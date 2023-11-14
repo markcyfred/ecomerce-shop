@@ -11,8 +11,8 @@
 
     <!-- Favicons -->
     <link href="assets/img/logo.png" rel="icon">
-    
-    
+
+
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
@@ -26,8 +26,8 @@
     <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
     <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
     <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
-    
-    
+
+
 
     <!-- Template Main CSS File -->
     <link href="assets/css/style.css" rel="stylesheet">
@@ -61,16 +61,44 @@
                     <li><a href="#pricing.php">Pricing</a></li>
                     <li><a href="#blog.php">Blog</a></li>
                     <li><a href="#contact.php">Contact</a></li>
-                    <li class="dropdown"><a href="#"><span>Login/Signup</span> <i class="bi bi-chevron-down"></i></a>
-                        <ul>
-                            <a href="login.php">
-                                <i class="bi bi-box-arrow-in-right"></i> login
-                             </a>
-                             <a href="register.php">
-                                <i class="bi bi-box-arrow-in-right"></i> <span style="margin-left: 20px;margin-right:-10px">register</span> 
-                             </a>
-                        </ul>
-                    </li>
+                    <?php
+                    if (isset($_SESSION['auth'])) {
+                    ?>
+
+                        <li class="dropdown"><a href="#"><span>
+
+                        <?= $_SESSION['auth_user']['email']; ?>
+
+                        </span> <i class="bi bi-chevron-down"></i></a>
+                            <ul>
+                                <a href="profile.php">
+                                    <i class="bi bi-box-arrow-in-right"></i> Profile
+                                </a>
+                                <a href="functions/logout.php">
+                                    <i class="bi bi-box-arrow-in-right"></i> <span style="margin-left: 20px;margin-right:-10px">Logout</span>
+                                </a>
+                            </ul>
+
+                        <?php
+
+                    } else {
+                        ?>
+                        <li class="dropdown"><a href="#"><span>Login/Signup</span> <i class="bi bi-chevron-down"></i></a>
+                            <ul>
+                                <a href="login.php">
+                                    <i class="bi bi-box-arrow-in-right"></i> login
+                                </a>
+                                <a href="register.php">
+                                    <i class="bi bi-box-arrow-in-right"></i> <span style="margin-left: 20px;margin-right:-10px">register</span>
+                                </a>
+                            </ul>
+                        </li>
+
+                    <?php
+                    }
+
+                    ?>
+
                 </ul>
 
                 </ul>

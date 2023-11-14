@@ -1,7 +1,9 @@
 <?php 
+session_start();
+include ('../middleware/adminMiddleware.php');
+
 include ('includes/header.php');
-include ('includes/topbar.php');
-include ('includes/sidebar.php');
+
 ?>
 
   <!-- Content Wrapper. Contains page content -->

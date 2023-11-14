@@ -46,7 +46,17 @@
           </li>
         </ul>
       </nav>
-      <!-- /.sidebar-menu -->
+
+      <!-- Logout -->
+      <div class="sidebar-footer mt-4">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <a href="../functions/logout.php" class="btn btn-danger btn-block">Logout</a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <!-- /.sidebar -->
   </aside>
