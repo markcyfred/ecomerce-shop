@@ -673,7 +673,6 @@ h6 {
 
 .sidebar-nav .nav-heading {
   font-size: 11px;
-  text-transform: uppercase;
   color: #899bbd;
   font-weight: 600;
   margin: 10px 0 5px 15px;
@@ -686,7 +685,7 @@ h6 {
   font-weight: 600;
   color: #4154f1;
   transition: 0.3;
-  background: #f6f9ff;
+  background: #fdf5d9;
   padding: 10px 15px;
   border-radius: 4px;
 }
@@ -694,12 +693,12 @@ h6 {
 .sidebar-nav .nav-link i {
   font-size: 16px;
   margin-right: 10px;
-  color: #4154f1;
+  color: #f1c841;
 }
 
 .sidebar-nav .nav-link.collapsed {
-  color: #012970;
-  background: #fff;
+  color: rgb(22, 197, 22);
+  background: #ffffff;
 }
 
 .sidebar-nav .nav-link.collapsed i {
@@ -1210,6 +1209,43 @@ h6 {
   }
 }
 
+
+/*--------------------------------------------------------------
+form focus
+--------------------------------------------------------------*/
+.form-control:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.input-group-text:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.datatable-input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 200px; /* Adjust the width if needed */
+}
+
+.datatable-input::placeholder {
+  color: #a5c5fe;
+}
+.form-select {
+	border: 1px solid #ddd;
+	box-shadow: none;
+	color: #333;
+	font-size: 15px;
+	height: 40px;
+}
+
+.form-select:focus {
+	border-color: #a5c5fe;
+	box-shadow: none;
+	outline: 0 none;
+}
 /*--------------------------------------------------------------
 # Footer
 --------------------------------------------------------------*/

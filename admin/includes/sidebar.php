@@ -17,6 +17,17 @@
         </a>
         <ul id="products-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
+            <a href="categories.php">
+              <i class="bi bi-circle"></i><span>Categories</span>
+            </a>
+          </li>
+          <!--add category-->
+          <li>
+            <a href="add-category.php">
+              <i class="bi bi-circle"></i><span>Add Category</span>
+            </a>
+          </li>
+          <li>
             <a href="products-add.php">
               <i class="bi bi-circle"></i><span>Add Product</span>
             </a>
@@ -26,16 +37,10 @@
               <i class="bi bi-circle"></i><span>Manage Products</span>
             </a>
           </li>
-
-          <li>
-            <a href="products-categories.php">
-              <i class="bi bi-circle"></i><span>Categories</span>
-            </a>
-          </li>
         </ul>
       </li><!-- End Products Nav -->
 
-      
+
       <li class="nav-heading">Shop Sales</li>
 
       <li class="nav-item">
@@ -57,7 +62,7 @@
           <li>
             <a href="sales.php">
               <i class="bi bi-circle"></i><span>Sales</span>
-            </a>  
+            </a>
           </li>
           <!--invoice-->
           <li>
@@ -100,7 +105,24 @@
         </ul>
       </li><!-- End Coupons Nav -->
 
-      <!-- Marketing Newsletter Section with Dropdown -->
+      <!--User Management-->
+      <li class="nav-heading">User Management</li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#users-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-people"></i><span>Users</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="users-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="users-add.php">
+              <i class="bi bi-circle"></i><span>Add User</span>
+            </a>
+          </li>
+          <li>
+            <a href="users-manage.php">
+              <i class="bi bi-circle"></i><span>Manage Users</span>
+            </a>
+          </li>
+        </ul>
 
       <li class="nav-heading">Shop Peoples</li>
       <li class="nav-item">
@@ -171,27 +193,9 @@
           </li>
         </ul>
       </li><!-- End Inventory Nav -->
-      <!--User Management-->
-      <li class="nav-heading">User Management</li>
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#users-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-people"></i><span>Users</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="users-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-          <li>
-            <a href="users-add.php">
-              <i class="bi bi-circle"></i><span>Add User</span>
-            </a>
-          </li>
-          <li>
-            <a href="users-manage.php">
-              <i class="bi bi-circle"></i><span>Manage Users</span>
-            </a>
-          </li>
-        </ul>
-      <!-- System Dropdown with Nested Options -->
-      <li class="nav-heading">System Shop Management</li>
 
+      <li class="nav-heading">System Shop Management</li>
+      <!--user management-->
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#system-dropdown" data-bs-toggle="collapse" href="#">
           <i class="bi bi-gear"></i>

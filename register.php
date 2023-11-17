@@ -70,7 +70,15 @@ include 'admin/config/dbcon.php';
                                         </div>
                                     </div>
                                 </div>
+                                <!-- Add a dropdown for user type -->
+                                <div class="form-group">
+                                    <select class="form-select"  aria-label="Default select example" name="role_as" >
+                                        <option selected>Select User Type</option>
+                                        <option value="0">Customer</option>
+                                        <option value="2">Supplier</option>
+                                    </select>
 
+                                </div>
                                 <!-- Contact Information Section -->
                                 <div class="row">
                                     <div class="col-md-6">
@@ -116,14 +124,14 @@ include 'admin/config/dbcon.php';
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <input class="form-control" type="password" placeholder="Confirm Password" name="confirm_password" >
+                                            <input class="form-control" type="password" placeholder="Confirm Password" name="confirm_password">
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Submit Button -->
                                 <div class="form-group mb-0">
-                                    <input class="btn btn-primary btn-block" type="submit" name="register" value="Register Shop" required>
+                                    <input class="btn btn-primary btn-block" type="submit" name="register" value="Register now" required>
                                 </div>
                             </form>
 

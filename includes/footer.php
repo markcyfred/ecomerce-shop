@@ -82,6 +82,32 @@
 
 <!-- Template Main JS File -->
 <script src="assets/js/main.js"></script>
+<!-- JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+<?php
+if (isset($_SESSION['message'])) {
+?>
+  <script>
+    Swal.fire({
+      position: 'top-end',
+      icon: 'success',
+      title: '<?php echo $_SESSION['message']; ?>',
+      showConfirmButton: false,
+      timer: 2000,
+      toast: true,
+      width: 'auto', // Set width to 'auto' for a compact notification
+      padding: '0.1em', // Adjust padding for a smaller size
+      background: 'white', // Background color
+      customClass: {
+        popup: 'small-swal'
+      }
+    });
+  </script>
+<?php
+  unset($_SESSION['message']);
+}
+?>
 
 </body>
 

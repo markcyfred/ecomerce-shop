@@ -23,6 +23,56 @@ include('includes/header.php');
   </div><!-- End Page Title -->
 
   <section class="section dashboard">
+    <div class="col-xxl-7 col-xxxl-6">
+      <div style="background-color: #6fd3f7!important" class="card mb-25 border-0 rounded-0 welcome-box">
+        <div class="card-body pe-15 pe-sm-20 pe-md-0 pb-0 pt-15 pt-sm-20">
+          <div class="row align-items-center">
+            <div class="col-lg-6 col-md-6">
+              <div class="title position-relative">
+                <?php
+                $userName = isset($fullName) ? $fullName : 'User';
+
+                date_default_timezone_set('Africa/Nairobi');
+
+                $currentHour = date('H');
+
+                if ($currentHour >= 5 && $currentHour < 12) {
+                  $greeting = 'Good Morning';
+                } elseif ($currentHour >= 12 && $currentHour < 17) {
+                  $greeting = 'Good Afternoon';
+                } else {
+                  $greeting = 'Good Evening';
+                }
+
+                echo "<h3 class='fw-semibold mb-8'>$greeting, <span class='fw-bold'>$userName</span></h3>";
+                ?>
+
+                <span class="d-block text-black-emphasis fs-md-15 fs-lg-16"> Here’s what's happening with your store today </span>
+                <!-- Additional Text -->
+                <!-- Additional Information -->
+                <div class="mt-4">
+                  <div class="d-flex justify-content-between mb-3">
+                    <div>
+                      <p class="fw-bold mb-1">TODAY’S VISIT</p>
+                      <p class="fs-4 text-light">15,209</p>
+                    </div>
+                    <div>
+                      <p class="fw-bold mb-1">TODAY’S TOTAL SALES</p>
+                      <p class="fs-4 text-light">Ksh 29,115.50</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-6 text-center mt-15 mt-md-0">
+              <img src="../Admin/assets/img/welcome.png" alt="welcome-image">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- End greetings banner -->
+
+
     <div class="row">
 
       <!-- Left side columns -->
@@ -32,22 +82,8 @@ include('includes/header.php');
           <!-- Sales Card -->
           <div class="col-xxl-4 col-md-6">
             <div class="card info-card sales-card">
-
-              <div class="filter">
-                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                  <li class="dropdown-header text-start">
-                    <h6>Filter</h6>
-                  </li>
-
-                  <li><a class="dropdown-item" href="#">Today</a></li>
-                  <li><a class="dropdown-item" href="#">This Month</a></li>
-                  <li><a class="dropdown-item" href="#">This Year</a></li>
-                </ul>
-              </div>
-
               <div class="card-body">
-                <h5 class="card-title">Sales <span>| Today</span></h5>
+                <h5 class="card-title">Sales <span>| Total Sold items</span></h5>
 
                 <div class="d-flex align-items-center">
                   <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
@@ -68,28 +104,15 @@ include('includes/header.php');
           <div class="col-xxl-4 col-md-6">
             <div class="card info-card revenue-card">
 
-              <div class="filter">
-                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                  <li class="dropdown-header text-start">
-                    <h6>Filter</h6>
-                  </li>
-
-                  <li><a class="dropdown-item" href="#">Today</a></li>
-                  <li><a class="dropdown-item" href="#">This Month</a></li>
-                  <li><a class="dropdown-item" href="#">This Year</a></li>
-                </ul>
-              </div>
-
               <div class="card-body">
-                <h5 class="card-title">Revenue <span>| This Month</span></h5>
+                <h5 class="card-title">Sales <span>| Total Sales </span></h5>
 
                 <div class="d-flex align-items-center">
                   <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                  Ksh<i class="Ksh"></i>
+                    Ksh<i class="Ksh"></i>
                   </div>
                   <div class="ps-3">
-                    <h6>Ksh 3,264</h6>
+                    <h6>Ksh 43,264</h6>
                     <span class="text-success small pt-1 fw-bold">8%</span> <span class="text-muted small pt-2 ps-1">increase</span>
 
                   </div>
@@ -101,18 +124,6 @@ include('includes/header.php');
           <!-- New Orders Card -->
           <div class="col-xxl-4 col-md-6">
             <div class="card info-card new-orders-card">
-
-              <div class="filter">
-                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                  <li class="dropdown-header text-start">
-                    <h6>Filter</h6>
-                  </li>
-                  <li><a class="dropdown-item" href="#">Today</a></li>
-                  <li><a class="dropdown-item" href="#">This Month</a></li>
-                  <li><a class="dropdown-item" href="#">This Year</a></li>
-                </ul>
-              </div>
 
               <div class="card-body">
                 <h5 class="card-title">New Orders <span>| Today</span></h5>
@@ -134,18 +145,6 @@ include('includes/header.php');
           <div class="col-xxl-4 col-md-6">
             <div class="card info-card total-users-card">
 
-              <div class="filter">
-                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                  <li class="dropdown-header text-start">
-                    <h6>Filter</h6>
-                  </li>
-                  <li><a class="dropdown-item" href="#">Today</a></li>
-                  <li><a class="dropdown-item" href="#">This Month</a></li>
-                  <li><a class="dropdown-item" href="#">This Year</a></li>
-                </ul>
-              </div>
-
               <div class="card-body">
                 <h5 class="card-title">Total Users</h5>
 
@@ -154,7 +153,7 @@ include('includes/header.php');
                     <i class="bi bi-person"></i>
                   </div>
                   <div class="ps-3">
-                    <h6>3,500</h6>
+                    <h6>35</h6>
                     <span class="text-muted small pt-2">Registered users</span>
                   </div>
                 </div>
@@ -169,41 +168,31 @@ include('includes/header.php');
 
       <!-- Right side columns -->
       <div class="col-lg-4">
-        <!-- Customer Satisfaction Card -->
-        <div class="card info-card satisfaction-card">
-
-          <!-- ... (similar structure to the existing cards) ... -->
+        <!-- Sales Card -->
+        <div class="card info-card customers-card">
+          <!-- Customers Card -->
 
           <div class="card-body">
-            <h5 class="card-title">Customer Satisfaction</h5>
+            <h5 class="card-title">Suppliers <span>| Total Suppliers</span></h5>
 
             <div class="d-flex align-items-center">
               <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                <i class="bi bi-heart"></i>
+                <i class="bi bi-people"></i>
               </div>
               <div class="ps-3">
-                <h6>92%</h6>
-                <span class="text-success small pt-1 fw-bold">2%</span>
-                <span class="text-muted small pt-2 ps-1">increase</span>
+                <h6>14</h6>
+                <span class="text-danger small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">decrease</span>
+
               </div>
             </div>
-          </div>
-        </div>
-        <!-- End Customer Satisfaction Card -->
+
+
+          </div><!-- End Customers Card -->
+        </div><!-- End Sales Card -->
+
         <!-- Total Orders Card -->
         <div class="card info-card total-orders-card">
 
-          <div class="filter">
-            <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-              <li class="dropdown-header text-start">
-                <h6>Filter</h6>
-              </li>
-              <li><a class="dropdown-item" href="#">Today</a></li>
-              <li><a class="dropdown-item" href="#">This Month</a></li>
-              <li><a class="dropdown-item" href="#">This Year</a></li>
-            </ul>
-          </div>
 
           <div class="card-body">
             <h5 class="card-title">Total Orders</h5>
@@ -228,7 +217,7 @@ include('includes/header.php');
       <div class="col-lg-6">
         <div class="card">
           <div class="card-body">
-          <h5 class="card-title">Sales Chart</h5>
+            <h5 class="card-title">Sales Chart</h5>
 
             <!-- Column Chart -->
             <div id="columnChart"></div>
@@ -297,7 +286,7 @@ include('includes/header.php');
       <div class="col-lg-6">
         <div class="card">
           <div class="card-body">
-          <h5 class="card-title">Sales Chart</h5>
+            <h5 class="card-title">Sales Chart</h5>
             <!-- Pie Chart -->
             <div style="margin-top: 100px;" id="pieChart"></div>
 

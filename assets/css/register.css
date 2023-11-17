@@ -45,12 +45,26 @@ input:-webkit-autofill:focus {
 	box-shadow: none;
 	outline: 0 none;
 }
+
 .form-control.form-control-sm {
 	height: calc(1.5em + .5rem + 2px);
 }
 
 .form-control.form-control-lg {
 	height: calc(1.5em + 1rem + 2px);
+}
+.form-select {
+	border: 1px solid #ddd;
+	box-shadow: none;
+	color: #333;
+	font-size: 15px;
+	height: 40px;
+}
+
+.form-select:focus {
+	border-color: #1bbd36;
+	box-shadow: none;
+	outline: 0 none;
 }
 a {
 	color: #009ce7;

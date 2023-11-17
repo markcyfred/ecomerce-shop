@@ -38,14 +38,50 @@ if (mysqli_num_rows($user_query_run) > 0) {
   <nav class="header-nav ms-auto">
     <ul class="d-flex align-items-center">
 
-      <li class="nav-item d-block d-lg-none">
-        <a class="nav-link nav-icon search-bar-toggle " href="#">
-          <i class="bi bi-search"></i>
-        </a>
-      </li><!-- End Search Icon-->
-
+      <!--language-->
       <li class="nav-item dropdown">
+        <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+          <i class="bi bi-globe"></i>
+        </a><!-- End Language Icon -->
 
+        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow language">
+          <li class="dropdown-header">
+            <h6>Select Language</h6>
+          </li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+
+          <li>
+            <a class="dropdown-item d-flex align-items-center" href="#">
+              <img src="../admin/assets/img/flags/us.png" alt="English Flag" class="flag">
+              <span>English</span>
+            </a>
+          </li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+
+          <li>
+            <a class="dropdown-item d-flex align-items-center" href="#">
+              <img src="../admin/assets/img/flags/fr.png" alt="French Flag" class="flag">
+              <span>French</span>
+            </a>
+          </li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+        </ul><!-- End Language Dropdown Items -->
+        <style>
+          .flag
+          {
+            width: 20px;
+            height: 20px;
+            border-radius: 5px;
+            margin-right: 5px;
+          }
+        </style>
+      <li class="nav-item dropdown">
         <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
           <i class="bi bi-bell"></i>
           <span class="badge bg-primary badge-number">4</span>
@@ -53,8 +89,8 @@ if (mysqli_num_rows($user_query_run) > 0) {
 
         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
           <li class="dropdown-header">
-            You have 4 new notifications
-            <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+            <h6>Hi, <?php echo $fullName; ?></h6>
+            <span>Welcome to Shop-Sales</span>
           </li>
           <li>
             <hr class="dropdown-divider">
@@ -91,8 +127,13 @@ if (mysqli_num_rows($user_query_run) > 0) {
 
         </ul><!-- End Notification Dropdown Items -->
 
-      </li><!-- End Notification Nav -->
+      <li class="nav-item d-block d-lg-none">
+        <a class="nav-link nav-icon search-bar-toggle " href="#">
+          <i class="bi bi-search"></i>
+        </a>
+      </li><!-- End Search Icon-->
 
+   
       <li class="nav-item dropdown">
 
         <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
@@ -140,7 +181,6 @@ if (mysqli_num_rows($user_query_run) > 0) {
             echo "<span class='d-none d-lg-block ps-2'><span class='fw-bold'>Hi,</span> $fullName</span>";
           } else {
             echo "<span class='d-none d-lg-block ps-2'><span class='fw-bold'>Hi,</span> User</span>";
-            
           }
 
           ?>

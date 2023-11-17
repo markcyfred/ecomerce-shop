@@ -4,19 +4,34 @@
 session_start();
 
 include 'header.php'; ?>
-<div style="margin-top: 80px;">
-  <?php
-  if (isset($_SESSION['message'])) {
-  ?>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-      <strong>Holy!</strong> <?php echo $_SESSION['message']; ?>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-  <?php
-    unset($_SESSION['message']);
-  }
-  ?>
+<?php
+if (isset($_SESSION['message'])) {
+    $icon = ($_SESSION['messageType'] == 'success') ? 'success' : 'error';
+?>
+    <script>
+        Swal.fire({
+            position: 'top-end',
+            icon: '<?php echo $icon; ?>',
+            title: '<?php echo $_SESSION['message']; ?>',
+            showConfirmButton: false,
+            timer: 2000,
+            toast: true,
+            width: 'auto',
+            padding: '0.1em',
+            background: 'white',
+            customClass: {
+                popup: 'small-swal'
+            }
+        });
+    </script>
+<?php
+    unset($_SESSION['message']); // unset the session message after displaying
+    unset($_SESSION['messageType']); // unset the session message type after displaying
+}
+?>
+
 </div>
 
 <main id="main">

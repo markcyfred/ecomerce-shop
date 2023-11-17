@@ -14,6 +14,8 @@ if (isset($_POST['register'])) {
     $additional_info = mysqli_real_escape_string($conn, $_POST['additional_info']);
     $password = mysqli_real_escape_string($conn, $_POST['password']);
     $confirm_password = mysqli_real_escape_string($conn, $_POST['confirm_password']);
+    $role_as = mysqli_real_escape_string($conn, $_POST['role_as']);  // Added this line to get the selected user type
+
 
     // Check if passwords match
     if ($password === $confirm_password) {
@@ -28,15 +30,15 @@ if (isset($_POST['register'])) {
         }
 
         // Insert user data
-        $insert_query = "INSERT INTO `users` (`first_name`, `last_name`, `email`, `phone`, `street_address`, `city`, `postal_code`, `additional_info`, `password`) VALUES ('$first_name', '$last_name', '$email', '$phone', '$street_address', '$city', '$postal_code', '$additional_info', '$password')";
+        $insert_query = "INSERT INTO `users` (`first_name`, `last_name`, `email`, `phone`, `street_address`, `city`, `postal_code`, `additional_info`, `password`,`role_as`) VALUES ('$first_name', '$last_name', '$email', '$phone', '$street_address', '$city', '$postal_code', '$additional_info', '$password','$role_as')";
 
         $insert_query_run = mysqli_query($conn, $insert_query);
 
         if ($insert_query_run) {
-            $_SESSION['success'] = "You are now registered";
+            $_SESSION['message'] = "You are now registered";
             header('location: ../login.php');
         } else {
-            $_SESSION['status'] = "You are not registered";
+            $_SESSION['message'] = "You are not registered";
             header('location: register.php');
         }
     } else {
@@ -67,10 +69,18 @@ if (isset($_POST['register'])) {
         $_SESSION['role_as'] = $user_role;
 
         if ($user_role == '1') {
-            $_SESSION['message'] = "Welcome to dashboard";
+            $_SESSION['message'] = "Welcome to Admin dashboard";
+            $_SESSION['messageType'] = "success";
             header('location: ../admin/index.php');
+
+        } elseif ($user_role == '2') {
+            $_SESSION['message'] = "Welcome to Supplier dashboard";
+            $_SESSION['messageType'] = "success";
+            header('location: ../supplier/index.php');
+            
         } else {
             $_SESSION['message'] = "You are now logged in";
+            $_SESSION['messageType'] = "success";
             header('location: ../index.php');
         }
     } else {
