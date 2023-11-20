@@ -43,23 +43,22 @@ include('includes/header.php');
                                 <label for="inputDescription" class="form-label">Description</label>
                                 <textarea class="form-control" name="description" rows="4"></textarea>
                             </div>
-                            <div class="col-md-6">
+                             <!-- Status -->
+                             <div class="col-md-6">
                                 <label for="inputStatus" class="form-label">Status</label>
                                 <select class="form-select" id="inputStatus" name="status">
                                     <option value="1">Active</option>
                                     <option value="0">Inactive</option>
                                 </select>
                             </div>
-
-
+                            <!-- Popularity -->
                             <div class="col-md-6">
                                 <label for="inputPopularity" class="form-label">Popularity</label>
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="inputPopularity" name="popularity">
-                                    <label class="form-check-label" for="inputPopularity">Popular</label>
-                                </div>
+                                <select class="form-select" id="inputPopularity" name="popularity">
+                                    <option value="1">Popular</option>
+                                    <option value="0">Not Popular</option>
+                                </select>
                             </div>
-
                             <div class="col-md-6">
                                 <label for="inputImage" class="form-label">Image</label>
                                 <div class="input-group">

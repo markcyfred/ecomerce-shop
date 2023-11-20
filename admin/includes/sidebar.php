@@ -28,13 +28,13 @@
             </a>
           </li>
           <li>
-            <a href="products-add.php">
-              <i class="bi bi-circle"></i><span>Add Product</span>
+            <a href="products.php">
+              <i class="bi bi-circle"></i><span>Products</span>
             </a>
           </li>
           <li>
-            <a href="products-manage.php">
-              <i class="bi bi-circle"></i><span>Manage Products</span>
+            <a href="products-add.php">
+              <i class="bi bi-circle"></i><span>Add Products</span>
             </a>
           </li>
         </ul>

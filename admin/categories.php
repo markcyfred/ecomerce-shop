@@ -41,8 +41,6 @@ include('includes/header.php');
                                     <th scope="col">Image</th>
                                     <th scope="col">Status</th>
                                     <th scope="col">Description</th>
-                                    <th scope="col">Popularity</th>
-
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>

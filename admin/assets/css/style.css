@@ -1230,8 +1230,22 @@ form focus
   width: 200px; /* Adjust the width if needed */
 }
 
-.datatable-input::placeholder {
-  color: #a5c5fe;
+.datatable-selector {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 60px; /* Adjust the width if needed */
+}
+
+.datatable-input:focus {
+  border: 1px solid #a5c5fe;
+  outline: none;
+  box-shadow: none;
+}
+.datatable-selector:focus {
+  border: 1px solid #a5c5fe;
+  outline: none;
+  box-shadow: none;
 }
 .form-select {
 	border: 1px solid #ddd;

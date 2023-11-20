@@ -56,19 +56,32 @@ include('includes/header.php');
                                     </div>
                                     <div class="col-md-6">
                                         <label for="inputStatus" class="form-label">Status</label>
-                                        <div class="form-check">
-                                            <input type="checkbox" class="form-check-input" id="inputStatus" name="status" <?= $data['status'] ? 'checked' : '' ?> value="1">
-                                            <label class="form-check-label" for="inputStatus">Active</label>
+                                        <div class="input-group">
+                                            <select class="form-control" id="inputStatus" name="status">
+                                                <option value="1" <?= $data['status'] == 1 ? 'selected' : '' ?>>Active</option>
+                                                <option value="0" <?= $data['status'] == 0 ? 'selected' : '' ?>>Inactive</option>
+                                            </select>
+                                            <span class="badge bg-success">
+                                                <?= $data['status'] == 1 ? '<span style="margin-top: 5px; display: inline-block;">Active</span>' : 'Inactive' ?>
+                                            </span>
                                         </div>
                                     </div>
 
+
                                     <div class="col-md-6">
                                         <label for="inputPopularity" class="form-label">Popularity</label>
-                                        <div class="form-check">
-                                            <input type="checkbox" class="form-check-input" id="inputPopularity" name="popularity" <?= $data['popularity'] ? "checked" : "" ?>>
-                                            <label class="form-check-label" for="inputPopularity">Popular</label>
+                                        <div class="input-group">
+                                            <select class="form-control" id="inputPopularity" name="popularity">
+                                                <option value="1" <?= $data['popularity'] == 1 ? 'selected' : '' ?>>Popular</option>
+                                                <option value="0" <?= $data['popularity'] == 0 ? 'selected' : '' ?>>Not Popular</option>
+                                            </select>
+                                            <span class="badge bg-warning text-dark">
+                                                <?= $data['popularity'] == 1 ? '<span style="margin-top: 5px; display: inline-block;">Popular</span>' : 'Not Popular' ?>
+                                            </span>
                                         </div>
                                     </div>
+
+
 
                                     <div class="col-md-6">
                                         <label for="inputImage" class="form-label">Image</label>
@@ -76,9 +89,9 @@ include('includes/header.php');
                                             <input type="file" class="form-control" name="image" id="inputImage" aria-describedby="inputImageAddon">
                                             <label class="input-group-text" for="current image" id="inputImageAddon">Upload</label>
                                         </div>
-                                        <input type="hidden" name="old_image" value="<?=$data['image']?>">
+                                        <input type="hidden" name="old_image" value="<?= $data['image'] ?>">
                                         <img src="../uploads/<?= $data['image'] ?>" alt="<?= $data['name'] ?>" width="100" height="50">
-                                        <small class="form-text text-muted">These is your old image.</small>
+                                        <small class="form-text text-muted">These is your current image.</small>
                                     </div>
 
 

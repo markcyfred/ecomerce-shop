@@ -13,7 +13,7 @@ include('includes/header.php');
 <main id="main" class="main">
 
     <div class="pagetitle">
-        <h1>Category Add</h1>
+        <h1>Add Products</h1>
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">Add new Products</li>
@@ -33,7 +33,7 @@ include('includes/header.php');
                         <form action="code.php" method="POST" enctype="multipart/form-data" class="row g-3">
                             <div class="col-md-3">
                                 <label for="inputCategory" class="form-label">Select Category</label>
-                                <select class="form-select" id="inputCategory">
+                                <select class="form-select" id="inputCategory" name="category_name">
                                     <option selected>Select Category</option>
                                     <?php
                                     $categories = getAll("categories");
@@ -41,14 +41,14 @@ include('includes/header.php');
                                     if (mysqli_num_rows($categories) > 0) {
                                         foreach ($categories as $item) {
                                     ?>
-                                            <option value="<?= $item['id'] ?>"><?= $item['name'] ?></option>
+                                            <option value="<?= $item['name'] ?>"><?= $item['name'] ?></option>
                                     <?php
                                         }
                                     }
                                     ?>
-
                                 </select>
                             </div>
+
                             <!--rating-->
                             <div class="col-md-3">
                                 <label for="inputRating" class="form-label">Rating</label>
@@ -61,6 +61,7 @@ include('includes/header.php');
                                     <option value="5">5 Star</option>
                                 </select>
                             </div>
+                            <!-- Status -->
                             <div class="col-md-3">
                                 <label for="inputStatus" class="form-label">Status</label>
                                 <select class="form-select" id="inputStatus" name="status">
@@ -68,22 +69,24 @@ include('includes/header.php');
                                     <option value="0">Inactive</option>
                                 </select>
                             </div>
+
                             <!-- Select Discount Type in Percentage -->
                             <div class="col-md-3">
                                 <label for="inputDiscountType" class="form-label">Select Discount Type</label>
-                                <select class="form-select" id="inputDiscountType" name="discount_type">
+                                <select class="form-select" id="inputDiscountType" name="discount">
                                     <option selected>Select Discount Type</option>
                                     <?php
                                     for ($i = 1; $i <= 100; $i++) {
-                                        echo '<option value="percentage_' . $i . '">' . $i . '%</option>';
+                                        echo '<option value="' . $i . '">' . $i . '%</option>';
                                     }
                                     ?>
                                 </select>
                             </div>
+
                             <!-- Select Discount Type in Percentage -->
                             <div class="col-md-">
                                 <label for="inputName" class="form-label">Product Name</label>
-                                <input type="text" class="form-control" name="name">
+                                <input type="text" class="form-control" name="product_name">
                             </div>
                             <div class="col-md-12">
                                 <label for="inputDescription" class="form-label">Description</label>
@@ -92,12 +95,12 @@ include('includes/header.php');
                             <!-- Original Price -->
                             <div class="col-md-3">
                                 <label for="original_price" class="form-label">Original Price</label>
-                                <input type="text" class="form-control" id="original_price" name="original_price" placeholder="Enter original price" required>
+                                <input type="number" class="form-control" id="original_price" name="original_price" placeholder="Enter original price">
                             </div>
                             <!--sellin price-->
                             <div class="col-md-3">
                                 <label for="original_price" class="form-label">Selling Price</label>
-                                <input type="text" class="form-control" id="selling_price" name="selling_price" placeholder="Enter Selling price" required>
+                                <input type="number" class="form-control" id="selling_price" name="selling_price" placeholder="Enter Selling price">
                             </div>
 
 
@@ -111,26 +114,30 @@ include('includes/header.php');
                             <!--quantity-->
                             <div class="col-md-6">
                                 <label for="inputQuantity" class="form-label">Quantity</label>
-                                <input type="number" class="form-control" id="inputQuantity" name="qty" placeholder="Enter Quantity" required>
+                                <input type="number" class="form-control" id="inputQuantity" name="quantity" placeholder="Enter Quantity">
                             </div>
                             <!-- Trending -->
                             <div class="col-md-6">
-                                <label for="inputTrending" class="form-label">Trending</label>
-                                <select class="form-select" id="inputTrending" name="trending">
-                                    <option value="1">Yes</option>
-                                    <option value="0">No</option>
+                                <label for="inputTrending" class="form-label">Status</label>
+                                <select class="form-select" id="inputStatus" name="trending">
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
                                 </select>
                             </div>
-                            <div class="col-12 text-center">
-                                <button type="submit" class="btn btn-primary" name="add_category_btn">Submit</button>
-                                <button type="reset" class="btn btn-secondary">Reset</button>
-                            </div>
-                        </form>
-                        <!-- End Multi Columns Form -->
-                    </div>
-                </div>
 
+
+                    </div>
+
+                    <div class="col-12 text-center">
+                        <button type="submit" class="btn btn-primary" name="add_product_btn">Submit</button>
+                        <button type="reset" class="btn btn-secondary">Reset</button>
+                    </div>
+                    </form>
+                    <!-- End Multi Columns Form -->
+                </div>
             </div>
+
+        </div>
         </div>
     </section>
 
