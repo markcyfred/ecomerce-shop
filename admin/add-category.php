@@ -16,9 +16,16 @@ include('includes/header.php');
         <h1>Category Add</h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item">Create new Category</li>
-                <li class="breadcrumb-item">Forms</li>
-                <li class="breadcrumb-item active"><a href="index.php">home</a></li>
+                <li class="breadcrumb-item">Add Category Forms</li>
+                <a href="categories.php" title="View categories">
+                    <i class=" ri-eye-line"></i> View categories
+                </a>
+
+                <li class="breadcrumb-item active">
+                    <a href="index.php">
+                        <i class="ri-arrow-go-back-fill"></i>
+                        home</a>
+                </li>
             </ol>
         </nav>
     </div><!-- End Page Title -->
@@ -43,8 +50,8 @@ include('includes/header.php');
                                 <label for="inputDescription" class="form-label">Description</label>
                                 <textarea class="form-control" name="description" rows="4"></textarea>
                             </div>
-                             <!-- Status -->
-                             <div class="col-md-6">
+                            <!-- Status -->
+                            <div class="col-md-6">
                                 <label for="inputStatus" class="form-label">Status</label>
                                 <select class="form-select" id="inputStatus" name="status">
                                     <option value="1">Active</option>

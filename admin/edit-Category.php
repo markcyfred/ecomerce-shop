@@ -13,12 +13,19 @@ include('includes/header.php');
 <main id="main" class="main">
 
     <div class="pagetitle">
-        <h1>Category Add</h1>
+        <h1>Edit Category</h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item">Edit Category</li>
-                <li class="breadcrumb-item">Forms</li>
-                <li class="breadcrumb-item active"><a href="index.php">home</a></li>
+                <li class="breadcrumb-item">Edit Category Forms</li>
+                <a href="add-category.php" title="Add new category">
+                    <i class=" ri-menu-add-line"></i> Add Category
+                </a>
+
+                <li class="breadcrumb-item active">
+                    <a href="index.php">
+                        <i class="ri-arrow-go-back-fill"></i>
+                        home</a>
+                </li>
             </ol>
         </nav>
     </div><!-- End Page Title -->

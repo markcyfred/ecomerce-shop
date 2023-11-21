@@ -1,7 +1,6 @@
 <link href="assets/img/Logo.png" rel="icon">
 
 <?php
-session_start();
 
 include 'header.php'; ?>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>

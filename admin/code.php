@@ -93,8 +93,7 @@ else if (isset($_POST['update_category_btn'])) {
     }
 }
 //delete
-else if (isset($_POST['delete_category_btn'])) 
-{
+else if (isset($_POST['delete_category_btn'])) {
     $category_id = mysqli_real_escape_string($conn, $_POST['category_id']);
 
     $category_query = "SELECT * FROM categories WHERE id='$category_id'";
@@ -157,5 +156,81 @@ else if (isset($_POST['add_product_btn'])) {
         redirect("products-add.php", "Product Created successfully", "success");
     } else {
         redirect("products-add.php", "Something went wrong", "error");
+    }
+} 
+
+else if (isset($_POST['update_product_btn']))
+{
+    $product_id = $_POST['product_id'];
+    $category_name = $_POST['category_name'];
+    $rating = $_POST['rating'];
+    $status = $_POST['status'];
+    $discount = $_POST['discount'];
+    $product_name = $_POST['product_name'];
+    $description = $_POST['description'];
+    $original_price = $_POST['original_price'];
+    $selling_price = $_POST['selling_price'];
+    $quantity = $_POST['quantity'];
+    $trending = $_POST['trending'];
+
+    $image = $_FILES['image']['name'];
+
+    $path = "../uploads/shop";
+
+
+    $new_image = $_FILES['image']['name'];
+    $old_image = $_POST['old_image'];
+
+    if ($new_image != "") {
+        $update_filename = $new_image;
+        $image_ext = pathinfo($new_image, PATHINFO_EXTENSION);
+        $update_filename = time() . "." . $image_ext;
+    } else {
+        $update_filename = $old_image;
+    }
+
+    $update_product_query = "UPDATE products SET category_name='$category_name', rating='$rating', status='$status', discount='$discount', product_name='$product_name', description='$description', original_price='$original_price', selling_price='$selling_price', image='$update_filename', quantity='$quantity', trending='$trending' WHERE id ='$product_id'";
+    $update_product_query_run = mysqli_query($conn, $update_product_query);
+
+    if ($update_product_query_run) {
+        if ($_FILES['image']['name'] != "") {
+            move_uploaded_file($_FILES['image']['tmp_name'], $path . '/' . $update_filename);
+            if (file_exists(("../uploads/shop/" . $old_image)) && !empty($old_image)) {
+                unlink("../uploads/shop/" . $old_image);
+            }
+        }
+        redirect("products.php", "Product updated successfully", "success");
+    } else {
+        redirect("edit-product.php", "Product not updated", "error");
+    }
+
+}
+else
+{
+    header("Location: ../index.php");
+}
+
+//delete product with dialog of confirm to delete
+if (isset($_POST['delete_product_btn'])) {
+    $product_id = mysqli_real_escape_string($conn, $_POST['product_id']);
+
+    $product_query = "SELECT * FROM products WHERE id='$product_id'";
+    $product_query_run = mysqli_query($conn, $product_query);
+    $product_data = mysqli_fetch_array($product_query_run);
+    $image = $product_data['image'];
+
+    $delete_query = "DELETE FROM products WHERE id='$product_id'";
+
+    $delete_query_run = mysqli_query($conn, $delete_query);
+
+    if ($delete_query_run) {
+
+        if (file_exists("../uploads/shop/" . $image)) {
+            unlink("../uploads/shop/" . $image);
+        }
+
+        redirect("products.php", "Product deleted successfully", "success");
+    } else {
+        redirect("products.php", "Product not deleted", "error");
     }
 }

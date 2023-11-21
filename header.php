@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -46,30 +49,25 @@
 
             <nav id="navbar" class="navbar order-last order-lg-0">
                 <ul>
+                    <!-- Update navigation links -->
+                    <!--categories.php-->
+                    <!--cart.php-->
+                    <!--checkout.php-->
                     <li><a href="index.php" class="active">Home</a></li>
-
-                    <li class="dropdown"><a href="#"><span>About</span> <i class="bi bi-chevron-down"></i></a>
-                        <ul>
-                            <li><a href="#about.php">About Us</a></li>
-                            <li><a href="#team.php">Team</a></li>
-                            <li><a href="#testimonials.php">Testimonials</a></li>
-                        </ul>
-                    </li>
-
-                    <li><a href="#services.php">Services</a></li>
-                    <li><a href="#portfolio.php">Portfolio</a></li>
-                    <li><a href="#pricing.php">Pricing</a></li>
-                    <li><a href="#blog.php">Blog</a></li>
-                    <li><a href="#contact.php">Contact</a></li>
+                    <li><a href="categories.php">Categories</a></li>
+                    <li><a href="#products.php">Products</a></li>
+                    <li><a href="#categories.php">Categories</a></li>
+                    <li><a href="#cart.php">Cart</a></li>
+                    <li><a href="#checkout.php">Checkout</a></li>
                     <?php
                     if (isset($_SESSION['auth'])) {
                     ?>
 
                         <li class="dropdown"><a href="#"><span>
 
-                        <?= $_SESSION['auth_user']['email']; ?>
+                                    <?= $_SESSION['auth_user']['email']; ?>
 
-                        </span> <i class="bi bi-chevron-down"></i></a>
+                                </span> <i class="bi bi-chevron-down"></i></a>
                             <ul>
                                 <a href="profile.php">
                                     <i class="bi bi-box-arrow-in-right"></i> Profile

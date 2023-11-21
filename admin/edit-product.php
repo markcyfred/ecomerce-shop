@@ -12,13 +12,21 @@ include('includes/header.php');
 </style>
 <main id="main" class="main">
 
+
     <div class="pagetitle">
-        <h1>Add Products</h1>
+        <h1>Edit product</h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item">edit Products</li>
-                <li class="breadcrumb-item">Forms</li>
-                <li class="breadcrumb-item active"><a href="index.php">home</a></li>
+                <li class="breadcrumb-item">Edit product Forms</li>
+                <a href="products-add.php" title="Add new Product">
+                    <i class=" ri-menu-add-line"></i> Add Product
+                </a>
+
+                <li class="breadcrumb-item active">
+                    <a href="index.php">
+                        <i class="ri-arrow-go-back-fill"></i>
+                        home</a>
+                </li>
             </ol>
         </nav>
     </div><!-- End Page Title -->
@@ -60,6 +68,7 @@ include('includes/header.php');
                                             ?>
                                         </select>
                                     </div>
+                                    <input type="hidden" name="product_id" value="<?= $data['id']; ?>">
 
                                     <!--rating-->
                                     <div class="col-md-3">
@@ -134,6 +143,7 @@ include('includes/header.php');
                                             <input type="file" class="form-control" name="image" id="inputImage" aria-describedby="inputImageAddon">
                                             <label class="input-group-text" for="currentImage" id="inputImageAddon">Upload</label>
                                         </div>
+                                        <input type="hidden" name="old_image" value="<?= $data['image'] ?>">
                                         <input type="hidden" name="old_image" value="<?= $data['image'] ?>">
                                         <img src="../uploads/shop/<?= $data['image'] ?>" alt="<?= $data['product_name'] ?>" width="100" height="50">
                                         <small class="form-text text-muted">This is your current image.</small>

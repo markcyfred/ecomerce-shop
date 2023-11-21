@@ -13,15 +13,23 @@ include('includes/header.php');
 <main id="main" class="main">
 
     <div class="pagetitle">
-        <h1>Add Products</h1>
+        <h1>Products Add</h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item">Add new Products</li>
-                <li class="breadcrumb-item">Forms</li>
-                <li class="breadcrumb-item active"><a href="index.php">home</a></li>
+                <li class="breadcrumb-item">Add Products Forms</li>
+                <a href="products.php" title="View products">
+                    <i class=" ri-eye-line"></i> View  products
+                </a>
+
+                <li class="breadcrumb-item active">
+                    <a href="index.php">
+                        <i class="ri-arrow-go-back-fill"></i>
+                        home</a>
+                </li>
             </ol>
         </nav>
     </div><!-- End Page Title -->
+
     <section class="section">
         <div class="row">
             <div class="col-lg-12">
