@@ -4,7 +4,6 @@
 
 include 'header.php'; ?>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-
 <?php
 if (isset($_SESSION['message'])) {
     $icon = ($_SESSION['messageType'] == 'success') ? 'success' : 'error';
@@ -33,6 +32,8 @@ if (isset($_SESSION['message'])) {
 
 </div>
 
+
+<
 <main id="main">
 
   <!-- ======= Hero Section ======= -->

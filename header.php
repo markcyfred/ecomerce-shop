@@ -58,8 +58,7 @@ session_start();
                     <li><a href="#products.php">Products</a></li>
                     <li><a href="#categories.php">Categories</a></li>
                     <li><a href="#cart.php">Cart</a></li>
-                    <li><a href="#checkout.php">Checkout</a></li>
-                    <?php
+                    <a href="https://www.google.com" target="blank">Go to Google</a>                    <?php
                     if (isset($_SESSION['auth'])) {
                     ?>
 
