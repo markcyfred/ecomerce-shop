@@ -35,8 +35,6 @@ include('includes/header.php');
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Fill out</h5>
-
-                        <!-- Category Columns Form name slug description status popularity image meta_title meta_description meta_keywords -->
                         <form action="code.php" method="POST" enctype="multipart/form-data" class="row g-3">
                             <div class="col-md-6">
                                 <label for="inputName" class="form-label">Category Name</label>

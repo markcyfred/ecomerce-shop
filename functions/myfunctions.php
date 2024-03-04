@@ -1,7 +1,5 @@
 <?php
 
-include('../admin/config/dbcon.php');
-
 //category
 function getAll($table)
 {
@@ -24,4 +22,17 @@ function redirect($url, $message, $messageType = 'success')
     header("Location: $url");
     exit();
 }
+
+function getAddress($url, $message)
+{
+    $_SESSION['message'] = $message;
+    header("Location: $url");
+    exit();
+}
+
+
+
+
+
+
 ?>

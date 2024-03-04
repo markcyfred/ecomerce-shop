@@ -1,35 +1,86 @@
+<?php
+include 'header.php'; 
+include ("functions/userfunctions.php");
+?>
 <link href="assets/img/Logo.png" rel="icon">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
-
-<?php
-
-include 'header.php'; ?>
-
 </div>
 
+<style>
+    .card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        border: 2px dotted green;
+    }
+
+    .card img {
+        flex: 1;
+        object-fit: cover;
+        border-radius: 0%;
+    }
+    .card-title {
+        text-align: center;
+        font-size: 15px;
+        font-weight: bold;
+    }
+    @media screen and (max-width: 768px)
+     {
+        .col-md-3 {
+            flex: 0 0 50%;
+            max-width: 50%;
+        }
+        
+    }
+</style>
+
 <main id="main">
-<!-- ======= Hero Section ======= -->
-<section style="margin-bottom: 120px;margin-top:100px" id="hero" class="d-flex align-items-center">
+   <div id="bread" style="margin-top: 70px;margin-bottom:10px;" class="py-3 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 mb-0"><a href="index.php">Home</a> <span class="mx-2 mb-0">/</span> <strong
+                        class="text-black">Categories</strong></div>
+            </div>
+        </div>
+    </div>
+    <!-- ======= Hero Section ======= -->
+    <section id="hero" class="d-flex align-items-center">
     <div class="container">
         <div class="row">
-            <div class="col-lg-6 pt-5 pt-lg-0 order-2 order-lg-1 d-flex flex-column justify-content-center">
-                <h1 data-aos="fade-up">Shop Sell</h1>
-                <h2 data-aos="fade-up" data-aos-delay="400">Shop Sell</h2>
-                <div data-aos="fade-up" data-aos-delay="800">
-                    <a href="#products" class="btn-get-started scrollto">Get Started</a>
-                </div>
-            </div>
-            <div class="col-lg-6 order-1 order-lg-2 hero-img" data-aos="fade-left" data-aos-delay="200">
-                <img src="assets/img/hero-img.png" class="img-fluid animated" alt="">
-            </div>
+            <?php
+            $categories = getAllActive("categories");
+
+            if (mysqli_num_rows($categories) > 0) {
+                $counter = 0;
+                foreach ($categories as $item) {
+                    ?>
+                    <div style="width: 140px;" class="col-md-3 mb-2">
+                        <a href="products.php?category=<?= $item['slug']; ?>">
+                            <div class="card">
+                                <img src="uploads/<?= $item['image']; ?>" class="card-img-top" alt="image">
+                                <div class="card-body">
+                                    <h5 class="card-title"><?= $item['name']; ?></h5>
+                                    <!-- You can add more information here if needed -->
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <?php 
+                    $counter++;
+                    if ($counter % 8 == 0) {
+                        echo '</div><div class="row">';
+                    }
+                }
+            } else {
+                echo "No data available";  // Added semicolon here
+            }
+            ?>
         </div>
     </div>
 </section><!-- End Hero -->
 
-<!-- ======= Products Section ======= -->
-
-
+    <!-- ======= Products Section ======= -->
 
 </main><!-- End #main -->
 <?php include 'includes/footer.php'; ?>
