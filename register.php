@@ -50,9 +50,7 @@ include 'admin/config/dbcon.php';
                                     <p style="color:red;"></p>
                                     <p style="color:green;"></p>
                                     <!-- Shop Registration Form -->
-                                    <form action="functions/authcode.php" method="post">
-                                        <!-- Personal Information Section -->
-                                        <!-- Personal Information Section -->
+                                    <form action="functions/authcode.php" method="post" enctype="multipart/form-data">
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-group">
@@ -78,12 +76,22 @@ include 'admin/config/dbcon.php';
                                                 border-color: #cfe2ff !important;
                                             }
                                         </style>
-                                        <div class="form-group">
-                                            <select class="form-select" aria-label="Default select example" name="role_as">
-                                                <option selected>Select User Type</option>
-                                                <option value="0">Customer</option>
-                                                <option value="2">Supplier</option>
-                                            </select>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <select class="form-select" aria-label="Default select example" name="role_as">
+                                                        <option selected>Select User Type</option>
+                                                        <option value="0">Customer</option>
+                                                        <option value="2">Supplier</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div style="margin-bottom:10px" class="col-md-6">
+                                                <label for="inputImage" class="form-label">Image</label>
+                                                <div class="input-group">
+                                                    <input type="file" class="form-control" name="profile_picture" id="inputImage" aria-describedby="inputImageAddon">
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <!-- Contact Information Section -->

@@ -1,5 +1,4 @@
 <?php
-session_start();
 include('../middleware/adminMiddleware.php');
 include('includes/header.php');
 ?>
@@ -50,7 +49,7 @@ include('includes/header.php');
                         <tbody>
                             <?php
                             $category = getAll("categories");
-
+                            
                             if (mysqli_num_rows($category) > 0) {
                                 foreach ($category as $item) {
                             ?>

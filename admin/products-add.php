@@ -1,5 +1,4 @@
 <?php
-session_start();
 include('../middleware/adminMiddleware.php');
 include('includes/header.php');
 ?>
@@ -141,7 +140,6 @@ include('includes/header.php');
                         <button type="reset" class="btn btn-secondary">Reset</button>
                     </div>
                     </form>
-                    <!-- End Multi Columns Form -->
                 </div>
             </div>
 

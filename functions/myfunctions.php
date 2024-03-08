@@ -23,15 +23,35 @@ function redirect($url, $message, $messageType = 'success')
     exit();
 }
 
-function getAddress($url, $message)
+
+//display user
+function getbyRole ($table,$role_as)
 {
-    $_SESSION['message'] = $message;
-    header("Location: $url");
-    exit();
+    global $conn;
+    $query = "SELECT * FROM $table WHERE role_as = '$role_as'";
+    return $query_run = mysqli_query($conn, $query);
 }
 
+// Get user details based on session data
+function getUserDetailsByEmail($email)
+{
+    global $conn;
+    $query = "SELECT * FROM users WHERE email = '$email'";
+    $result = mysqli_query($conn, $query);
+    
+    if ($result && mysqli_num_rows($result) > 0) {
+        return mysqli_fetch_assoc($result);
+    } else {
+        return false; // User not found
+    }
+}
 
-
+function getUserByID($table,$id)
+{
+    global $conn;
+    $query = "SELECT * FROM users WHERE id = $id";
+   return $query_run = mysqli_query($conn, $query);
+}
 
 
 

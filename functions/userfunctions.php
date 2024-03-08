@@ -17,4 +17,18 @@ function redirect($url, $message, $messageType = 'success')
     exit();
 }
 
+// Function to retrieve popular categories
+function getPopularCategories($conn)
+{
+    global $conn;
+    $query = "SELECT * FROM categories WHERE status='1' AND popularity='1'";
+    return $query_run = mysqli_query($conn, $query);
+}
+function getAllProducts($table) {
+    global $conn;
+    $query = "SELECT * FROM $table WHERE status='1'";
+    return mysqli_query($conn, $query);
+}
+
+
 ?>

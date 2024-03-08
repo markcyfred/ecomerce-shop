@@ -44,7 +44,8 @@ include 'admin/config/dbcon.php';
                                     }
                                     ?>
                                     <h1>Login</h1>
-                                    <p class="account-subtitle">Access your account</p>
+                                    <p class="mb-30">Don't have an account? <a href='register.php'>Create here</a></p>
+
                                     <p style="color:red;"></p>
                                     <p style="color:green;"></p>
                                     <!-- Login Form -->
@@ -59,15 +60,17 @@ include 'admin/config/dbcon.php';
                                             <input class="form-control" type="password" placeholder="Password" name="password">
                                         </div>
 
-                                        <div class="chek-form">
-                                            <div class="custome-checkbox">
-                                                <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox1" value="" />
-                                                <label class="form-check-label" for="exampleCheckbox1"><span>Remember me</span></label>
+                                        <div class="login_footer form-group mb-50">
+                                                <div class="chek-form">
+                                                    <div class="custome-checkbox">
+                                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox1" value="" />
+                                                        <label class="form-check-label" for="exampleCheckbox1"><span>Remember me</span></label>
+                                                    </div>
+                                                </div>
+                                                <a class="text-muted" href="reset.php">Forgot password?</a>
                                             </div>
-                                        </div>
                                         <button type="submit" class="btn btn-fill-out btn-block hover-up font-weight-bold" name="login" value="login" required> Login</button>
                                     </form>
-                                    <div class="text-center dont-have">Don't have an account? <a href="register.php">Register</a></div>
                                 </div>
                             </div>
                         </div>

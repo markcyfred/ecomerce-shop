@@ -1,7 +1,10 @@
-<?php 
+<?php
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
+include 'admin/config/dbcon.php';
+
+include 'functions/userfunctions.php';
 ?>
 <!DOCTYPE html>
 <html class="no-js" lang="en">
@@ -21,7 +24,12 @@ if (session_status() == PHP_SESSION_NONE) {
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/favicon.png" />
     <!-- Template CSS -->
     <link rel="stylesheet" href="assets/css/plugins/slider-range.css" />
-    <link rel="stylesheet" href="assets/css/main5103.css?v=6.0" />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link href="../admin/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+
+
+
 </head>
 
 <body>
@@ -127,7 +135,7 @@ if (session_status() == PHP_SESSION_NONE) {
                     <div class="col-xl-3 col-lg-4">
                         <div class="header-info">
                             <ul>
-                                <li><a href="login.php">About Us</a></li>
+                                <li><a href="login.php">Login</a></li>
                                 <li><a href='login.php'>My Account</a></li>
                                 <li><a href='shop-wishlist.html'>Wishlist</a></li>
                                 <li><a href="shop-order.html">Order Tracking</a></li>
@@ -267,7 +275,12 @@ if (session_status() == PHP_SESSION_NONE) {
                                             <li><a href=''><i class="fi fi-rs-label mr-10"></i>My Voucher</a></li>
                                             <li><a href=''><i class="fi fi-rs-heart mr-10"></i>My Wishlist</a></li>
                                             <li><a href=''><i class="fi fi-rs-settings-sliders mr-10"></i>Setting</a></li>
-                                            <li><a href='functions/logout.php'><i class="fi fi-rs-sign-out mr-10"></i>Sign out</a></li>
+                                            <?php
+                                            // Check if the user is logged in
+                                            if (isset($_SESSION['auth']) && $_SESSION['auth'] === true) {
+                                                echo "<li><a href='functions/logout.php'><i class=\"fi fi-rs-sign-out mr-10\"></i>Sign out</a></li>";
+                                            }
+                                            ?>
                                         </ul>
                                     </div>
                                 </div>
@@ -289,65 +302,7 @@ if (session_status() == PHP_SESSION_NONE) {
                                 <span class="fi-rs-apps"></span> <span style="font-size: 13px;" class="et">All Our </span><span style="font-size: 13px;">Categories</span>
                                 <i class="fi-rs-angle-down"></i>
                             </a>
-                            <div class="categories-dropdown-wrap categories-dropdown-active-large font-heading">
-                                <div class="d-flex categori-dropdown-inner">
-                                    <ul>
-                                        <li>
-                                            <a href='shop-grid-right.html'> <img src="assets/imgs/theme/icons/category-1.svg" alt="" />Milks and Dairies</a>
-                                        </li>
-                                        <li>
-                                            <a href='shop-grid-right.html'> <img src="assets/imgs/theme/icons/category-2.svg" alt="" />Clothing & beauty</a>
-                                        </li>
-                                        <li>
-                                            <a href='shop-grid-right.html'> <img src="assets/imgs/theme/icons/category-3.svg" alt="" />Pet Foods & Toy</a>
-                                        </li>
-                                        <li>
-                                            <a href='shop-grid-right.html'> <img src="assets/imgs/theme/icons/category-4.svg" alt="" />Baking material</a>
-                                        </li>
-                                        <li>
-                                            <a href='shop-grid-right.html'> <img src="assets/imgs/theme/icons/category-5.svg" alt="" />Fresh Fruit</a>
-                                        </li>
-                                    </ul>
-                                    <ul class="end">
-                                        <li>
-                                            <a href='shop-grid-right.html'> <img src="assets/imgs/theme/icons/category-6.svg" alt="" />Wines & Drinks</a>
-                                        </li>
-                                        <li>
-                                            <a href='shop-grid-right.html'> <img src="assets/imgs/theme/icons/category-7.svg" alt="" />Fresh Seafood</a>
-                                        </li>
-                                        <li>
-                                            <a href='shop-grid-right.html'> <img src="assets/imgs/theme/icons/category-8.svg" alt="" />Fast food</a>
-                                        </li>
-                                        <li>
-                                            <a href='shop-grid-right.html'> <img src="assets/imgs/theme/icons/category-9.svg" alt="" />Vegetables</a>
-                                        </li>
-                                        <li>
-                                            <a href='shop-grid-right.html'> <img src="assets/imgs/theme/icons/category-10.svg" alt="" />Bread and Juice</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="more_slide_open" style="display: none">
-                                    <div class="d-flex categori-dropdown-inner">
-                                        <ul>
-                                            <li>
-                                                <a href='shop-grid-right.html'> <img src="assets/imgs/theme/icons/icon-1.svg" alt="" />Milks and Dairies</a>
-                                            </li>
-                                            <li>
-                                                <a href='shop-grid-right.html'> <img src="assets/imgs/theme/icons/icon-2.svg" alt="" />Clothing & beauty</a>
-                                            </li>
-                                        </ul>
-                                        <ul class="end">
-                                            <li>
-                                                <a href='shop-grid-right.html'> <img src="assets/imgs/theme/icons/icon-3.svg" alt="" />Wines & Drinks</a>
-                                            </li>
-                                            <li>
-                                                <a href='shop-grid-right.html'> <img src="assets/imgs/theme/icons/icon-4.svg" alt="" />Fresh Seafood</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="more_categories"><span class="icon"></span> <span class="heading-sm-1">Show more...</span></div>
-                            </div>
+                            
                         </div>
                         <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block font-heading">
                             <nav>
@@ -369,7 +324,7 @@ if (session_status() == PHP_SESSION_NONE) {
                                         <a href="#">Quick Go <i class="fi-rs-angle-down"></i></a>
                                         <ul class="mega-menu">
                                             <li class="sub-mega-menu sub-mega-menu-width-22">
-                                                <a class="menu-title" href="#">Fruit & Vegetables</a>
+                                                <a class="menu-title" href="#">Merchandise</a>
                                                 <ul>
                                                     <li><a href='shop-product-right.html'>Meat & Poultry</a></li>
                                                     <li><a href='shop-product-right.html'>Fresh Vegetables</a></li>

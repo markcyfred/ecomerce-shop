@@ -1,5 +1,4 @@
 <?php
-session_start();
 include('../middleware/adminMiddleware.php');
 
 include('includes/header.php');
