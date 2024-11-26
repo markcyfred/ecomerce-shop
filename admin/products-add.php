@@ -17,7 +17,7 @@ include('includes/header.php');
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">Add Products Forms</li>
                 <a href="products.php" title="View products">
-                    <i class=" ri-eye-line"></i> View  products
+                    <i class=" ri-eye-line"></i> View products
                 </a>
 
                 <li class="breadcrumb-item active">
@@ -91,10 +91,33 @@ include('includes/header.php');
                             </div>
 
                             <!-- Select Discount Type in Percentage -->
-                            <div class="col-md-">
+                            <div class="col-md-6">
                                 <label for="inputName" class="form-label">Product Name</label>
                                 <input type="text" class="form-control" name="product_name">
                             </div>
+                            <!--sizes clothers, shoes , --medium , large, small, select multiple , drop down-->
+                            <div class="col-md-6">
+                                <label for="inputSize" class="form-label">Select Size</label>
+                                <select class="form-select" id="inputSize" name="size">
+                                    <option selected>Select Size</option>
+                                    <option value="small">Small</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="large">Large</option>
+                                    <option value="x-large">X-Large</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputFeautered" class="form-label">Select Featured</label>
+                                <select class="form-select" id="inputFeautered" name="featured">
+                                    <option selected>Select Featured</option>
+                                    <option value="new">New</option>
+                                    <option value="best_selling">Best Selling</option>
+                                    <option value="trending">Trending</option>
+                                    <option value="popular">Popular</option>
+                                    <option value="featured">Featured</option>
+                                </select>
+                            </div>
+
                             <div class="col-md-12">
                                 <label for="inputDescription" class="form-label">Description</label>
                                 <textarea class="form-control" name="description" rows="4"></textarea>

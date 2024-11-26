@@ -69,7 +69,7 @@ include('includes/header.php');
                                             <?php endif; ?>
                                         </td>
                                         <td>
-                                            <img src="../uploads/<?= $item['image']; ?>" alt="<?= $item['name']; ?>" width="100" height="100">
+                                            <img src="../uploads/categories/<?= $item['image']; ?>" alt="<?= $item['name']; ?>" width="100" height="100">
                                         </td>
                                         <td>
                                             <?php if ($item['status'] == 1) : ?>

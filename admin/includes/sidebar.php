@@ -124,32 +124,6 @@
           </li>
         </ul>
 
-      <li class="nav-heading">Shop Peoples</li>
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#customers-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-person"></i><span>Customers</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="customers-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-          <li>
-            <a href="customers-list.php">
-              <i class="bi bi-circle"></i><span>Customer List</span>
-            </a>
-          </li>
-          <!--suppliers-->
-          <li>
-            <a href="suppliers.php">
-              <i class="bi bi-circle"></i><span>Suppliers</span>
-            </a>
-          </li>
-          <!--stores-->
-          <li>
-            <a href="stores.php">
-              <i class="bi bi-circle"></i><span>Stores</span>
-            </a>
-          </li>
-        </ul>
-      </li><!-- End Customers Nav -->
-
       <li class="nav-heading">Shop Reports</li>
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#sales-nav" data-bs-toggle="collapse" href="#">

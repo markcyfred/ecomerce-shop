@@ -1,28 +1,74 @@
 <?php
 session_start();
-
 include '../admin/config/dbcon.php';
+
 if (isset($_POST['register'])) {
+    // Validate required fields
+    $requiredFields = [
+        'first_name', 'last_name', 'email', 'phone',
+        'street_address', 'city', 'postal_code',
+        'password', 'confirm_password'
+    ];
+
+    $emptyFields = [];
+    foreach ($requiredFields as $field) {
+        if (!isset($_POST[$field]) || empty(trim($_POST[$field]))) {
+            $emptyFields[] = $field;
+        }
+    }
+
+    if (!isset($_POST['agreed_to_terms'])) {
+        $emptyFields[] = 'agreed_to_terms';
+    }
+
+    if (!isset($_FILES["profile_picture"]["tmp_name"]) || empty($_FILES["profile_picture"]["tmp_name"])) {
+        $emptyFields[] = 'profile_picture';
+    }
+
+    if (!empty($emptyFields)) {
+        $_SESSION['message'] = "The following fields are required and must not be empty: " . implode(", ", $emptyFields);
+        header('location: ../register.php');
+        exit();
+    }
+
+    // Check if passwords match
+    $password = mysqli_real_escape_string($conn, $_POST['password']);
+    $confirm_password = mysqli_real_escape_string($conn, $_POST['confirm_password']);
+
+    if ($password !== $confirm_password) {
+        $_SESSION['message'] = "Passwords do not match. Please try again.";
+        header('location: ../register.php');
+        exit();
+    }
+
+    // Check if email already exists
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $check_email_query = "SELECT * FROM `users` WHERE `email`='$email'";
+    $check_email_result = mysqli_query($conn, $check_email_query);
+
+    if (mysqli_num_rows($check_email_result) > 0) {
+        $_SESSION['message'] = "Email is already registered.";
+        header('location: ../register.php');
+        exit();
+    }
+
     // File upload handling
-    $targetDirectory = "../assets/imgs/profile/";
+    $targetDirectory = "../uploads/profile/";
     $targetFile = $targetDirectory . basename($_FILES["profile_picture"]["name"]);
     $uploadOk = 1;
     $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
 
-    // Check if image file is a actual image or fake image
     $check = getimagesize($_FILES["profile_picture"]["tmp_name"]);
     if ($check === false) {
         $_SESSION['message'] = "File is not an image.";
         $uploadOk = 0;
     }
 
-    // Check file size (limit to 5MB)
     if ($_FILES["profile_picture"]["size"] > 5000000) {
         $_SESSION['message'] = "Sorry, your file is too large.";
         $uploadOk = 0;
     }
 
-    // Allow only certain file formats
     $allowedExtensions = array("jpg", "jpeg", "png", "gif");
     if (!in_array($imageFileType, $allowedExtensions)) {
         $_SESSION['message'] = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
@@ -30,54 +76,31 @@ if (isset($_POST['register'])) {
     }
 
     if ($uploadOk === 1) {
-        // Move the uploaded file to the destination directory
         if (move_uploaded_file($_FILES["profile_picture"]["tmp_name"], $targetFile)) {
-
-            // Escaping user inputs to prevent SQL injection
             $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
             $last_name = mysqli_real_escape_string($conn, $_POST['last_name']);
-            $email = mysqli_real_escape_string($conn, $_POST['email']);
             $phone = mysqli_real_escape_string($conn, $_POST['phone']);
             $street_address = mysqli_real_escape_string($conn, $_POST['street_address']);
             $city = mysqli_real_escape_string($conn, $_POST['city']);
             $postal_code = mysqli_real_escape_string($conn, $_POST['postal_code']);
             $additional_info = mysqli_real_escape_string($conn, $_POST['additional_info']);
-            $password = mysqli_real_escape_string($conn, $_POST['password']);
-            $confirm_password = mysqli_real_escape_string($conn, $_POST['confirm_password']);
-            $role_as = mysqli_real_escape_string($conn, $_POST['role_as']);  // Added this line to get the selected user type
+            $role_as = mysqli_real_escape_string($conn, $_POST['role_as']);
+            $agreed_to_terms = 1;
 
-            // Check if email already exists
-            $check_email_query = "SELECT * FROM `users` WHERE `email`='$email'";
-            $check_email_result = mysqli_query($conn, $check_email_query);
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+            $filename = basename($_FILES["profile_picture"]["name"]);
 
-            if (mysqli_num_rows($check_email_result) > 0) {
-                $_SESSION['message'] = "Email is already registered";
-                header('location: ../register.php');
+            $insert_query = "INSERT INTO `users` 
+                (`first_name`, `last_name`, `email`, `phone`, `street_address`, `city`, `postal_code`, `additional_info`, `password`, `role_as`, `profile_picture`, `agreed_to_terms`) 
+                VALUES 
+                ('$first_name', '$last_name', '$email', '$phone', '$street_address', '$city', '$postal_code', '$additional_info', '$hashed_password', '$role_as', '$filename', '$agreed_to_terms')";
+
+            if (mysqli_query($conn, $insert_query)) {
+                $_SESSION['message'] = "You are now registered.";
+                header('location: ../login.php');
                 exit();
-            }
-
-            // Check if passwords match
-            if ($password === $confirm_password) {
-                // Hash the password
-                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
-                // Insert user data
-                $filename = basename($_FILES["profile_picture"]["name"]);
-
-                $insert_query = "INSERT INTO `users` (`first_name`, `last_name`, `email`, `phone`, `street_address`, `city`, `postal_code`, `additional_info`, `password`, `role_as`, `profile_picture`) VALUES ('$first_name', '$last_name', '$email', '$phone', '$street_address', '$city', '$postal_code', '$additional_info', '$hashed_password', '$role_as', '$filename')";
-                $insert_query_run = mysqli_query($conn, $insert_query);
-
-                if ($insert_query_run) {
-                    $_SESSION['message'] = "You are now registered";
-                    header('location: ../login.php');
-                    exit();
-                } else {
-                    $_SESSION['message'] = "You are not registered";
-                    header('location: register.php');
-                    exit();
-                }
             } else {
-                $_SESSION['message'] = "Password does not match";
+                $_SESSION['message'] = "Registration failed. Please try again.";
                 header('location: ../register.php');
                 exit();
             }
@@ -92,7 +115,6 @@ if (isset($_POST['register'])) {
         exit();
     }
 }
-
 if (isset($_POST['login'])) {
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $password = mysqli_real_escape_string($conn, $_POST['password']);
@@ -102,21 +124,57 @@ if (isset($_POST['login'])) {
     $fetch_user_result = mysqli_query($conn, $fetch_user_query);
 
     if ($fetch_user_result && $user_data = mysqli_fetch_assoc($fetch_user_result)) {
+        // Check user status
+        if ($user_data['user_status'] === 'inactive') {
+            $_SESSION['message'] = "Your account is inactive. Please contact support for assistance.";
+            $_SESSION['messageType'] = "error";
+            header('location: ../login.php');
+            exit;
+        }
+
+        if ($user_data['user_status'] === 'request_for_deletion') {
+            $_SESSION['message'] = "Your account is marked for deletion. Please contact support for recovery.";
+            $_SESSION['messageType'] = "error";
+            header('location: ../login.php');
+            exit;
+        }
+
         // Verify the entered password with the stored hashed password
         if (password_verify($password, $user_data['password'])) {
             $_SESSION['auth'] = true;
 
+            // User data to be stored in the session
             $user_id = $user_data['id'];
             $user_email = $user_data['email'];
+            $user_first_name = $user_data['first_name'];
+            $user_last_name = $user_data['last_name'];
+            $user_display_name = $user_data['display_name'];
             $user_role = $user_data['role_as'];
+            $user_phone = $user_data['phone'];
+            $user_city = $user_data['city'];
+            $user_street_address = $user_data['street_address'];
+            $user_postal_code = $user_data['postal_code'];
+            $user_additional_info = $user_data['additional_info'];
+            $user_profile_picture = $user_data['profile_picture'];
 
-            $_SESSION['auth_user']  = [
+            // Set session variables
+            $_SESSION['auth_user'] = [
                 'id' => $user_id,
-                'email' => $user_email
+                'email' => $user_email,
+                'first_name' => $user_first_name,
+                'last_name' => $user_last_name,
+                'display_name' => $user_display_name,
+                'phone' => $user_phone,
+                'city' => $user_city,
+                'street_address' => $user_street_address,
+                'postal_code' => $user_postal_code,
+                'additional_info' => $user_additional_info,
+                'profile_picture' => $user_profile_picture
             ];
 
             $_SESSION['role_as'] = $user_role;
 
+            // Redirect based on the role
             if ($user_role == '1') {
                 $_SESSION['message'] = "Welcome to Admin dashboard";
                 $_SESSION['messageType'] = "success";
@@ -133,14 +191,17 @@ if (isset($_POST['login'])) {
         } else {
             // Invalid password
             $_SESSION['message'] = "Invalid credentials";
+            $_SESSION['messageType'] = "error";
             header('location: ../login.php');
         }
     } else {
         // User not found
         $_SESSION['message'] = "Invalid credentials";
+        $_SESSION['messageType'] = "error";
         header('location: ../login.php');
     }
 }
+
 
 //update account
 if (isset($_POST['update_account_btn'])) {
@@ -171,45 +232,18 @@ if (isset($_POST['update_account_btn'])) {
 
     if ($update_query_run) {
         if ($new_image != "") {
-            move_uploaded_file($_FILES['profile_picture']['tmp_name'], '../assets/imgs/profile/' . $new_image);
+            move_uploaded_file($_FILES['profile_picture']['tmp_name'], '../uploads/profile/' . $new_image);
             if ($old_image != "") {
-                unlink('../assets/imgs/profile/' . $old_image);
+                unlink('../uploads/profile/' . $old_image);
             }
         }
         $_SESSION['message'] = "Your account has been updated";
         $_SESSION['messageType'] = "success";
-        header('location: ../account.php');
+        header('location: ../profile.php');
     } else {
         $_SESSION['message'] = "Your account has not been updated";
         $_SESSION['messageType'] = "error";
-        header('location: ../account.php');
-    }
-}
-
-//delete_user_btn
-else if (isset($_POST['delete_user_btn'])) {
-    $user_id = mysqli_real_escape_string($conn, $_POST['user_id']);
-
-    $user_query = "SELECT * FROM users WHERE id='$user_id'";
-    $user_query_run = mysqli_query($conn, $user_query);
-    $user_data = mysqli_fetch_array($user_query_run);
-    $image = $user_data['profile_picture'];
-
-    $delete_query = "DELETE FROM users WHERE id='$user_id'";
-
-    $delete_query_run = mysqli_query($conn, $delete_query);
-
-    if ($delete_query_run) {
-        if (file_exists(("../assets/imgs/profile/" . $image)) && !empty($image)) {
-            unlink("../assets/imgs/profile/" . $image);
-        }
-        $_SESSION['message'] = "User has been deleted";
-        $_SESSION['messageType'] = "success";
-        header('location: ../index.php');
-    } else {
-        $_SESSION['message'] = "User has not been deleted";
-        $_SESSION['messageType'] = "error";
-        header('location: ../account.php');
+        header('location: ../profile.php');
     }
 }
 

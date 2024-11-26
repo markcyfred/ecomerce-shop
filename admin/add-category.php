@@ -83,6 +83,12 @@ include('includes/header.php');
                                 <label for="inputMetaKeywords" class="form-label">Meta Keywords</label>
                                 <input type="text" class="form-control" name="meta_keywords">
                             </div>
+                            <!--size for clothers for shoes -->
+                            <div class="col-md-6">
+                                <label for="inputSize" class="form-label">Size</label>
+                                <input type="text" class="form-control" name="size">
+                            </div>
+                            
                             <div class="col-12 text-center">
                                 <button type="submit" class="btn btn-primary" name="add_category_btn">Submit</button>
                                 <button type="reset" class="btn btn-secondary">Reset</button>

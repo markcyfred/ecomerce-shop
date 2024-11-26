@@ -1,86 +1,81 @@
 <?php
-session_start();
-
 if (isset($_SESSION['auth'])) {
-    $_SESSION['message'] = "You are already logged in";
-    header('location: index.php');
-    exit();
+     $_SESSION['message'] = "You are already logged in";
+     $_SESSION['messageType'] = "error";
+     header('location: index.php');
+     exit();
 }
-include 'header.php';
-include 'admin/config/dbcon.php';
+
+include 'includes/header.php';
+
 
 ?>
-<!--End header-->
-<main class="main pages">
-    <div class="page-header breadcrumb-wrap">
-        <div class="container">
-            <div class="breadcrumb">
-                <a href='index.html' rel='nofollow'><i class="fi-rs-home mr-5"></i>Home</a>
-                <span></span> Pages <span></span> My Account
-            </div>
-        </div>
-    </div>
-    <div class="page-content pt-50 pb-150">
-        <div class="container">
-            <div class="row">
-                <div class="col-xl-8 col-lg-10 col-md-12 m-auto">
-                    <div class="row">
-                        <div class="col-lg-6 pr-30 d-none d-lg-block">
-                            <img class="border-radius-15" src="assets/imgs/page/login-1.png" alt="" />
-                        </div>
-                        <div class="col-lg-6 col-md-8">
-                            <div class="login_wrap widget-taber-content background-white">
-                                <div class="login-right-wrap">
-                                    <?php
-                                    if (isset($_SESSION['message'])) {
-                                    ?>
+<main class="main">
+     <div class="page-header breadcrumb-wrap">
+          <div class="container">
+               <div class="breadcrumb">
+                    <a href="index.php" rel="nofollow">Home</a>
+                    <span></span> Pages
+                    <span></span> Register
+               </div>
+          </div>
+     </div>
+     <section class="pt-150 pb-150">
+          <div class="container">
+               <div class="row align-items-center">
+                    <!-- Image Section -->
+                    <div class="col-lg-6">
+                         <div class="image-wrap">
+                              <img src="assets/images/menu-banner-4.jpg" alt="Register Image" class="img-fluid border-radius-10">
+                         </div>
+                    </div>
+                    <!-- Registration Form Section -->
+                    <div class="col-lg-6">
+                         <div class="login_wrap widget-taber-content p-30 background-white border-radius-5">
+                              <div class="padding_eight_all bg-white">
+                                   <?php
+                                   if (isset($_SESSION['message'])) {
+                                   ?>
 
                                         <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                            <strong>Holy!</strong> <?php echo $_SESSION['message']; ?>
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                             <strong>Holy!</strong> <?php echo $_SESSION['message']; ?>
+                                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                         </div>
-                                    <?php
-                                        unset($_SESSION['message']);
-                                    }
-                                    ?>
-                                    <h1>Login</h1>
-                                    <p class="mb-30">Don't have an account? <a href='register.php'>Create here</a></p>
-
-                                    <p style="color:red;"></p>
-                                    <p style="color:green;"></p>
-                                    <!-- Login Form -->
-                                    <form action="functions/authcode.php" method="post">
-                                        <!-- Email Section -->
+                                   <?php
+                                        
+                                   }
+                                   ?>
+                                   <div class="heading_s1">
+                                        <h3 class="mb-30">Login</h3>
+                                   </div>
+                                   <p class="mb-50 font-sm">
+                                   </p>
+                                   <form method="post" enctype="multipart/form-data" action="functions/authcode.php">
+                                        <!-- Email Address -->
+                                        <div class="form-group mb-20">
+                                             <input type="email" name="email" class="form-control" placeholder="Email Address" required>
+                                        </div>
+                                        <!-- Password -->
+                                        <div class="form-group mb-20">
+                                             <input type="password" name="password" class="form-control" placeholder="Password" required>
+                                        </div>
+                                        <!-- Remember Me -->
+                                        <div class="form-group mb-20">
+                                             <div class="custom-control custom-checkbox">
+                                                  <input type="checkbox" class="custom-control-input" id="customCheck1">
+                                                  <label class="custom-control-label" for="customCheck1">Remember me</label>
+                                             </div>
+                                        </div>
                                         <div class="form-group">
-                                            <input class="form-control" type="email" placeholder="Email" name="email">
+                                             <button type="submit" class="btn btn-fill-out btn-block hover-up" name="login">Submit &amp; Login</button>
                                         </div>
-
-                                        <!-- Password Section -->
-                                        <div class="form-group">
-                                            <input class="form-control" type="password" placeholder="Password" name="password">
-                                        </div>
-
-                                        <div class="login_footer form-group mb-50">
-                                                <div class="chek-form">
-                                                    <div class="custome-checkbox">
-                                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox1" value="" />
-                                                        <label class="form-check-label" for="exampleCheckbox1"><span>Remember me</span></label>
-                                                    </div>
-                                                </div>
-                                                <a class="text-muted" href="reset.php">Forgot password?</a>
-                                            </div>
-                                        <button type="submit" class="btn btn-fill-out btn-block hover-up font-weight-bold" name="login" value="login" required> Login</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+                                   </form>
+                                   <div class="text-muted text-center">Create an account? <a href="register.php">register now</a></div>
+                              </div>
+                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
+               </div>
+          </div>
+     </section>
 </main>
 <?php include 'includes/footer.php'; ?>
-</body>
-
-</html>

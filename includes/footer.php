@@ -1,232 +1,154 @@
 <footer class="main">
-    <section class="newsletter mb-15">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="position-relative newsletter-inner">
-                        <div class="newsletter-content">
-                            <h2 class="mb-20">
-                                Stay home & get your daily <br />
-                                needs from our shop
-                            </h2>
-                            <p class="mb-45">Start You'r Daily Shopping with <span class="text-brand">Nest Mart</span></p>
-                            <form class="form-subcriber d-flex">
-                                <input type="email" placeholder="Your emaill address" />
-                                <button class="btn" type="submit">Subscribe</button>
-                            </form>
-                        </div>
-                        <img src="assets/imgs/banner/banner-9.png" alt="newsletter" />
+     <section class="newsletter p-30 text-white wow fadeIn animated">
+          <div class="container">
+               <div class="row align-items-center">
+                    <div class="col-lg-7 mb-md-3 mb-lg-0">
+                         <div class="row align-items-center">
+                              <div class="col flex-horizontal-center">
+                                   <img class="icon-email" src="assets/images/icon-email.svg" alt="">
+                                   <h4 class="font-size-20 mb-0 ml-3">Sign up to Newsletter</h4>
+                              </div>
+                              <div class="col my-4 my-md-0 des">
+                                   <h5 class="font-size-15 ml-4 mb-0">...and receive <strong>$25 coupon for first shopping.</strong></h5>
+                              </div>
+                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="featured section-padding">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-1-5 col-md-4 col-12 col-sm-6 mb-md-4 mb-xl-0">
-                    <div class="banner-left-icon d-flex align-items-center wow fadeIn animated">
-                        <div class="banner-icon">
-                            <img src="assets/imgs/theme/icons/icon-1.svg" alt="" />
-                        </div>
-                        <div class="banner-text">
-                            <h3 class="icon-box-title">Best prices & offers</h3>
-                            <p>Orders $50 or more</p>
-                        </div>
+                    <div class="col-lg-5">
+                         <!-- Subscribe Form -->
+                         <form class="form-subcriber d-flex wow fadeIn animated">
+                              <input type="email" class="form-control bg-white font-small" placeholder="Enter your email">
+                              <button class="btn bg-dark text-white" type="submit">Subscribe</button>
+                         </form>
+                         <!-- End Subscribe Form -->
                     </div>
-                </div>
-                <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
-                    <div class="banner-left-icon d-flex align-items-center wow fadeIn animated">
-                        <div class="banner-icon">
-                            <img src="assets/imgs/theme/icons/icon-2.svg" alt="" />
-                        </div>
-                        <div class="banner-text">
-                            <h3 class="icon-box-title">Free delivery</h3>
-                            <p>24/7 amazing services</p>
-                        </div>
+               </div>
+          </div>
+     </section>
+     <section class="section-padding footer-mid">
+          <div class="container pt-15 pb-20">
+               <div class="row">
+                    <div class="col-lg-4 col-md-6">
+                         <div class="widget-about font-md mb-md-5 mb-lg-0">
+                              <div class="logo logo-width-1 wow fadeIn animated">
+                                   <a href="index.html"><img src="assets/images/logo.svg" alt="logo"></a>
+                              </div>
+                              <h5 class="mt-20 mb-10 fw-600 text-grey-4 wow fadeIn animated">Contact</h5>
+                              <p class="wow fadeIn animated">
+                                   <strong>Address: </strong>562 Wellington Road, Street 32, San Francisco
+                              </p>
+                              <p class="wow fadeIn animated">
+                                   <strong>Phone: </strong>+01 2222 365 /(+91) 01 2345 6789
+                              </p>
+                              <p class="wow fadeIn animated">
+                                   <strong>Hours: </strong>10:00 - 18:00, Mon - Sat
+                              </p>
+                              <h5 class="mb-10 mt-30 fw-600 text-grey-4 wow fadeIn animated">Follow Us</h5>
+                              <div class="mobile-social-icon wow fadeIn animated mb-sm-5 mb-md-0">
+                                   <a href="#"><img src="assets/images/icon-facebook.svg" alt=""></a>
+                                   <a href="#"><img src="assets/images/icon-twitter.svg" alt=""></a>
+                                   <a href="#"><img src="assets/images/icon-instagram.svg" alt=""></a>
+                                   <a href="#"><img src="assets/images/icon-pinterest.svg" alt=""></a>
+                                   <a href="#"><img src="assets/images/icon-youtube.svg" alt=""></a>
+                              </div>
+                         </div>
                     </div>
-                </div>
-                <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
-                    <div class="banner-left-icon d-flex align-items-center wow fadeIn animated">
-                        <div class="banner-icon">
-                            <img src="assets/imgs/theme/icons/icon-3.svg" alt="" />
-                        </div>
-                        <div class="banner-text">
-                            <h3 class="icon-box-title">Great daily deal</h3>
-                            <p>When you sign up</p>
-                        </div>
+                    <div class="col-lg-2 col-md-3">
+                         <h5 class="widget-title wow fadeIn animated">About</h5>
+                         <ul class="footer-list wow fadeIn animated mb-sm-5 mb-md-0">
+                              <li><a href="#">About Us</a></li>
+                              <li><a href="#">Delivery Information</a></li>
+                              <li><a href="#">Privacy Policy</a></li>
+                              <li><a href="#">Terms &amp; Conditions</a></li>
+                              <li><a href="#">Contact Us</a></li>
+                              <li><a href="#">Support Center</a></li>
+                         </ul>
                     </div>
-                </div>
-                <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
-                    <div class="banner-left-icon d-flex align-items-center wow fadeIn animated">
-                        <div class="banner-icon">
-                            <img src="assets/imgs/theme/icons/icon-4.svg" alt="" />
-                        </div>
-                        <div class="banner-text">
-                            <h3 class="icon-box-title">Wide assortment</h3>
-                            <p>Mega Discounts</p>
-                        </div>
+                    <div class="col-lg-2  col-md-3">
+                         <h5 class="widget-title wow fadeIn animated">My Account</h5>
+                         <ul class="footer-list wow fadeIn animated">
+                              <li><a href="#">Sign In</a></li>
+                              <li><a href="#">View Cart</a></li>
+                              <li><a href="#">My Wishlist</a></li>
+                              <li><a href="#">Track My Order</a></li>
+                              <li><a href="#">Help</a></li>
+                              <li><a href="#">Order</a></li>
+                         </ul>
                     </div>
-                </div>
-                <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
-                    <div class="banner-left-icon d-flex align-items-center wow fadeIn animated">
-                        <div class="banner-icon">
-                            <img src="assets/imgs/theme/icons/icon-5.svg" alt="" />
-                        </div>
-                        <div class="banner-text">
-                            <h3 class="icon-box-title">Easy returns</h3>
-                            <p>Within 30 days</p>
-                        </div>
+                    <div class="col-lg-4">
+                         <h5 class="widget-title wow fadeIn animated">Install App</h5>
+                         <div class="row">
+                              <div class="col-md-8 col-lg-12">
+                                   <p class="wow fadeIn animated">From App Store or Google Play</p>
+                                   <div class="download-app wow fadeIn animated">
+                                        <a href="#" class="hover-up mb-sm-4 mb-lg-0"><img class="active" src="assets/images/app-store.jpg" alt=""></a>
+                                        <a href="#" class="hover-up"><img src="assets/images/google-play.jpg" alt=""></a>
+                                   </div>
+                              </div>
+                              <div class="col-md-4 col-lg-12 mt-md-3 mt-lg-0">
+                                   <p class="mb-20 wow fadeIn animated">Secured Payment Gateways</p>
+                                   <img class="wow fadeIn animated" src="assets/images/payment-method.png" alt="">
+                              </div>
+                         </div>
                     </div>
-                </div>
-                <div class="col-lg-1-5 col-md-4 col-12 col-sm-6 d-xl-none">
-                    <div class="banner-left-icon d-flex align-items-center wow fadeIn animated">
-                        <div class="banner-icon">
-                            <img src="assets/imgs/theme/icons/icon-6.svg" alt="" />
-                        </div>
-                        <div class="banner-text">
-                            <h3 class="icon-box-title">Safe delivery</h3>
-                            <p>Within 30 days</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="section-padding footer-mid">
-        <div class="container pt-15 pb-20">
-            <div class="row">
-                <div class="col">
-                    <div class="widget-about font-md mb-md-3 mb-lg-3 mb-xl-0">
-                        <div class="logo mb-30">
-                            <a class='mb-15' href='index.php'><img src="assets/imgs/logo.png" alt="logo" /></a>
-                            <p class="font-lg text-heading">Awesome grocery store website template</p>
-                        </div>
-                        <ul class="contact-infor">
-                            <li><img src="assets/imgs/theme/icons/icon-location.svg" alt="" /><strong>Address: </strong> <span>5171 W Campbell Ave undefined Kent, Utah 53127 United States</span></li>
-                            <li><img src="assets/imgs/theme/icons/icon-contact.svg" alt="" /><strong>Call Us:</strong><span>(+91) - 540-025-124553</span></li>
-                            <li><img src="assets/imgs/theme/icons/icon-email-2.svg" alt="" /><strong>Email:</strong><span>sale@Nest.com</span></li>
-                            <li><img src="assets/imgs/theme/icons/icon-clock.svg" alt="" /><strong>Hours:</strong><span>10:00 - 18:00, Mon - Sat</span></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="footer-link-widget col">
-                    <h4 class="widget-title">Company</h4>
-                    <ul class="footer-list mb-sm-5 mb-md-0">
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Delivery Information</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms &amp; Conditions</a></li>
-                        <li><a href="#">Contact Us</a></li>
-                        <li><a href="#">Support Center</a></li>
-                        <li><a href="#">Careers</a></li>
-                    </ul>
-                </div>
-                <div class="footer-link-widget col">
-                    <h4 class="widget-title">Account</h4>
-                    <ul class="footer-list mb-sm-5 mb-md-0">
-                        <li><a href="#">Sign In</a></li>
-                        <li><a href="#">View Cart</a></li>
-                        <li><a href="#">My Wishlist</a></li>
-                        <li><a href="#">Track My Order</a></li>
-                        <li><a href="#">Help Ticket</a></li>
-                        <li><a href="#">Shipping Details</a></li>
-                        <li><a href="#">Compare products</a></li>
-                    </ul>
-                </div>
-                <div class="footer-link-widget col">
-                    <h4 class="widget-title">Corporate</h4>
-                    <ul class="footer-list mb-sm-5 mb-md-0">
-                        <li><a href="#">Become a Vendor</a></li>
-                        <li><a href="#">Affiliate Program</a></li>
-                        <li><a href="#">Farm Business</a></li>
-                        <li><a href="#">Farm Careers</a></li>
-                        <li><a href="#">Our Suppliers</a></li>
-                        <li><a href="#">Accessibility</a></li>
-                        <li><a href="#">Promotions</a></li>
-                    </ul>
-                </div>
-                <div class="footer-link-widget col">
-                    <h4 class="widget-title">Popular</h4>
-                    <ul class="footer-list mb-sm-5 mb-md-0">
-                        <li><a href="#">Milk & Flavoured Milk</a></li>
-                        <li><a href="#">Butter and Margarine</a></li>
-                        <li><a href="#">Eggs Substitutes</a></li>
-                        <li><a href="#">Marmalades</a></li>
-                        <li><a href="#">Sour Cream and Dips</a></li>
-                        <li><a href="#">Tea & Kombucha</a></li>
-                        <li><a href="#">Cheese</a></li>
-                    </ul>
-                </div>
-                <div class="footer-link-widget widget-install-app col">
-                    <h4 class="widget-title">Install App</h4>
-                    <p class="wow fadeIn animated">From App Store or Google Play</p>
-                    <div class="download-app">
-                        <a href="#" class="hover-up mb-sm-2 mb-lg-0"><img class="active" src="assets/imgs/theme/app-store.jpg" alt="" /></a>
-                        <a href="#" class="hover-up mb-sm-2"><img src="assets/imgs/theme/google-play.jpg" alt="" /></a>
-                    </div>
-                    <p class="mb-20">Secured Payment Gateways</p>
-                    <img class="wow fadeIn animated" src="assets/imgs/theme/payment-method.png" alt="" />
-                </div>
-            </div>
-        </div>
-    </section>
-    <div class="container pb-30">
-        <div class="row align-items-center">
-            <div class="col-12 mb-30">
-                <div class="footer-bottom"></div>
-            </div>
-            <div class="col-xl-4 col-lg-6 col-md-6">
-                <p class="font-sm mb-0">&copy; 2024, <strong class="text-brand">Nest</strong> - HTML Ecommerce Template <br />All rights reserved</p>
-            </div>
-            <div class="col-xl-4 col-lg-6 text-center d-none d-xl-block">
-                <div class="hotline d-lg-inline-flex mr-30">
-                    <img src="assets/imgs/theme/icons/phone-call.svg" alt="hotline" />
-                    <p>1900 - 6666<span>Working 8:00 - 22:00</span></p>
-                </div>
-                <div class="hotline d-lg-inline-flex">
-                    <img src="assets/imgs/theme/icons/phone-call.svg" alt="hotline" />
-                    <p>1900 - 8888<span>24/7 Support Center</span></p>
-                </div>
-            </div>
-            <div class="col-xl-4 col-lg-6 col-md-6 text-end d-none d-md-block">
-                <div class="mobile-social-icon">
-                    <h6>Follow Us</h6>
-                    <a href="#"><img src="assets/imgs/theme/icons/icon-facebook-white.svg" alt="" /></a>
-                    <a href="#"><img src="assets/imgs/theme/icons/icon-twitter-white.svg" alt="" /></a>
-                    <a href="#"><img src="assets/imgs/theme/icons/icon-instagram-white.svg" alt="" /></a>
-                    <a href="#"><img src="assets/imgs/theme/icons/icon-pinterest-white.svg" alt="" /></a>
-                    <a href="#"><img src="assets/imgs/theme/icons/icon-youtube-white.svg" alt="" /></a>
-                </div>
-                <p class="font-sm">Up to 15% discount on your first subscribe</p>
-            </div>
-        </div>
-    </div>
+               </div>
+          </div>
+     </section>
+     <div class="container pb-20 wow fadeIn animated">
+          <div class="row">
+               <div class="col-12 mb-20">
+                    <div class="footer-bottom"></div>
+               </div>
+               <div class="col-lg-6">
+                    <p class="float-md-left font-sm text-muted mb-0">© 2022, <strong class="text-brand">Evara</strong> - HTML Ecommerce Template </p>
+               </div>
+               <div class="col-lg-6">
+                    <p class="text-lg-end text-start font-sm text-muted mb-0">
+                         Designed by <a href="http://alithemes.com" target="_blank">Alithemes.com</a>. All rights reserved
+                    </p>
+               </div>
+          </div>
+     </div>
 </footer>
-
-<script src="assets/js/vendor/modernizr-3.6.0.min.js"></script>
-<script src="assets/js/vendor/jquery-3.6.0.min.js"></script>
-<script src="assets/js/vendor/jquery-migrate-3.3.0.min.js"></script>
-<script src="assets/js/vendor/bootstrap.bundle.min.js"></script>
-<script src="assets/js/plugins/slick.js"></script>
-<script src="assets/js/plugins/jquery.syotimer.min.js"></script>
-<script src="assets/js/plugins/wow.js"></script>
-<script src="assets/js/plugins/slider-range.js"></script>
-<script src="assets/js/plugins/perfect-scrollbar.js"></script>
-<script src="assets/js/plugins/magnific-popup.js"></script>
-<script src="assets/js/plugins/select2.min.js"></script>
-<script src="assets/js/plugins/waypoints.js"></script>
-<script src="assets/js/plugins/counterup.js"></script>
-<script src="assets/js/plugins/jquery.countdown.min.js"></script>
-<script src="assets/js/plugins/images-loaded.js"></script>
-<script src="assets/js/plugins/isotope.js"></script>
-<script src="assets/js/plugins/scrollup.js"></script>
-<script src="assets/js/plugins/jquery.vticker-min.js"></script>
-<script src="assets/js/plugins/jquery.theia.sticky.js"></script>
-<script src="assets/js/plugins/jquery.elevatezoom.js"></script>
+<!-- Preloader Start -->
+<!-- <div id="preloader-active">
+     <div class="preloader d-flex align-items-center justify-content-center">
+          <div class="preloader-inner position-relative">
+               <div class="text-center">
+                    <h5 class="mb-10">Now Loading</h5>
+                    <div class="loader">
+                         <div class="bar bar1"></div>
+                         <div class="bar bar2"></div>
+                         <div class="bar bar3"></div>
+                    </div>
+               </div>
+          </div>
+     </div>
+</div> -->
+<!-- Vendor JS-->
+<script src="assets/js/modernizr-3.6.0.min.js"></script>
+<script src="assets/js/jquery-3.6.0.min.js"></script>
+<script src="assets/js/jquery-migrate-3.3.0.min.js"></script>
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/slick.js"></script>
+<script src="assets/js/jquery.syotimer.min.js"></script>
+<script src="assets/js/wow.js"></script>
+<script src="assets/js/jquery-ui.js"></script>
+<script src="assets/js/perfect-scrollbar.js"></script>
+<script src="assets/js/magnific-popup.js"></script>
+<script src="assets/js/select2.min.js"></script>
+<script src="assets/js/waypoints.js"></script>
+<script src="assets/js/counterup.js"></script>
+<script src="assets/js/jquery.countdown.min.js"></script>
+<script src="assets/js/images-loaded.js"></script>
+<script src="assets/js/isotope.js"></script>
+<script src="assets/js/scrollup.js"></script>
+<script src="assets/js/jquery.vticker-min.js"></script>
+<script src="assets/js/jquery.theia.sticky.js"></script>
+<script src="assets/js/jquery.elevatezoom.js"></script>
 <!-- Template  JS -->
-<script src="assets/js/main5103.js?v=6.0"></script>
-<script src="assets/js/shop5103.js?v=6.0"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/shop.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
 <?php
@@ -254,3 +176,6 @@ if (isset($_SESSION['message'])) {
     unset($_SESSION['messageType']); // unset the session message type after displaying
 }
 ?>
+</body>
+
+</html>
