@@ -1,6 +1,6 @@
 ﻿<?php include 'includes/header.php'; ?>
 <main class="main">
-    <section class="home-slider position-relative pt-50">
+    <section class="home-slider position-relative pt0">
         <div class="hero-slider-1 dot-style-1 dot-style-1-position-1">
             <div class="single-hero-slider single-animation-wrap">
                 <div class="container">
@@ -11,7 +11,7 @@
                                 <h2 class="animated fw-900">Supper value deals</h2>
                                 <h1 class="animated fw-900 text-brand">On all products</h1>
                                 <p class="animated">Save more with coupons &amp; up to 70% off</p>
-                                <a class="animated btn btn-brush btn-brush-3" href="shop-product-right.html"> Shop Now </a>
+                                <a class="animated btn btn-brush btn-brush-3" href="shop.php"> Shop Now </a>
                             </div>
                         </div>
                         <div class="col-lg-7 col-md-6">
@@ -31,12 +31,12 @@
                                 <h2 class="animated fw-900">Fashion Trending</h2>
                                 <h1 class="animated fw-900 text-7">Great Collection</h1>
                                 <p class="animated">Save more with coupons &amp; up to 20% off</p>
-                                <a class="animated btn btn-brush btn-brush-2" href="shop-product-right.html"> Discover Now </a>
+                                <a class="animated btn btn-brush btn-brush-2" href="shop.php"> Discover Now </a>
                             </div>
                         </div>
                         <div class="col-lg-7 col-md-6">
                             <div class="single-slider-img single-slider-img-1">
-                                <img class="animated slider-1-2" src="assets/images/slider-2.png" alt="">
+                                <img class="animated slider-1-2" src="assets/images/slider-dec2.png" alt="">
                             </div>
                         </div>
                     </div>
@@ -51,7 +51,7 @@
                                 <h2 class="animated fw-900">Big Deals From</h2>
                                 <h1 class="animated fw-900 text-8">Manufacturer</h1>
                                 <p class="animated">Clothing, Shoes, Bags, Wallets...</p>
-                                <a class="animated btn btn-brush btn-brush-1" href="shop-product-right.html"> Shop Now </a>
+                                <a class="animated btn btn-brush btn-brush-1" href="shop.php"> Shop Now </a>
                             </div>
                         </div>
                         <div class="col-lg-7 col-md-6">
@@ -130,7 +130,7 @@
                         <button class="nav-link" id="nav-tab-five" data-bs-toggle="tab" data-bs-target="#tab-five" type="button" role="tab" aria-controls="tab-five" aria-selected="false">Best Selling</button>
                     </li>
                 </ul>
-                <a href="#" class="view-more d-none d-md-flex">View More<i class="fi-rs-angle-double-small-right"></i></a>
+                <a class="view-more d-none d-md-flex">View More<i class="fi-rs-angle-double-small-right"></i></a>
             </div>
             <!--End nav-tabs-->
             <div class="tab-content wow fadeIn animated" id="myTabContent">
@@ -138,7 +138,11 @@
                     <div class="row product-grid-4">
                         <?php
                         // Fetch a maximum of 8 randomly selected products where `featured` is 'featured'
-                        $product_query = "SELECT * FROM products WHERE status = 1 AND featured = 'featured' ORDER BY RAND() LIMIT 8";
+                        $product_query = "SELECT products.*, categories.name AS category_name, categories.id AS category_id 
+                      FROM products 
+                      LEFT JOIN categories ON products.category_name = categories.name 
+                      WHERE products.status = 1 AND products.featured = 'featured' 
+                      ORDER BY RAND() LIMIT 8";
                         $product_query_run = mysqli_query($conn, $product_query);
 
                         if (mysqli_num_rows($product_query_run) > 0) {
@@ -148,7 +152,7 @@
                                     <div class="product-cart-wrap mb-30">
                                         <div class="product-img-action-wrap">
                                             <div class="product-img product-img-zoom">
-                                                <a href="shop-product-right.php?id=<?= $product['id']; ?>">
+                                                <a href="shop-product.php?id=<?= $product['id']; ?>">
                                                     <img class="default-img" src="uploads/shop/<?= $product['image']; ?>" alt="<?= $product['product_name']; ?>">
                                                 </a>
                                             </div>
@@ -159,28 +163,86 @@
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="new">
-                                                    <a href="shop-grid-right.php"><?= $product['featured']; ?></a>
+                                                    <?= $product['featured']; ?>
                                                 </span>
                                             </div>
                                         </div>
                                         <div class="product-content-wrap">
                                             <div class="product-category">
-                                                <a href="shop-grid-right.php"><?= $product['category_name']; ?></a>
+                                                <?php
+                                                // Display the category name and link to the category page
+                                                if ($product['category_name']) {
+                                                    echo '<a href="category.php?id=' . $product['category_id'] . '">' . $product['category_name'] . '</a>';
+                                                } else {
+                                                    echo "<p>No category available</p>";
+                                                }
+                                                ?>
                                             </div>
                                             <h2>
-                                                <a href="shop-product-right.php?id=<?= $product['id']; ?>"><?= $product['product_name']; ?></a>
+                                                <a href="shop-product.php?id=<?= $product['id']; ?>"><?= $product['product_name']; ?></a>
                                             </h2>
-                                            <div class="rating-result" title="90%">
+                                            <div>
                                                 <span>
-                                                    <span><?= $product['rating']; ?>%</span>
+                                                    <?php
+                                                    // Extract the rating value from the product array
+                                                    $rating = $product['rating'];
+
+                                                    // Loop to display up to 5 stars
+                                                    for ($i = 0; $i < 5; $i++) {
+                                                        if ($rating > 0) {
+                                                            // Display a filled star for each point of the rating
+                                                            echo '<i class="fi-rs-star text-warning"></i>';
+                                                        } else {
+                                                            // Display an empty star for remaining slots
+                                                            echo '<i class="fi-rs-star text-secondary"></i>';
+                                                        }
+                                                        $rating--; // Reduce rating after each iteration
+                                                    }
+                                                    ?>
                                                 </span>
                                             </div>
+
                                             <div class="product-price">
                                                 <span>Kes<?= $product['selling_price']; ?></span>
                                                 <span class="old-price">Kes<?= $product['original_price']; ?></span>
                                             </div>
                                             <div class="product-action-1 show">
-                                                <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
+                                                <!-- Add To Cart Button with Form Submission -->
+                                                <?php
+                                                // Check if the product is already in the cart
+                                                $product_in_cart = false;
+                                                if (isset($_SESSION['cart'])) {
+                                                    foreach ($_SESSION['cart'] as $key => $value) {
+                                                        if ($product['id'] == $value['product_id']) {
+                                                            $product_in_cart = true;
+                                                        }
+                                                    }
+                                                }
+
+                                                
+                                                ?>
+
+                                                <!-- Cart Form -->
+                                                <form id="cartForm_<?= $product['id'] ?>" action="admin/code.php" method="POST">
+                                                    <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
+                                                    <input type="hidden" name="add_to_cart_btn" value="true" />
+                                                    <input type="hidden" name="product_name" value="<?= $product['product_name']; ?>">
+                                                    <input type="hidden" name="selling_price" value="<?= $product['selling_price']; ?>">
+                                                    <input type="hidden" name="image" value="<?= $product['image']; ?>">
+                                                    <input type="hidden" name="quantity" value="1">
+
+                                                    <?php if (!$product_in_cart): ?>
+                                                        <!-- Show Add to Cart button if the product is not in the cart -->
+                                                        <a aria-label="Add To Cart" class="action-btn hover-up" href="javascript:void(0);"
+                                                            onclick="document.getElementById('cartForm_<?= $product['id'] ?>').submit();">
+                                                            <i class="fi-rs-shopping-bag-add"></i>
+                                                        </a>
+                                                    <?php else: ?>
+                                                        <!-- Show message if the product is already in the cart -->
+                                                        <span class="in-cart-message">Already in Cart</span>
+                                                    <?php endif; ?>
+                                                </form>
+
                                             </div>
                                         </div>
                                     </div>
@@ -192,6 +254,7 @@
                         }
                         ?>
                     </div>
+
                     <!--End product-grid-4-->
                 </div>
 
@@ -199,8 +262,11 @@
                 <div class="tab-pane fade" id="tab-two" role="tabpanel" aria-labelledby="tab-two">
                     <div class="row product-grid-4">
                         <?php
-                        // // Fetch a maximum of 8 randomly selected products where `featured` is 'featured'
-                        $product_query = "SELECT * FROM products WHERE status = 1 AND featured = 'popular' ORDER BY RAND() LIMIT 8";
+                        $product_query = "SELECT products.*, categories.name AS category_name, categories.id AS category_id 
+                                FROM products 
+                                LEFT JOIN categories ON products.category_name = categories.name 
+                                WHERE products.status = 1 AND products.featured = 'popular' 
+                                ORDER BY RAND() LIMIT 8";
                         $product_query_run = mysqli_query($conn, $product_query);
 
                         if (mysqli_num_rows($product_query_run) > 0) {
@@ -211,7 +277,7 @@
                                     <div class="product-cart-wrap mb-30">
                                         <div class="product-img-action-wrap">
                                             <div class="product-img product-img-zoom">
-                                                <a href="shop-product-right.php?id=<?= $product['id']; ?>">
+                                                <a href="shop-product.php?id=<?= $product['id']; ?>">
                                                     <img class="default-img" src="uploads/shop/<?= $product['image']; ?>" alt="<?= $product['product_name']; ?>">
                                                 </a>
                                             </div>
@@ -222,20 +288,42 @@
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="hot">
-                                                    <a href="shop-grid-right.php"><?= $product['featured']; ?></a>
+                                                    <?= $product['featured']; ?>
                                                 </span>
                                             </div>
                                         </div>
                                         <div class="product-content-wrap">
                                             <div class="product-category">
-                                                <a href="shop-grid-right.php"><?= $product['category_name']; ?></a>
+                                                <?php
+                                                // Display the category name and link to the category page
+                                                if ($product['category_name']) {
+                                                    echo '<a href="category.php?id=' . $product['category_id'] . '">' . $product['category_name'] . '</a>';
+                                                } else {
+                                                    echo "<p>No category available</p>";
+                                                }
+                                                ?>
                                             </div>
                                             <h2>
-                                                <a href="shop-product-right.php?id=<?= $product['id']; ?>"><?= $product['product_name']; ?></a>
+                                                <a href="shop-product.php?id=<?= $product['id']; ?>"><?= $product['product_name']; ?></a>
                                             </h2>
-                                            <div class="rating-result" title="90%">
+                                            <div>
                                                 <span>
-                                                    <span><?= $product['rating']; ?>%</span>
+                                                    <?php
+                                                    // Extract the rating value from the product array
+                                                    $rating = $product['rating'];
+
+                                                    // Loop to display up to 5 stars
+                                                    for ($i = 0; $i < 5; $i++) {
+                                                        if ($rating > 0) {
+                                                            // Display a filled star for each point of the rating
+                                                            echo '<i class="fi-rs-star text-warning"></i>';
+                                                        } else {
+                                                            // Display an empty star for remaining slots
+                                                            echo '<i class="fi-rs-star text-secondary"></i>';
+                                                        }
+                                                        $rating--; // Reduce rating after each iteration
+                                                    }
+                                                    ?>
                                                 </span>
                                             </div>
                                             <div class="product-price">
@@ -262,8 +350,11 @@
 
                     <div class="row product-grid-4">
                         <?php
-                        // Fetch a maximum of 8 randomly selected products where `featured` is 'featured'
-                        $product_query = "SELECT * FROM products WHERE status = 1 AND featured = 'new' ORDER BY RAND() LIMIT 8";
+                        $product_query = "SELECT products.*, categories.name AS category_name, categories.id AS category_id 
+                                FROM products 
+                                LEFT JOIN categories ON products.category_name = categories.name 
+                                WHERE products.status = 1 AND products.featured = 'new' 
+                                ORDER BY RAND() LIMIT 8";
                         $product_query_run = mysqli_query($conn, $product_query);
 
                         if (mysqli_num_rows($product_query_run) > 0) {
@@ -273,7 +364,7 @@
                                     <div class="product-cart-wrap mb-30">
                                         <div class="product-img-action-wrap">
                                             <div class="product-img product-img-zoom">
-                                                <a href="shop-product-right.php?id=<?= $product['id']; ?>">
+                                                <a href="shop-product.php?id=<?= $product['id']; ?>">
                                                     <img class="default-img" src="uploads/shop/<?= $product['image']; ?>" alt="<?= $product['product_name']; ?>">
                                                 </a>
                                             </div>
@@ -284,20 +375,42 @@
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="hot">
-                                                    <a href="shop-grid-right.php"><?= $product['featured']; ?>
+                                                    <?= $product['featured']; ?>
                                                 </span>
                                             </div>
                                         </div>
                                         <div class="product-content-wrap">
                                             <div class="product-category">
-                                                <a href="shop-grid-right.php"><?= $product['category_name']; ?></a>
+                                                <?php
+                                                // Display the category name and link to the category page
+                                                if ($product['category_name']) {
+                                                    echo '<a href="category.php?id=' . $product['category_id'] . '">' . $product['category_name'] . '</a>';
+                                                } else {
+                                                    echo "<p>No category available</p>";
+                                                }
+                                                ?>
                                             </div>
                                             <h2>
-                                                <a href="shop-product-right.php?id=<?= $product['id']; ?>"><?= $product['product_name']; ?></a>
+                                                <a href="shop-product.php?id=<?= $product['id']; ?>"><?= $product['product_name']; ?></a>
                                             </h2>
-                                            <div class="rating-result" title="90%">
+                                            <div>
                                                 <span>
-                                                    <span><?= $product['rating']; ?>%</span>
+                                                    <?php
+                                                    // Extract the rating value from the product array
+                                                    $rating = $product['rating'];
+
+                                                    // Loop to display up to 5 stars
+                                                    for ($i = 0; $i < 5; $i++) {
+                                                        if ($rating > 0) {
+                                                            // Display a filled star for each point of the rating
+                                                            echo '<i class="fi-rs-star text-warning"></i>';
+                                                        } else {
+                                                            // Display an empty star for remaining slots
+                                                            echo '<i class="fi-rs-star text-secondary"></i>';
+                                                        }
+                                                        $rating--; // Reduce rating after each iteration
+                                                    }
+                                                    ?>
                                                 </span>
                                             </div>
                                             <div class="product-price">
@@ -324,8 +437,12 @@
                 <div class="tab-pane fade" id="tab-four" role="tabpanel" aria-labelledby="tab-four">
                     <div class="row product-grid-4">
                         <?php
-                        // Fetch a maximum of 8 randomly selected products where `featured` is 'featured'
-                        $product_query = "SELECT * FROM products WHERE status = 1 AND featured = 'trending' ORDER BY RAND() LIMIT 8";
+
+                        $product_query = "SELECT products.*, categories.name AS category_name, categories.id AS category_id 
+                        FROM products 
+                        LEFT JOIN categories ON products.category_name = categories.name 
+                        WHERE products.status = 1 AND products.featured = 'trending' 
+                        ORDER BY RAND() LIMIT 8";
                         $product_query_run = mysqli_query($conn, $product_query);
 
                         if (mysqli_num_rows($product_query_run) > 0) {
@@ -335,7 +452,7 @@
                                     <div class="product-cart-wrap mb-30">
                                         <div class="product-img-action-wrap">
                                             <div class="product-img product-img-zoom">
-                                                <a href="shop-product-right.php?id=<?= $product['id']; ?>">
+                                                <a href="shop-product.php?id=<?= $product['id']; ?>">
                                                     <img class="default-img" src="uploads/shop/<?= $product['image']; ?>" alt="<?= $product['product_name']; ?>">
                                                 </a>
                                             </div>
@@ -346,20 +463,42 @@
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="hot">
-                                                    <a href="shop-grid-right.php"><?= $product['featured']; ?>
+                                                    <?= $product['featured']; ?>
                                                 </span>
                                             </div>
                                         </div>
                                         <div class="product-content-wrap">
                                             <div class="product-category">
-                                                <a href="shop-grid-right.php"><?= $product['category_name']; ?></a>
+                                                <?php
+                                                // Display the category name and link to the category page
+                                                if ($product['category_name']) {
+                                                    echo '<a href="category.php?id=' . $product['category_id'] . '">' . $product['category_name'] . '</a>';
+                                                } else {
+                                                    echo "<p>No category available</p>";
+                                                }
+                                                ?>
                                             </div>
                                             <h2>
-                                                <a href="shop-product-right.php?id=<?= $product['id']; ?>"><?= $product['product_name']; ?></a>
+                                                <a href="shop-product.php?id=<?= $product['id']; ?>"><?= $product['product_name']; ?></a>
                                             </h2>
-                                            <div class="rating-result" title="90%">
+                                            <div>
                                                 <span>
-                                                    <span><?= $product['rating']; ?>%</span>
+                                                    <?php
+                                                    // Extract the rating value from the product array
+                                                    $rating = $product['rating'];
+
+                                                    // Loop to display up to 5 stars
+                                                    for ($i = 0; $i < 5; $i++) {
+                                                        if ($rating > 0) {
+                                                            // Display a filled star for each point of the rating
+                                                            echo '<i class="fi-rs-star text-warning"></i>';
+                                                        } else {
+                                                            // Display an empty star for remaining slots
+                                                            echo '<i class="fi-rs-star text-secondary"></i>';
+                                                        }
+                                                        $rating--; // Reduce rating after each iteration
+                                                    }
+                                                    ?>
                                                 </span>
                                             </div>
                                             <div class="product-price">
@@ -385,7 +524,11 @@
                     <div class="row product-grid-4">
                         <?php
                         // Fetch a maximum of 8 randomly selected products where `featured` is 'featured'
-                        $product_query = "SELECT * FROM products WHERE status = 1 AND featured = 'best_selling' ORDER BY RAND() LIMIT 8";
+                        $product_query = "SELECT products.*, categories.name AS category_name, categories.id AS category_id 
+                      FROM products 
+                      LEFT JOIN categories ON products.category_name = categories.name 
+                      WHERE products.status = 1 AND products.featured = 'best_selling' 
+                      ORDER BY RAND() LIMIT 8";
                         $product_query_run = mysqli_query($conn, $product_query);
 
                         if (mysqli_num_rows($product_query_run) > 0) {
@@ -395,7 +538,7 @@
                                     <div class="product-cart-wrap mb-30">
                                         <div class="product-img-action-wrap">
                                             <div class="product-img product-img-zoom">
-                                                <a href="shop-product-right.php?id=<?= $product['id']; ?>">
+                                                <a href="shop-product.php?id=<?= $product['id']; ?>">
                                                     <img class="default-img" src="uploads/shop/<?= $product['image']; ?>" alt="<?= $product['product_name']; ?>">
                                                 </a>
                                             </div>
@@ -406,21 +549,42 @@
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="hot">
-                                                    <a href="shop-grid-right.php"><?= $product['featured']; ?>
+                                                    <?= $product['featured']; ?>
                                                 </span>
                                             </div>
                                         </div>
                                         <div class="product-content-wrap">
                                             <div class="product-category">
-                                                <a href="shop-grid-right.php"><?= $product['category_name']; ?></a>
+                                                <?php
+                                                // Display the category name and link to the category page
+                                                if ($product['category_name']) {
+                                                    echo '<a href="category.php?id=' . $product['category_id'] . '">' . $product['category_name'] . '</a>';
+                                                } else {
+                                                    echo "<p>No category available</p>";
+                                                }
+                                                ?>
                                             </div>
                                             <h2>
-                                                <a href="shop-product-right.php?id=<?= $product['id']; ?>"><?= $product['product_name']; ?></a>
+                                                <a href="shop-product.php?id=<?= $product['id']; ?>"><?= $product['product_name']; ?></a>
                                             </h2>
-                                            <div class="rating-result
-                                            " title="90%">
+                                            <div>
                                                 <span>
-                                                    <span><?= $product['rating']; ?>%</span>
+                                                    <?php
+                                                    // Extract the rating value from the product array
+                                                    $rating = $product['rating'];
+
+                                                    // Loop to display up to 5 stars
+                                                    for ($i = 0; $i < 5; $i++) {
+                                                        if ($rating > 0) {
+                                                            // Display a filled star for each point of the rating
+                                                            echo '<i class="fi-rs-star text-warning"></i>';
+                                                        } else {
+                                                            // Display an empty star for remaining slots
+                                                            echo '<i class="fi-rs-star text-secondary"></i>';
+                                                        }
+                                                        $rating--; // Reduce rating after each iteration
+                                                    }
+                                                    ?>
                                                 </span>
                                             </div>
                                             <div class="product-price">
@@ -455,7 +619,7 @@
                 <div class="banner-text d-md-block d-none">
                     <h4 class="mb-15 mt-40 text-brand">Repair Services</h4>
                     <h1 class="fw-600 mb-20">We're an Apple <br>Authorised Service Provider</h1>
-                    <a href="shop-grid-right.html" class="btn">Learn More <i class="fi-rs-arrow-right"></i></a>
+                    <a class="btn">Learn More <i class="fi-rs-arrow-right"></i></a>
                 </div>
             </div>
         </div>
@@ -476,9 +640,10 @@
                     ?>
                             <div class="card-1">
                                 <figure class=" img-hover-scale overflow-hidden">
-                                    <a href="shop-grid-right.php?category_id=<?= $category['id']; ?>"><img src="uploads/categories/<?= $category['image']; ?>" alt="<?= $category['name']; ?>"></a>
+
+                                    <a href="category.php?id=<?= $category['id']; ?>"><img src="uploads/categories/<?= $category['image']; ?>" alt="<?= $category['name']; ?>"></a>
                                 </figure>
-                                <h5><a href="shop-grid-right.php?category_id=<?= $category['id']; ?>"><?= $category['name']; ?></a></h5>
+                                <h5><a href="category.php?id=<?= $category['id']; ?>"><?= $category['name']; ?></a></h5>
                             </div>
                     <?php
                         }
@@ -499,7 +664,7 @@
                         <div class="banner-text">
                             <span>Smart Offer</span>
                             <h4>Save 20% on <br>Woman Bag</h4>
-                            <a href="shop-grid-right.html">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                            <a>Shop Now <i class="fi-rs-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
@@ -509,7 +674,7 @@
                         <div class="banner-text">
                             <span>Sale off</span>
                             <h4>Great Summer <br>Collection</h4>
-                            <a href="shop-grid-right.html">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                            <a>Shop Now <i class="fi-rs-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
@@ -519,7 +684,7 @@
                         <div class="banner-text">
                             <span>New Arrivals</span>
                             <h4>Shop Today’s <br>Deals &amp; Offers</h4>
-                            <a href="shop-grid-right.html">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                            <a>Shop Now <i class="fi-rs-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
@@ -544,7 +709,7 @@
 
                                 <div class="product-img-action-wrap">
                                     <div class="product-img product-img-zoom">
-                                        <a href="shop-product-right.html">
+                                        <a href="shop-product.php?id=<?= $product['id']; ?>">
                                             <img class="default-img" src="uploads/shop/<?= $product['image']; ?>" alt="<?= $product['product_name']; ?>">
                                         </a>
                                     </div>
@@ -556,16 +721,32 @@
                                     </div>
                                     <div class="product-badges product-badges-position product-badges-mrg">
                                         <span class="hot">
-                                            <a href="shop-grid-right.html"><?= $product['featured']; ?>
+                                            <?= $product['featured']; ?>
                                         </span>
                                     </div>
                                 </div>
                                 <div class="product-content-wrap">
                                     <h2>
-                                        <a href="shop-product-right.html"><?= $product['product_name']; ?></a>
+                                        <a href="shop-product.php?id=<?= $product['id']; ?>"><?= $product['product_name']; ?></a>
                                     </h2>
-                                    <div class="rating-result" title="90%">
+                                    <div>
                                         <span>
+                                            <?php
+                                            // Extract the rating value from the product array
+                                            $rating = $product['rating'];
+
+                                            // Loop to display up to 5 stars
+                                            for ($i = 0; $i < 5; $i++) {
+                                                if ($rating > 0) {
+                                                    // Display a filled star for each point of the rating
+                                                    echo '<i class="fi-rs-star text-warning"></i>';
+                                                } else {
+                                                    // Display an empty star for remaining slots
+                                                    echo '<i class="fi-rs-star text-secondary"></i>';
+                                                }
+                                                $rating--; // Reduce rating after each iteration
+                                            }
+                                            ?>
                                         </span>
                                     </div>
                                     <div class="product-price">
@@ -580,7 +761,7 @@
                         echo "<p>No featured products available</p>";
                     }
                     ?>
-                   
+
                 </div>
             </div>
         </div>
@@ -595,13 +776,13 @@
                             <h5>Limited quantities.</h5>
                         </div>
                         <div class="deal-content">
-                            <h6 class="product-title"><a href="shop-product-right.html">Summer Collection New Morden Design</a></h6>
+                            <h6 class="product-title"><a href="shop.php">Summer Collection New Morden Design</a></h6>
                             <div class="product-price"><span class="new-price">$139.00</span><span class="old-price">$160.99</span></div>
                         </div>
                         <div class="deal-bottom">
                             <p>Hurry Up! Offer End In:</p>
                             <div class="deals-countdown" data-countdown="2025/03/25 00:00:00"></div>
-                            <a href="shop-grid-right.html" class="btn hover-up">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                            <a class="btn hover-up">Shop Now <i class="fi-rs-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
@@ -612,13 +793,13 @@
                             <h5>Shirt &amp; Bag</h5>
                         </div>
                         <div class="deal-content">
-                            <h6 class="product-title"><a href="shop-product-right.html">Try something new on vacation</a></h6>
+                            <h6 class="product-title"><a href="shop.php">Try something new on vacation</a></h6>
                             <div class="product-price"><span class="new-price">$178.00</span><span class="old-price">$256.99</span></div>
                         </div>
                         <div class="deal-bottom">
                             <p>Hurry Up! Offer End In:</p>
                             <div class="deals-countdown" data-countdown="2026/03/25 00:00:00"></div>
-                            <a href="shop-grid-right.html" class="btn hover-up">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                            <a class="btn hover-up">Shop Now <i class="fi-rs-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
@@ -683,7 +864,7 @@
                         <div class="banner-text">
                             <span>Woman Area</span>
                             <h4 class="mt-5">Save 17% on <br>Clothing</h4>
-                            <a href="shop-grid-right.html" class="text-white">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                            <a class="text-white">Shop Now <i class="fi-rs-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
@@ -693,60 +874,87 @@
                             <div class="carausel-4-columns-cover arrow-center position-relative">
                                 <div class="slider-arrow slider-arrow-2 carausel-4-columns-arrow" id="carausel-4-columns-arrows"></div>
                                 <div class="carausel-4-columns carausel-arrow-center" id="carausel-4-columns">
-                                    <?php 
-                                    $product_query = "SELECT * FROM products WHERE status = 1 AND featured = 'featured' ORDER BY RAND() LIMIT 8";
+                                    <?php
+
+                                    $product_query = "SELECT products.*, categories.name AS category_name, categories.id AS category_id 
+                                            FROM products 
+                                            LEFT JOIN categories ON products.category_name = categories.name 
+                                            WHERE products.status = 1 AND products.featured = 'featured' 
+                                            ORDER BY RAND() LIMIT 8";
                                     $product_query_run = mysqli_query($conn, $product_query);
 
                                     if (mysqli_num_rows($product_query_run) > 0) {
                                         while ($product = mysqli_fetch_assoc($product_query_run)) {
                                     ?>
-                                    <div class="product-cart-wrap">
-                                        <div class="product-img-action-wrap">
-                                            <div class="product-img product-img-zoom">
-                                                <a href="shop-product-right.html">
-                                                    <img class="default-img" src="uploads/shop/<?= $product['image']; ?>" alt="<?= $product['product_name']; ?>">
-                                                </a>
+                                            <div class="product-cart-wrap">
+                                                <div class="product-img-action-wrap">
+                                                    <div class="product-img product-img-zoom">
+                                                        <a href="shop-product.php?id=<?= $product['id']; ?>">
+                                                            <img class="default-img" src="uploads/shop/<?= $product['image']; ?>" alt="<?= $product['product_name']; ?>">
+                                                        </a>
+                                                    </div>
+                                                    <div class="product-action-1">
+                                                        <a aria-label="Quick view" class="action-btn small hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
+                                                            <i class="fi-rs-eye"></i></a>
+                                                        <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+                                                        <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                    </div>
+                                                    <div class="product-badges product-badges-position product-badges-mrg">
+                                                        <span class="hot">
+                                                            <?= $product['featured']; ?>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="product-content-wrap">
+                                                    <div class="product-category">
+                                                        <?php
+                                                        // Display the category name and link to the category page
+                                                        if ($product['category_name']) {
+                                                            echo '<a href="category.php?id=' . $product['category_id'] . '">' . $product['category_name'] . '</a>';
+                                                        } else {
+                                                            echo "<p>No category available</p>";
+                                                        }
+                                                        ?>
+                                                    </div>
+                                                    <h2>
+                                                        <a href="shop-product.php?id=<?= $product['id']; ?>"><?= $product['product_name']; ?></a>
+                                                    </h2>
+                                                    <div>
+                                                        <span>
+                                                            <?php
+                                                            // Extract the rating value from the product array
+                                                            $rating = $product['rating'];
+
+                                                            // Loop to display up to 5 stars
+                                                            for ($i = 0; $i < 5; $i++) {
+                                                                if ($rating > 0) {
+                                                                    // Display a filled star for each point of the rating
+                                                                    echo '<i class="fi-rs-star text-warning"></i>';
+                                                                } else {
+                                                                    // Display an empty star for remaining slots
+                                                                    echo '<i class="fi-rs-star text-secondary"></i>';
+                                                                }
+                                                                $rating--; // Reduce rating after each iteration
+                                                            }
+                                                            ?>
+                                                        </span>
+                                                    </div>
+                                                    <div class="product-price">
+                                                        <span>Kes<?= $product['selling_price']; ?></span>
+                                                        <span class="old-price">Kes<?= $product['original_price']; ?></span>
+                                                    </div>
+                                                    <div class="product-action-1 show">
+                                                        <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="product-action-1">
-                                                <a aria-label="Quick view" class="action-btn small hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
-                                                    <i class="fi-rs-eye"></i></a>
-                                                <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-                                            </div>
-                                            <div class="product-badges product-badges-position product-badges-mrg">
-                                                <span class="hot">
-                                                    <a href="shop-grid-right.html"><?= $product['featured']; ?>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="product-content-wrap">
-                                            <div class="product-category">
-                                                <a href="shop-grid-right.html"><?= $product['category_name']; ?></a>
-                                            </div>
-                                            <h2>
-                                                <a href="shop-product-right.html"><?= $product['product_name']; ?></a>
-                                            </h2>
-                                            <div class="rating-result" title="90%">
-                                                <span>
-                                                    <span><?= $product['rating']; ?>%</span>
-                                                </span>
-                                            </div>
-                                            <div class="product-price">
-                                                <span>Kes<?= $product['selling_price']; ?></span>
-                                                <span class="old-price">Kes<?= $product['original_price']; ?></span>
-                                            </div>
-                                            <div class="product-action-1 show">
-                                                <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
-                                            </div>
-                                        </div>
-                                    </div>
                                     <?php
                                         }
                                     } else {
                                         echo "<p>No featured products available</p>";
                                     }
                                     ?>
-                                   
+
                                 </div>
                             </div>
                         </div>
@@ -755,60 +963,87 @@
                             <div class="carausel-4-columns-cover arrow-center position-relative">
                                 <div class="slider-arrow slider-arrow-2 carausel-4-columns-arrow" id="carausel-4-columns-2-arrows"></div>
                                 <div class="carausel-4-columns carausel-arrow-center" id="carausel-4-columns-2">
-                                    <?php 
-                                    $product_query = "SELECT * FROM products WHERE status = 1 AND featured = 'popular' ORDER BY RAND() LIMIT 8";
+                                    <?php
+
+                                    $product_query = "SELECT products.*, categories.name AS category_name, categories.id AS category_id 
+                                    FROM products 
+                                    LEFT JOIN categories ON products.category_name = categories.name 
+                                    WHERE products.status = 1 AND products.featured = 'popular' 
+                                    ORDER BY RAND() LIMIT 8";
                                     $product_query_run = mysqli_query($conn, $product_query);
 
                                     if (mysqli_num_rows($product_query_run) > 0) {
                                         while ($product = mysqli_fetch_assoc($product_query_run)) {
                                     ?>
-                                    <div class="product-cart-wrap">
-                                        <div class="product-img-action-wrap">
-                                            <div class="product-img product-img-zoom">
-                                                <a href="shop-product-right.html">
-                                                    <img class="default-img" src="uploads/shop/<?= $product['image']; ?>" alt="<?= $product['product_name']; ?>">
-                                                </a>
+                                            <div class="product-cart-wrap">
+                                                <div class="product-img-action-wrap">
+                                                    <div class="product-img product-img-zoom">
+                                                        <a href="shop-product.php?id=<?= $product['id']; ?>">
+                                                            <img class="default-img" src="uploads/shop/<?= $product['image']; ?>" alt="<?= $product['product_name']; ?>">
+                                                        </a>
+                                                    </div>
+                                                    <div class="product-action-1">
+                                                        <a aria-label="Quick view" class="action-btn small hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
+                                                            <i class="fi-rs-eye"></i></a>
+                                                        <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+                                                        <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                    </div>
+                                                    <div class="product-badges product-badges-position product-badges-mrg">
+                                                        <span class="hot">
+                                                            <?= $product['featured']; ?>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="product-content-wrap">
+                                                    <div class="product-category">
+                                                        <?php
+                                                        // Display the category name and link to the category page
+                                                        if ($product['category_name']) {
+                                                            echo '<a href="category.php?id=' . $product['category_id'] . '">' . $product['category_name'] . '</a>';
+                                                        } else {
+                                                            echo "<p>No category available</p>";
+                                                        }
+                                                        ?>
+                                                    </div>
+                                                    <h2>
+                                                        <a href="shop-product.php?id=<?= $product['id']; ?>"><?= $product['product_name']; ?></a>
+                                                    </h2>
+                                                    <div>
+                                                        <span>
+                                                            <?php
+                                                            // Extract the rating value from the product array
+                                                            $rating = $product['rating'];
+
+                                                            // Loop to display up to 5 stars
+                                                            for ($i = 0; $i < 5; $i++) {
+                                                                if ($rating > 0) {
+                                                                    // Display a filled star for each point of the rating
+                                                                    echo '<i class="fi-rs-star text-warning"></i>';
+                                                                } else {
+                                                                    // Display an empty star for remaining slots
+                                                                    echo '<i class="fi-rs-star text-secondary"></i>';
+                                                                }
+                                                                $rating--; // Reduce rating after each iteration
+                                                            }
+                                                            ?>
+                                                        </span>
+                                                    </div>
+                                                    <div class="product-price">
+                                                        <span>Kes<?= $product['selling_price']; ?></span>
+                                                        <span class="old-price">Kes<?= $product['original_price']; ?></span>
+                                                    </div>
+                                                    <div class="product-action-1 show">
+                                                        <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="product-action-1">
-                                                <a aria-label="Quick view" class="action-btn small hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
-                                                    <i class="fi-rs-eye"></i></a>
-                                                <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-                                            </div>
-                                            <div class="product-badges product-badges-position product-badges-mrg">
-                                                <span class="hot">
-                                                    <a href="shop-grid-right.html"><?= $product['featured']; ?>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="product-content-wrap">
-                                            <div class="product-category">
-                                                <a href="shop-grid-right.html"><?= $product['category_name']; ?></a>
-                                            </div>
-                                            <h2>
-                                                <a href="shop-product-right.html"><?= $product['product_name']; ?></a>
-                                            </h2>
-                                            <div class="rating-result" title="90%">
-                                                <span>
-                                                    <span><?= $product['rating']; ?>%</span>
-                                                </span>
-                                            </div>
-                                            <div class="product-price">
-                                                <span>Kes<?= $product['selling_price']; ?></span>
-                                                <span class="old-price">Kes<?= $product['original_price']; ?></span>
-                                            </div>
-                                            <div class="product-action-1 show">
-                                                <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
-                                            </div>
-                                        </div>
-                                    </div>
                                     <?php
                                         }
                                     } else {
                                         echo "<p>No featured products available</p>";
                                     }
                                     ?>
-                                   
+
                                 </div>
                             </div>
                         </div>
@@ -817,61 +1052,86 @@
                                 <div class="slider-arrow slider-arrow-2 carausel-4-columns-arrow" id="carausel-4-columns-3-arrows"></div>
                                 <div class="carausel-4-columns carausel-arrow-center" id="carausel-4-columns-3">
                                     <?php
-                                    $product_query = "SELECT * FROM products WHERE status = 1 AND featured = 'new' ORDER BY RAND() LIMIT 8";
+
+                                    $product_query = "SELECT products.*, categories.name AS category_name, categories.id AS category_id 
+                                            FROM products 
+                                            LEFT JOIN categories ON products.category_name = categories.name 
+                                            WHERE products.status = 1 AND products.featured = 'new' 
+                                            ORDER BY RAND() LIMIT 8";
                                     $product_query_run = mysqli_query($conn, $product_query);
 
                                     if (mysqli_num_rows($product_query_run) > 0) {
                                         while ($product = mysqli_fetch_assoc($product_query_run)) {
                                     ?>
-                                    <div class="product-cart-wrap">
-                                        <div class="product-img-action-wrap">
-                                            <div class="product-img product-img-zoom">
-                                                <a href="shop-product-right.html">
-                                                    <img class="default-img" src="uploads/shop/<?= $product['image']; ?>" alt="<?= $product['product_name']; ?>">
-                                                </a>
+                                            <div class="product-cart-wrap">
+                                                <div class="product-img-action-wrap">
+                                                    <div class="product-img product-img-zoom">
+                                                        <a href="shop-product.php?id=<?= $product['id']; ?>">
+                                                            <img class="default-img" src="uploads/shop/<?= $product['image']; ?>" alt="<?= $product['product_name']; ?>">
+                                                        </a>
+                                                    </div>
+                                                    <div class="product-action-1">
+                                                        <a aria-label="Quick view" class="action-btn small hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
+                                                            <i class="fi-rs-eye"></i></a>
+                                                        <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+                                                        <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                    </div>
+                                                    <div class="product-badges product-badges-position product-badges-mrg">
+                                                        <span class="hot">
+                                                            <?= $product['featured']; ?>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="product-content-wrap">
+                                                    <div class="product-category">
+                                                        <?php
+                                                        // Display the category name and link to the category page
+                                                        if ($product['category_name']) {
+                                                            echo '<a href="category.php?id=' . $product['category_id'] . '">' . $product['category_name'] . '</a>';
+                                                        } else {
+                                                            echo "<p>No category available</p>";
+                                                        }
+                                                        ?>
+                                                    </div>
+                                                    <h2>
+                                                        <a href="shop-product.php?id=<?= $product['id']; ?>"><?= $product['product_name']; ?></a>
+                                                    </h2>
+                                                    <div>
+                                                        <span>
+                                                            <?php
+                                                            // Extract the rating value from the product array
+                                                            $rating = $product['rating'];
+
+                                                            // Loop to display up to 5 stars
+                                                            for ($i = 0; $i < 5; $i++) {
+                                                                if ($rating > 0) {
+                                                                    // Display a filled star for each point of the rating
+                                                                    echo '<i class="fi-rs-star text-warning"></i>';
+                                                                } else {
+                                                                    // Display an empty star for remaining slots
+                                                                    echo '<i class="fi-rs-star text-secondary"></i>';
+                                                                }
+                                                                $rating--; // Reduce rating after each iteration
+                                                            }
+                                                            ?>
+                                                        </span>
+                                                    </div>
+                                                    <div class="product-price">
+                                                        <span>Kes<?= $product['selling_price']; ?></span>
+                                                        <span class="old-price">Kes<?= $product['original_price']; ?></span>
+                                                    </div>
+                                                    <div class="product-action-1 show">
+                                                        <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="product-action-1">
-                                                <a aria-label="Quick view" class="action-btn small hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
-                                                    <i class="fi-rs-eye"></i></a>
-                                                <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-                                            </div>
-                                            <div class="product-badges product-badges-position product-badges-mrg">
-                                                <span class="hot">
-                                                    <a href="shop-grid-right.html"><?= $product['featured']; ?>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="product-content-wrap">
-                                            <div class="product-category">
-                                                <a href="shop-grid-right.html">
-                                                    <?= $product['category_name']; ?>
-                                                </a>
-                                            </div>
-                                            <h2>
-                                                <a href="shop-product-right.html"><?= $product['product_name']; ?></a>
-                                            </h2>
-                                            <div class="rating-result" title="90%">
-                                                <span>
-                                                    <span><?= $product['rating']; ?>%</span>
-                                                </span>
-                                            </div>
-                                            <div class="product-price">
-                                                <span>Kes<?= $product['selling_price']; ?></span>
-                                                <span class="old-price">Kes<?= $product['original_price']; ?></span>
-                                            </div>
-                                            <div class="product-action-1 show">
-                                                <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
-                                            </div>
-                                        </div>
-                                    </div>
                                     <?php
                                         }
                                     } else {
                                         echo "<p>No featured products available</p>";
                                     }
                                     ?>
-                                  
+
                                 </div>
                             </div>
                         </div>
@@ -882,97 +1142,7 @@
             </div>
         </div>
     </section>
-    <section class="section-padding">
-        <div class="container pt-25 pb-20">
-            <div class="row">
-                <div class="col-lg-6">
-                    <h3 class="section-title mb-20"><span>From</span> blog</h3>
-                    <div class="post-list mb-4 mb-lg-0">
-                        <article class="wow fadeIn animated">
-                            <div class="d-md-flex d-block">
-                                <div class="post-thumb d-flex mr-15">
-                                    <a class="color-white" href="blog-post-fullwidth.html">
-                                        <img src="assets/images/blog-2.jpg" alt="">
-                                    </a>
-                                </div>
-                                <div class="post-content">
-                                    <div class="entry-meta mb-10 mt-10">
-                                        <a class="entry-meta meta-2" href="blog-category-fullwidth.html"><span class="post-in font-x-small">Fashion</span></a>
-                                    </div>
-                                    <h4 class="post-title mb-25 text-limit-2-row">
-                                        <a href="blog-post-fullwidth.html">Qualcomm is developing a Nintendo Switch-like console, report says</a>
-                                    </h4>
-                                    <div class="entry-meta meta-1 font-xs color-grey mt-10 pb-10">
-                                        <div>
-                                            <span class="post-on">14 April 2022</span>
-                                            <span class="hit-count has-dot">12M Views</span>
-                                        </div>
-                                        <a href="blog-post-right.html">Read More</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </article>
-                        <article class="wow fadeIn animated">
-                            <div class="d-md-flex d-block">
-                                <div class="post-thumb d-flex mr-15">
-                                    <a class="color-white" href="blog-post-fullwidth.html">
-                                        <img src="assets/images/blog-1.jpg" alt="">
-                                    </a>
-                                </div>
-                                <div class="post-content">
-                                    <div class="entry-meta mb-10 mt-10">
-                                        <a class="entry-meta meta-2" href="blog-category-fullwidth.html"><span class="post-in font-x-small">Healthy</span></a>
-                                    </div>
-                                    <h4 class="post-title mb-25 text-limit-2-row">
-                                        <a href="blog-post-fullwidth.html">Not even the coronavirus can derail 5G's global momentum</a>
-                                    </h4>
-                                    <div class="entry-meta meta-1 font-xs color-grey mt-10 pb-10">
-                                        <div>
-                                            <span class="post-on">14 April 2022</span>
-                                            <span class="hit-count has-dot">12M Views</span>
-                                        </div>
-                                        <a href="blog-post-right.html">Read More</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="banner-img banner-1 wow fadeIn animated">
-                                <img src="assets/images/banner-5.jpg" alt="">
-                                <div class="banner-text">
-                                    <span>Accessories</span>
-                                    <h4>Save 17% on <br>Autumn Hat</h4>
-                                    <a href="shop-grid-right.html">Shop Now <i class="fi-rs-arrow-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="banner-img mb-15 wow fadeIn animated">
-                                <img src="assets/images/banner-6.jpg" alt="">
-                                <div class="banner-text">
-                                    <span>Big Offer</span>
-                                    <h4>Save 20% on <br>Women's socks</h4>
-                                    <a href="shop-grid-right.html">Shop Now <i class="fi-rs-arrow-right"></i></a>
-                                </div>
-                            </div>
-                            <div class="banner-img banner-2 wow fadeIn animated">
-                                <img src="assets/images/banner-7.jpg" alt="">
-                                <div class="banner-text">
-                                    <span>Smart Offer</span>
-                                    <h4>Save 20% on <br>Eardrop</h4>
-                                    <a href="shop-grid-right.html">Shop Now <i class="fi-rs-arrow-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+
     <section class="mb-50">
         <div class="container">
             <div class="row">
@@ -996,149 +1166,109 @@
                         <div class="banner-text">
                             <span>Shoes Zone</span>
                             <h4>Save 17% on <br>All Items</h4>
-                            <a href="shop-grid-right.html">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                            <a>Shop Now <i class="fi-rs-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-sm-5 mb-md-0">
                     <h4 class="section-title style-1 mb-30 wow fadeIn animated">Deals &amp; Outlet</h4>
                     <div class="product-list-small wow fadeIn animated">
-                        <article class="row align-items-center">
-                            <figure class="col-md-4 mb-0">
-                                <a href="shop-product-right.html"><img src="assets/images/thumbnail-3.jpg" alt=""></a>
-                            </figure>
-                            <div class="col-md-8 mb-0">
-                                <h4 class="title-small">
-                                    <a href="shop-product-right.html">Fish Print Patched T-shirt</a>
-                                </h4>
-                                <div class="product-price">
-                                    <span>$238.85 </span>
-                                    <span class="old-price">$245.8</span>
-                                </div>
-                            </div>
-                        </article>
-                        <article class="row align-items-center">
-                            <figure class="col-md-4 mb-0">
-                                <a href="shop-product-right.html"><img src="assets/images/thumbnail-4.jpg" alt=""></a>
-                            </figure>
-                            <div class="col-md-8 mb-0">
-                                <h4 class="title-small">
-                                    <a href="shop-product-right.html">Vintage Floral Print Dress</a>
-                                </h4>
-                                <div class="product-price">
-                                    <span>$238.85 </span>
-                                    <span class="old-price">$245.8</span>
-                                </div>
-                            </div>
-                        </article>
-                        <article class="row align-items-center">
-                            <figure class="col-md-4 mb-0">
-                                <a href="shop-product-right.html"><img src="assets/images/thumbnail-5.jpg" alt=""></a>
-                            </figure>
-                            <div class="col-md-8 mb-0">
-                                <h4 class="title-small">
-                                    <a href="shop-product-right.html">Multi-color Stripe Circle Print T-Shirt</a>
-                                </h4>
-                                <div class="product-price">
-                                    <span>$238.85 </span>
-                                    <span class="old-price">$245.8</span>
-                                </div>
-                            </div>
-                        </article>
+                        <?php
+                        //select from products where discount is above 50
+                        $product_query = "SELECT * FROM products WHERE status = 1 AND discount > 50 ORDER BY RAND() LIMIT 3";
+                        $product_query_run = mysqli_query($conn, $product_query);
+
+                        if (mysqli_num_rows($product_query_run) > 0) {
+                            while ($product = mysqli_fetch_assoc($product_query_run)) {
+                        ?>
+                                <article class="row align-items-center">
+                                    <figure class="col-md-4 mb-0">
+                                        <a href="shop-product.php?id=<?= $product['id']; ?>"><img src="uploads/shop/<?= $product['image']; ?>" alt=""></a>
+                                    </figure>
+                                    <div class="col-md-8 mb-0">
+                                        <h4 class="title-small">
+                                            <a href="shop-product.php?id=<?= $product['id']; ?>"><?= $product['product_name']; ?></a>
+                                        </h4>
+                                        <div class="product-price">
+                                            <span>Kes<?= $product['selling_price']; ?></span>
+                                            <span class="old-price">Kes<?= $product['original_price']; ?></span>
+                                        </div>
+                                    </div>
+                                </article>
+                        <?php
+                            }
+                        } else {
+                            echo "<p>No featured products available</p>";
+                        }
+                        ?>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-sm-5 mb-md-0">
                     <h4 class="section-title style-1 mb-30 wow fadeIn animated">Top Selling</h4>
                     <div class="product-list-small wow fadeIn animated">
-                        <article class="row align-items-center">
-                            <figure class="col-md-4 mb-0">
-                                <a href="shop-product-right.html"><img src="assets/images/thumbnail-6.jpg" alt=""></a>
-                            </figure>
-                            <div class="col-md-8 mb-0">
-                                <h4 class="title-small">
-                                    <a href="shop-product-right.html">Geometric Printed Long Sleeve Blosue</a>
-                                </h4>
-                                <div class="product-price">
-                                    <span>$238.85 </span>
-                                    <span class="old-price">$245.8</span>
-                                </div>
-                            </div>
-                        </article>
-                        <article class="row align-items-center">
-                            <figure class="col-md-4 mb-0">
-                                <a href="shop-product-right.html"><img src="assets/images/thumbnail-7.jpg" alt=""></a>
-                            </figure>
-                            <div class="col-md-8 mb-0">
-                                <h4 class="title-small">
-                                    <a href="shop-product-right.html">Print Patchwork Maxi Dress</a>
-                                </h4>
-                                <div class="product-price">
-                                    <span>$238.85 </span>
-                                    <span class="old-price">$245.8</span>
-                                </div>
-                            </div>
-                        </article>
-                        <article class="row align-items-center">
-                            <figure class="col-md-4 mb-0">
-                                <a href="shop-product-right.html"><img src="assets/images/thumbnail-8.jpg" alt=""></a>
-                            </figure>
-                            <div class="col-md-8 mb-0">
-                                <h4 class="title-small">
-                                    <a href="shop-product-right.html">Daisy Floral Print Straps Jumpsuit</a>
-                                </h4>
-                                <div class="product-price">
-                                    <span>$238.85 </span>
-                                    <span class="old-price">$245.8</span>
-                                </div>
-                            </div>
-                        </article>
+                        <?php
+                        // Fetch a maximum of 3 randomly selected products where `featured` is 'best_selling' and 'discount' is below 50
+                        $product_query = "SELECT * FROM products WHERE status = 1 AND featured = 'best_selling' AND discount < 50 ORDER BY RAND() LIMIT 3";
+                        $product_query_run = mysqli_query($conn, $product_query);
+
+                        if (mysqli_num_rows($product_query_run) > 0) {
+                            while ($product = mysqli_fetch_assoc($product_query_run)) {
+
+                        ?>
+                                <article class="row align-items-center">
+                                    <figure class="col-md-4 mb-0">
+                                        <a href="shop-product.php?id=<?= $product['id']; ?>"><img src="uploads/shop/<?= $product['image']; ?>" alt=""></a>
+                                    </figure>
+                                    <div class="col-md-8 mb-0">
+                                        <h4 class="title-small">
+                                            <a href="shop-product.php?id=<?= $product['id']; ?>"><?= $product['product_name']; ?></a>
+                                        </h4>
+                                        <div class="product-price">
+                                            <span>Kes<?= $product['selling_price']; ?></span>
+                                            <span class="old-price">Kes<?= $product['original_price']; ?></span>
+                                        </div>
+                                    </div>
+                                </article>
+                        <?php
+                            }
+                        } else {
+                            echo "<p>No featured products available</p>";
+                        }
+                        ?>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <h4 class="section-title style-1 mb-30 wow fadeIn animated">Hot Releases</h4>
                     <div class="product-list-small wow fadeIn animated">
-                        <article class="row align-items-center">
-                            <figure class="col-md-4 mb-0">
-                                <a href="shop-product-right.html"><img src="assets/images/thumbnail-9.jpg" alt=""></a>
-                            </figure>
-                            <div class="col-md-8 mb-0">
-                                <h4 class="title-small">
-                                    <a href="shop-product-right.html">Floral Print Casual Cotton Dress</a>
-                                </h4>
-                                <div class="product-price">
-                                    <span>$238.85 </span>
-                                    <span class="old-price">$245.8</span>
-                                </div>
-                            </div>
-                        </article>
-                        <article class="row align-items-center">
-                            <figure class="col-md-4 mb-0">
-                                <a href="shop-product-right.html"><img src="assets/images/thumbnail-1.jpg" alt=""></a>
-                            </figure>
-                            <div class="col-md-8 mb-0">
-                                <h4 class="title-small">
-                                    <a href="shop-product-right.html">Ruffled Solid Long Sleeve Blouse</a>
-                                </h4>
-                                <div class="product-price">
-                                    <span>$238.85 </span>
-                                    <span class="old-price">$245.8</span>
-                                </div>
-                            </div>
-                        </article>
-                        <article class="row align-items-center">
-                            <figure class="col-md-4 mb-0">
-                                <a href="shop-product-right.html"><img src="assets/images/thumbnail-2.jpg" alt=""></a>
-                            </figure>
-                            <div class="col-md-8 mb-0">
-                                <h4 class="title-small">
-                                    <a href="shop-product-right.html">Multi-color Print V-neck T-Shirt</a>
-                                </h4>
-                                <div class="product-price">
-                                    <span>$238.85 </span>
-                                    <span class="old-price">$245.8</span>
-                                </div>
-                            </div>
-                        </article>
+                        <?php
+                        // Fetch a maximum of 3 randomly selected products where 'rating' is above 4
+                        $product_query = "SELECT * FROM products WHERE status = 1 AND rating > 4 ORDER BY RAND() LIMIT 3";
+                        $product_query_run = mysqli_query($conn, $product_query);
+
+                        if (mysqli_num_rows($product_query_run) > 0) {
+                            while ($product = mysqli_fetch_assoc($product_query_run)) {
+
+                        ?>
+                                <article class="row align-items-center">
+                                    <figure class="col-md-4 mb-0">
+                                        <a href="shop-product.php?id=<?= $product['id']; ?>"><img src="uploads/shop/<?= $product['image']; ?>" alt=""></a>
+                                    </figure>
+                                    <div class="col-md-8 mb-0">
+                                        <h4 class="title-small">
+                                            <a href="shop-product.php?id=<?= $product['id']; ?>"><?= $product['product_name']; ?></a>
+                                        </h4>
+                                        <div class="product-price">
+                                            <span>Kes<?= $product['selling_price']; ?></span>
+                                            <span class="old-price">Kes<?= $product['original_price']; ?></span>
+                                        </div>
+                                    </div>
+                                </article>
+                        <?php
+                            }
+                        } else {
+                            echo "<p>No featured products available</p>";
+                        }
+                        ?>
                     </div>
                 </div>
             </div>

@@ -370,3 +370,51 @@ if (isset($_POST['delete_user_btn'])) {
         redirect("users-manage.php", "User not deleted", "error");
     }
 }
+if (isset($_POST['add_to_cart_btn'])) {
+    $product_id = isset($_POST['product_id']) ? (int)mysqli_real_escape_string($conn, $_POST['product_id']) : 0;
+    $product_name = mysqli_real_escape_string($conn, $_POST['product_name']);
+    $selling_price = mysqli_real_escape_string($conn, $_POST['selling_price']);
+    $image = mysqli_real_escape_string($conn, $_POST['image']);
+    $quantity = isset($_POST['quantity']) ? (int)mysqli_real_escape_string($conn, $_POST['quantity']) : 1;
+
+    if ($product_id <= 0 || empty($product_name) || empty($selling_price) || empty($image)) {
+        redirect("cart.php", "Missing product details", "error");
+        exit();
+    }
+
+    if ($quantity <= 0) {
+        redirect("cart.php", "Invalid quantity", "error");
+        exit();
+    }
+
+    if (isset($_SESSION['auth_user'])) {
+        $user_id = $_SESSION['auth_user']['id'];
+        $email = $_SESSION['auth_user']['email'];
+    } else {
+        $user_id = NULL;
+        $email = NULL;
+    }
+
+    // Retrieve the current session ID
+    $session_id = session_id();
+    if (empty($session_id)) {
+        error_log("Session ID is empty");
+        redirect("cart.php", "Session issue. Try again.", "error");
+        exit();
+    }
+
+    // Insert or update cart entry
+    $cart_query = "
+        INSERT INTO cart (product_id, product_name, selling_price, image, quantity, user_id, email, session_id, cart_order)
+        VALUES ('$product_id', '$product_name', '$selling_price', '$image', '$quantity', '$user_id', '$email', '$session_id', 1)
+        ON DUPLICATE KEY UPDATE quantity = quantity + '$quantity'";
+
+    $cart_query_run = mysqli_query($conn, $cart_query);
+
+    if ($cart_query_run) {
+        redirect("../index.php", "Product added to cart successfully", "success");
+    } else {
+        error_log("MySQL Error: " . mysqli_error($conn)); // Log errors
+        redirect("../index.php", "Product not added to cart", "error");
+    }
+}

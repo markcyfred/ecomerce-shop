@@ -117,9 +117,27 @@ include('includes/header.php');
 
 
                                     <!-- Select Discount Type in Percentage -->
-                                    <div class="col-md-">
+                                    <div class="col-md-6">
                                         <label for="inputName" class="form-label">Product Name</label>
                                         <input type="text" class="form-control" name="product_name" value="<?= $data['product_name']; ?>">
+                                    </div>
+                                    <!--featured to show selected ,best_selling, new_arrival, trending, populer and featured -->
+                                    <div class="col-md-6">
+                                        <label for="inputFeautered" class="form-label">Select Featured</label>
+                                        <select class="form-select" id="inputFeautered" name="featured">
+                                            <option selected>Select Featured</option>
+                                            <?php
+                                            $features = ['new', 'best_selling', 'trending', 'populer', 'featured']; // Assuming features are string values
+
+                                            foreach ($features as $value) {
+                                            ?>
+                                                <option value="<?= $value ?>" <?= ($data['featured'] == $value) ? 'selected' : '' ?>>
+                                                    <?= ucfirst($value) ?>
+                                                </option>
+                                            <?php
+                                            }
+                                            ?>
+                                        </select>
                                     </div>
                                     <div class="col-md-12">
                                         <label for="inputDescription" class="form-label">Description</label>

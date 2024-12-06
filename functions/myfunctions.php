@@ -53,6 +53,13 @@ function getUserByID($table,$id)
    return $query_run = mysqli_query($conn, $query);
 }
 
+//getCategories
+function getCategories()
+{
+    global $conn;
+    $query = "SELECT * FROM categories";
+    return $query_run = mysqli_query($conn, $query);
+}
 
 
 ?>
