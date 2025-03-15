@@ -137,16 +137,24 @@
                 <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
                     <div class="row product-grid-4">
                         <?php
-                        // Fetch a maximum of 8 randomly selected products where `featured` is 'featured'
-                        $product_query = "SELECT products.*, categories.name AS category_name, categories.id AS category_id 
-                      FROM products 
-                      LEFT JOIN categories ON products.category_name = categories.name 
-                      WHERE products.status = 1 AND products.featured = 'featured' 
-                      ORDER BY RAND() LIMIT 8";
+                  a
+                        $user_id = isset($_SESSION['auth_user']) ? $_SESSION['auth_user']['id'] : 0;
+
+                        $product_query = "SELECT products.*, categories.name AS category_name, categories.id AS category_id, 
+                                         (SELECT COUNT(*) FROM cart WHERE cart.product_id = products.id 
+                                             AND (cart.session_id = '$session_id' 
+                                             OR (cart.user_id IS NOT NULL AND cart.user_id = '$user_id'))
+                                         ) AS in_cart 
+                                         FROM products 
+                                         LEFT JOIN categories ON products.category_name = categories.name 
+                                         WHERE products.status = 1 AND products.featured = 'featured' 
+                                         ORDER BY RAND() LIMIT 8";
+
                         $product_query_run = mysqli_query($conn, $product_query);
 
                         if (mysqli_num_rows($product_query_run) > 0) {
                             while ($product = mysqli_fetch_assoc($product_query_run)) {
+
                         ?>
                                 <div class="col-lg-3 col-md-4 col-12 col-sm-6">
                                     <div class="product-cart-wrap mb-30">
@@ -169,60 +177,22 @@
                                         </div>
                                         <div class="product-content-wrap">
                                             <div class="product-category">
-                                                <?php
-                                                // Display the category name and link to the category page
-                                                if ($product['category_name']) {
-                                                    echo '<a href="category.php?id=' . $product['category_id'] . '">' . $product['category_name'] . '</a>';
-                                                } else {
-                                                    echo "<p>No category available</p>";
-                                                }
-                                                ?>
+                                                <?php if ($product['category_name']): ?>
+                                                    <a href="category.php?id=<?= $product['category_id']; ?>"><?= $product['category_name']; ?></a>
+                                                <?php else: ?>
+                                                    <p>No category available</p>
+                                                <?php endif; ?>
                                             </div>
                                             <h2>
                                                 <a href="shop-product.php?id=<?= $product['id']; ?>"><?= $product['product_name']; ?></a>
                                             </h2>
-                                            <div>
-                                                <span>
-                                                    <?php
-                                                    // Extract the rating value from the product array
-                                                    $rating = $product['rating'];
-
-                                                    // Loop to display up to 5 stars
-                                                    for ($i = 0; $i < 5; $i++) {
-                                                        if ($rating > 0) {
-                                                            // Display a filled star for each point of the rating
-                                                            echo '<i class="fi-rs-star text-warning"></i>';
-                                                        } else {
-                                                            // Display an empty star for remaining slots
-                                                            echo '<i class="fi-rs-star text-secondary"></i>';
-                                                        }
-                                                        $rating--; // Reduce rating after each iteration
-                                                    }
-                                                    ?>
-                                                </span>
-                                            </div>
 
                                             <div class="product-price">
                                                 <span>Kes<?= $product['selling_price']; ?></span>
                                                 <span class="old-price">Kes<?= $product['original_price']; ?></span>
                                             </div>
+
                                             <div class="product-action-1 show">
-                                                <!-- Add To Cart Button with Form Submission -->
-                                                <?php
-                                                // Check if the product is already in the cart
-                                                $product_in_cart = false;
-                                                if (isset($_SESSION['cart'])) {
-                                                    foreach ($_SESSION['cart'] as $key => $value) {
-                                                        if ($product['id'] == $value['product_id']) {
-                                                            $product_in_cart = true;
-                                                        }
-                                                    }
-                                                }
-
-                                                
-                                                ?>
-
-                                                <!-- Cart Form -->
                                                 <form id="cartForm_<?= $product['id'] ?>" action="admin/code.php" method="POST">
                                                     <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
                                                     <input type="hidden" name="add_to_cart_btn" value="true" />
@@ -231,10 +201,9 @@
                                                     <input type="hidden" name="image" value="<?= $product['image']; ?>">
                                                     <input type="hidden" name="quantity" value="1">
 
-                                                    <?php if (!$product_in_cart): ?>
+                                                    <?php if ($product['in_cart'] == 0): ?>
                                                         <!-- Show Add to Cart button if the product is not in the cart -->
-                                                        <a aria-label="Add To Cart" class="action-btn hover-up" href="javascript:void(0);"
-                                                            onclick="document.getElementById('cartForm_<?= $product['id'] ?>').submit();">
+                                                        <a aria-label="Add To Cart" class="action-btn hover-up" href="javascript:void(0);" onclick="document.getElementById('cartForm_<?= $product['id'] ?>').submit();">
                                                             <i class="fi-rs-shopping-bag-add"></i>
                                                         </a>
                                                     <?php else: ?>
@@ -242,7 +211,6 @@
                                                         <span class="in-cart-message">Already in Cart</span>
                                                     <?php endif; ?>
                                                 </form>
-
                                             </div>
                                         </div>
                                     </div>
@@ -253,6 +221,7 @@
                             echo "<p>No featured products available</p>";
                         }
                         ?>
+
                     </div>
 
                     <!--End product-grid-4-->
