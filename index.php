@@ -137,7 +137,7 @@
                 <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
                     <div class="row product-grid-4">
                         <?php
-                  a
+                  
                         $user_id = isset($_SESSION['auth_user']) ? $_SESSION['auth_user']['id'] : 0;
 
                         $product_query = "SELECT products.*, categories.name AS category_name, categories.id AS category_id, 
