@@ -132,19 +132,22 @@
                 </ul>
                 <a class="view-more d-none d-md-flex">View More<i class="fi-rs-angle-double-small-right"></i></a>
             </div>
+
+
+
             <!--End nav-tabs-->
             <div class="tab-content wow fadeIn animated" id="myTabContent">
                 <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
                     <div class="row product-grid-4">
                         <?php
-                  
-                  $product_query = "SELECT products.*, categories.name AS category_name, categories.id AS category_id, 
-                  (SELECT COUNT(*) FROM cart WHERE cart.product_id = products.id AND (cart.session_id = '" . session_id() . "' OR cart.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_cart 
-                  FROM products 
-                  LEFT JOIN categories ON products.category_name = categories.name 
-                  WHERE products.status = 1 AND products.featured = 'featured' 
-                  ORDER BY RAND() LIMIT 8";
-                  
+
+                        $product_query = "SELECT products.*, categories.name AS category_name, categories.id AS category_id, 
+                                (SELECT COUNT(*) FROM cart WHERE cart.product_id = products.id AND (cart.session_id = '" . session_id() . "' OR cart.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_cart 
+                                FROM products 
+                                LEFT JOIN categories ON products.category_name = categories.name 
+                                WHERE products.status = 1 AND products.featured = 'featured' 
+                                ORDER BY RAND() LIMIT 8";
+
 
                         $product_query_run = mysqli_query($conn, $product_query);
 
@@ -161,7 +164,9 @@
                                                 </a>
                                             </div>
                                             <div class="product-action-1">
-                                                <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
+                                                <a aria-label="Quick view" class="action-btn hover-up quick-view-btn" data-product-id="<?= $product['id']; ?>" data-bs-toggle="modal" data-bs-target="#quickViewModal">
+                                                    <i class="fi-rs-eye"></i>
+                                                </a>
                                                 <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
                                                 <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
                                             </div>
@@ -219,7 +224,6 @@
                         ?>
 
                     </div>
-
                     <!--End product-grid-4-->
                 </div>
 
@@ -247,8 +251,9 @@
                                                 </a>
                                             </div>
                                             <div class="product-action-1">
-                                                <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-                                                <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+                                                <a aria-label="Quick view" class="action-btn hover-up quick-view-btn" data-product-id="<?= $product['id']; ?>" data-bs-toggle="modal" data-bs-target="#quickViewModal">
+                                                    <i class="fi-rs-eye"></i>
+                                                </a> <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
                                                 <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
@@ -334,8 +339,9 @@
                                                 </a>
                                             </div>
                                             <div class="product-action-1">
-                                                <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-                                                <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+                                                <a aria-label="Quick view" class="action-btn hover-up quick-view-btn" data-product-id="<?= $product['id']; ?>" data-bs-toggle="modal" data-bs-target="#quickViewModal">
+                                                    <i class="fi-rs-eye"></i>
+                                                </a> <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
                                                 <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
@@ -422,8 +428,9 @@
                                                 </a>
                                             </div>
                                             <div class="product-action-1">
-                                                <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-                                                <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+                                                <a aria-label="Quick view" class="action-btn hover-up quick-view-btn" data-product-id="<?= $product['id']; ?>" data-bs-toggle="modal" data-bs-target="#quickViewModal">
+                                                    <i class="fi-rs-eye"></i>
+                                                </a> <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
                                                 <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
@@ -508,8 +515,9 @@
                                                 </a>
                                             </div>
                                             <div class="product-action-1">
-                                                <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-                                                <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+                                                <a aria-label="Quick view" class="action-btn hover-up quick-view-btn" data-product-id="<?= $product['id']; ?>" data-bs-toggle="modal" data-bs-target="#quickViewModal">
+                                                    <i class="fi-rs-eye"></i>
+                                                </a> <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
                                                 <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
@@ -679,8 +687,9 @@
                                         </a>
                                     </div>
                                     <div class="product-action-1">
-                                        <a aria-label="Quick view" class="action-btn small hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
-                                            <i class="fi-rs-eye"></i></a>
+                                        <a aria-label="Quick view" class="action-btn hover-up quick-view-btn" data-product-id="<?= $product['id']; ?>" data-bs-toggle="modal" data-bs-target="#quickViewModal">
+                                            <i class="fi-rs-eye"></i>
+                                        </a>
                                         <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="shop-wishlist.html" tabindex="0"><i class="fi-rs-heart"></i></a>
                                         <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html" tabindex="0"><i class="fi-rs-shuffle"></i></a>
                                     </div>
@@ -1240,4 +1249,46 @@
         </div>
     </section>
 </main>
+
+<div class="modal fade" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="quickViewModalLabel">Product Quick View</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="quick-view-content">
+                    <p class="text-center">Loading product details...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $(".quick-view-btn").click(function() {
+            var productId = $(this).data("product-id");
+
+            // Show loading message
+            $("#quick-view-content").html('<p class="text-center">Loading product details...</p>');
+
+            // Fetch product details via AJAX
+            $.ajax({
+                url: "ajax/fetch_product.php",
+                type: "POST",
+                data: {
+                    product_id: productId
+                },
+                success: function(response) {
+                    $("#quick-view-content").html(response);
+                },
+                error: function() {
+                    $("#quick-view-content").html('<p class="text-danger text-center">Failed to load product details.</p>');
+                }
+            });
+        });
+    });
+</script>
 <?php include 'includes/footer.php'; ?>
