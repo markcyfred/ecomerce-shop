@@ -138,17 +138,13 @@
                     <div class="row product-grid-4">
                         <?php
                   
-                        $user_id = isset($_SESSION['auth_user']) ? $_SESSION['auth_user']['id'] : 0;
-
-                        $product_query = "SELECT products.*, categories.name AS category_name, categories.id AS category_id, 
-                                         (SELECT COUNT(*) FROM cart WHERE cart.product_id = products.id 
-                                             AND (cart.session_id = '$session_id' 
-                                             OR (cart.user_id IS NOT NULL AND cart.user_id = '$user_id'))
-                                         ) AS in_cart 
-                                         FROM products 
-                                         LEFT JOIN categories ON products.category_name = categories.name 
-                                         WHERE products.status = 1 AND products.featured = 'featured' 
-                                         ORDER BY RAND() LIMIT 8";
+                  $product_query = "SELECT products.*, categories.name AS category_name, categories.id AS category_id, 
+                  (SELECT COUNT(*) FROM cart WHERE cart.product_id = products.id AND (cart.session_id = '" . session_id() . "' OR cart.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_cart 
+                  FROM products 
+                  LEFT JOIN categories ON products.category_name = categories.name 
+                  WHERE products.status = 1 AND products.featured = 'featured' 
+                  ORDER BY RAND() LIMIT 8";
+                  
 
                         $product_query_run = mysqli_query($conn, $product_query);
 

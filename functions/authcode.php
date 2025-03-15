@@ -5,9 +5,15 @@ include '../admin/config/dbcon.php';
 if (isset($_POST['register'])) {
     // Validate required fields
     $requiredFields = [
-        'first_name', 'last_name', 'email', 'phone',
-        'street_address', 'city', 'postal_code',
-        'password', 'confirm_password'
+        'first_name',
+        'last_name',
+        'email',
+        'phone',
+        'street_address',
+        'city',
+        'postal_code',
+        'password',
+        'confirm_password'
     ];
 
     $emptyFields = [];
@@ -138,42 +144,46 @@ if (isset($_POST['login'])) {
             header('location: ../login.php');
             exit;
         }
-
-        // Verify the entered password with the stored hashed password
         if (password_verify($password, $user_data['password'])) {
             $_SESSION['auth'] = true;
-
+        
             // User data to be stored in the session
             $user_id = $user_data['id'];
             $user_email = $user_data['email'];
-            $user_first_name = $user_data['first_name'];
-            $user_last_name = $user_data['last_name'];
-            $user_display_name = $user_data['display_name'];
-            $user_role = $user_data['role_as'];
-            $user_phone = $user_data['phone'];
-            $user_city = $user_data['city'];
-            $user_street_address = $user_data['street_address'];
-            $user_postal_code = $user_data['postal_code'];
-            $user_additional_info = $user_data['additional_info'];
-            $user_profile_picture = $user_data['profile_picture'];
-
+        
             // Set session variables
             $_SESSION['auth_user'] = [
                 'id' => $user_id,
                 'email' => $user_email,
-                'first_name' => $user_first_name,
-                'last_name' => $user_last_name,
-                'display_name' => $user_display_name,
-                'phone' => $user_phone,
-                'city' => $user_city,
-                'street_address' => $user_street_address,
-                'postal_code' => $user_postal_code,
-                'additional_info' => $user_additional_info,
-                'profile_picture' => $user_profile_picture
+                // Other user details...
             ];
-
-            $_SESSION['role_as'] = $user_role;
-
+        
+            // Now, update the cart for this user
+            $session_id = session_id(); // Get the session ID of the user
+            $update_cart_query = "
+                UPDATE cart
+                SET user_id = ?, email = ?
+                WHERE session_id = ? AND user_id IS NULL"; // Only update items that have user_id = NULL
+        
+            if ($stmt = mysqli_prepare($conn, $update_cart_query)) {
+                // Bind parameters to update cart with user data
+                mysqli_stmt_bind_param($stmt, 'iss', $user_id, $user_email, $session_id);
+                
+                if (mysqli_stmt_execute($stmt)) {
+                    // Optional: redirect or show success
+                    // You could redirect to the cart page, or wherever you'd like after login
+                    $_SESSION['message'] = "Cart updated with your details";
+                    $_SESSION['messageType'] = "success";
+                } else {
+                    error_log("MySQL Error: " . mysqli_error($conn));
+                }
+        
+                // Close prepared statement
+                mysqli_stmt_close($stmt);
+            } else {
+                error_log("MySQL Prepare Error: " . mysqli_error($conn));
+            }
+        
             // Redirect based on the role
             if ($user_role == '1') {
                 $_SESSION['message'] = "Welcome to Admin dashboard";
@@ -188,6 +198,8 @@ if (isset($_POST['login'])) {
                 $_SESSION['messageType'] = "success";
                 header('location: ../index.php');
             }
+        
+        
         } else {
             // Invalid password
             $_SESSION['message'] = "Invalid credentials";
@@ -274,54 +286,54 @@ if (isset($_POST['verify_user_email'])) {
         $_SESSION['messageType'] = "error";
         header('location: ../reset.php');
     }
-    }
+}
 
-    //updte the user password after verification
-    if (isset($_POST['update_user_password'])) {
-        // Check if the session variables are set (verification)
-        if (isset($_SESSION['email'])) {
-            $email = $_SESSION['email'];
-    
-            // Retrieve the new password and confirm new password from the form
-            $new_password = mysqli_real_escape_string($conn, $_POST['new_password']);
-            $confirm_new_password = mysqli_real_escape_string($conn, $_POST['confirm_new_password']);
-    
-            // Check if the passwords match
-            if ($new_password === $confirm_new_password) {
-                // Hash the new password before updating
-                $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-    
-                // Update the user's password in the database
-                $update_password_query = "UPDATE `users` SET `password`='$hashed_password' WHERE `email`='$email'";
-                $update_password_result = mysqli_query($conn, $update_password_query);
-    
-                if ($update_password_result) {
-                    // Password updated successfully
-                    $_SESSION['message'] = "Password updated successfully";
-                    $_SESSION['messageType'] = "success";
-                    // Clear the email session variable
-                    unset($_SESSION['email']);
-                    header('location: ../login.php'); // Redirect to login page or any other appropriate page
-                    exit();
-                } else {
-                    // Failed to update password
-                    $_SESSION['message'] = "Failed to update password";
-                    $_SESSION['messageType'] = "error";
-                    header('location: ../reset_password.php');
-                    exit();
-                }
+//updte the user password after verification
+if (isset($_POST['update_user_password'])) {
+    // Check if the session variables are set (verification)
+    if (isset($_SESSION['email'])) {
+        $email = $_SESSION['email'];
+
+        // Retrieve the new password and confirm new password from the form
+        $new_password = mysqli_real_escape_string($conn, $_POST['new_password']);
+        $confirm_new_password = mysqli_real_escape_string($conn, $_POST['confirm_new_password']);
+
+        // Check if the passwords match
+        if ($new_password === $confirm_new_password) {
+            // Hash the new password before updating
+            $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+
+            // Update the user's password in the database
+            $update_password_query = "UPDATE `users` SET `password`='$hashed_password' WHERE `email`='$email'";
+            $update_password_result = mysqli_query($conn, $update_password_query);
+
+            if ($update_password_result) {
+                // Password updated successfully
+                $_SESSION['message'] = "Password updated successfully";
+                $_SESSION['messageType'] = "success";
+                // Clear the email session variable
+                unset($_SESSION['email']);
+                header('location: ../login.php'); // Redirect to login page or any other appropriate page
+                exit();
             } else {
-                // Passwords don't match
-                $_SESSION['message'] = "Passwords do not match";
+                // Failed to update password
+                $_SESSION['message'] = "Failed to update password";
                 $_SESSION['messageType'] = "error";
                 header('location: ../reset_password.php');
                 exit();
             }
         } else {
-            // Session variables not set (verification not done)
-            $_SESSION['message'] = "Email verification not done";
+            // Passwords don't match
+            $_SESSION['message'] = "Passwords do not match";
             $_SESSION['messageType'] = "error";
-            header('location: ../reset.php');
+            header('location: ../reset_password.php');
             exit();
         }
+    } else {
+        // Session variables not set (verification not done)
+        $_SESSION['message'] = "Email verification not done";
+        $_SESSION['messageType'] = "error";
+        header('location: ../reset.php');
+        exit();
     }
+}
