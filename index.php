@@ -141,12 +141,22 @@
                     <div class="row product-grid-4">
                         <?php
 
-                        $product_query = "SELECT products.*, categories.name AS category_name, categories.id AS category_id, 
-                                (SELECT COUNT(*) FROM cart WHERE cart.product_id = products.id AND (cart.session_id = '" . session_id() . "' OR cart.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_cart 
-                                FROM products 
-                                LEFT JOIN categories ON products.category_name = categories.name 
-                                WHERE products.status = 1 AND products.featured = 'featured' 
-                                ORDER BY RAND() LIMIT 8";
+                        $product_query = "SELECT products.*, 
+                        categories.name AS category_name, 
+                        categories.id AS category_id, 
+                        (SELECT COUNT(*) FROM cart 
+                        WHERE cart.product_id = products.id 
+                        AND (cart.session_id = '" . session_id() . "' OR cart.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_cart, 
+
+                        (SELECT COUNT(*) FROM favorite 
+                        WHERE favorite.product_id = products.id 
+                        AND (favorite.session_id = '" . session_id() . "' OR favorite.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_favorite 
+                        
+                        FROM products 
+                        LEFT JOIN categories ON products.category_name = categories.name 
+                        WHERE products.status = 1 AND products.featured = 'featured' 
+                        ORDER BY RAND() LIMIT 8";
+
 
 
                         $product_query_run = mysqli_query($conn, $product_query);
@@ -167,8 +177,21 @@
                                                 <a aria-label="Quick view" class="action-btn hover-up quick-view-btn" data-product-id="<?= $product['id']; ?>" data-bs-toggle="modal" data-bs-target="#quickViewModal">
                                                     <i class="fi-rs-eye"></i>
                                                 </a>
-                                                <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                <a aria-label="Add To Favorite" class="action-btn hover-up favorite-btn"
+                                                    href="javascript:void(0);"
+                                                    data-product-id="<?= $product['id']; ?>"
+                                                    data-product-name="<?= $product['product_name']; ?>"
+                                                    data-selling-price="<?= $product['selling_price']; ?>"
+                                                    data-image="<?= $product['image']; ?>">
+                                                    <?php if ($product['in_favorite'] > 0): ?>
+                                                        <i class="fi-rs-check"></i>
+                                                    <?php else: ?>
+                                                        <i class="fi-rs-heart"></i>
+                                                    <?php endif; ?>
+                                                </a>
+
+
+
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="new">
@@ -194,7 +217,7 @@
                                             </div>
 
                                             <div class="product-action-1 show">
-                                                <form id="cartForm_<?= $product['id'] ?>" action="admin/code.php" method="POST">
+                                                <form id="cartForm_<?= $product['id'] ?>" method="POST">
                                                     <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
                                                     <input type="hidden" name="add_to_cart_btn" value="true" />
                                                     <input type="hidden" name="product_name" value="<?= $product['product_name']; ?>">
@@ -203,16 +226,15 @@
                                                     <input type="hidden" name="quantity" value="1">
 
                                                     <?php if ($product['in_cart'] == 0): ?>
-                                                        <!-- Show Add to Cart button if the product is not in the cart -->
-                                                        <a aria-label="Add To Cart" class="action-btn hover-up" href="javascript:void(0);" onclick="document.getElementById('cartForm_<?= $product['id'] ?>').submit();">
+                                                        <a aria-label="Add To Cart" class="action-btn hover-up" href="javascript:void(0);" onclick="addToCart('cartForm_<?= $product['id'] ?>');">
                                                             <i class="fi-rs-shopping-bag-add"></i>
                                                         </a>
                                                     <?php else: ?>
-                                                        <!-- Show message if the product is already in the cart -->
                                                         <span class="in-cart-message">Already in Cart</span>
                                                     <?php endif; ?>
                                                 </form>
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -231,11 +253,25 @@
                 <div class="tab-pane fade" id="tab-two" role="tabpanel" aria-labelledby="tab-two">
                     <div class="row product-grid-4">
                         <?php
-                        $product_query = "SELECT products.*, categories.name AS category_name, categories.id AS category_id 
-                                FROM products 
-                                LEFT JOIN categories ON products.category_name = categories.name 
-                                WHERE products.status = 1 AND products.featured = 'popular' 
-                                ORDER BY RAND() LIMIT 8";
+
+                        $product_query = "SELECT products.*, 
+                            categories.name AS category_name, 
+                            categories.id AS category_id, 
+                            (SELECT COUNT(*) FROM cart 
+                            WHERE cart.product_id = products.id 
+                            AND (cart.session_id = '" . session_id() . "' OR cart.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_cart, 
+
+                            (SELECT COUNT(*) FROM favorite 
+                            WHERE favorite.product_id = products.id 
+                            AND (favorite.session_id = '" . session_id() . "' OR favorite.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_favorite 
+
+                            FROM products 
+                            LEFT JOIN categories ON products.category_name = categories.name 
+                            WHERE products.status = 1 AND products.featured = 'popular' 
+                            ORDER BY RAND() LIMIT 8";
+
+
+
                         $product_query_run = mysqli_query($conn, $product_query);
 
                         if (mysqli_num_rows($product_query_run) > 0) {
@@ -253,8 +289,19 @@
                                             <div class="product-action-1">
                                                 <a aria-label="Quick view" class="action-btn hover-up quick-view-btn" data-product-id="<?= $product['id']; ?>" data-bs-toggle="modal" data-bs-target="#quickViewModal">
                                                     <i class="fi-rs-eye"></i>
-                                                </a> <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                </a>
+                                                <a aria-label="Add To Favorite" class="action-btn hover-up favorite-btn"
+                                                    href="javascript:void(0);"
+                                                    data-product-id="<?= $product['id']; ?>"
+                                                    data-product-name="<?= $product['product_name']; ?>"
+                                                    data-selling-price="<?= $product['selling_price']; ?>"
+                                                    data-image="<?= $product['image']; ?>">
+                                                    <?php if ($product['in_favorite'] > 0): ?>
+                                                        <i class="fi-rs-check"></i>
+                                                    <?php else: ?>
+                                                        <i class="fi-rs-heart"></i>
+                                                    <?php endif; ?>
+                                                </a>
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="hot">
@@ -301,7 +348,22 @@
                                                 <span class="old-price">Kes<?= $product['original_price']; ?></span>
                                             </div>
                                             <div class="product-action-1 show">
-                                                <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
+                                                <form id="cartForm_<?= $product['id'] ?>" method="POST">
+                                                    <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
+                                                    <input type="hidden" name="add_to_cart_btn" value="true" />
+                                                    <input type="hidden" name="product_name" value="<?= $product['product_name']; ?>">
+                                                    <input type="hidden" name="selling_price" value="<?= $product['selling_price']; ?>">
+                                                    <input type="hidden" name="image" value="<?= $product['image']; ?>">
+                                                    <input type="hidden" name="quantity" value="1">
+
+                                                    <?php if ($product['in_cart'] == 0): ?>
+                                                        <a aria-label="Add To Cart" class="action-btn hover-up" href="javascript:void(0);" onclick="addToCart('cartForm_<?= $product['id'] ?>');">
+                                                            <i class="fi-rs-shopping-bag-add"></i>
+                                                        </a>
+                                                    <?php else: ?>
+                                                        <span class="in-cart-message">Already in Cart</span>
+                                                    <?php endif; ?>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
@@ -320,15 +382,30 @@
 
                     <div class="row product-grid-4">
                         <?php
-                        $product_query = "SELECT products.*, categories.name AS category_name, categories.id AS category_id 
-                                FROM products 
-                                LEFT JOIN categories ON products.category_name = categories.name 
-                                WHERE products.status = 1 AND products.featured = 'new' 
-                                ORDER BY RAND() LIMIT 8";
+
+                        $product_query = "SELECT products.*, 
+                            categories.name AS category_name, 
+                            categories.id AS category_id, 
+                            (SELECT COUNT(*) FROM cart 
+                            WHERE cart.product_id = products.id 
+                            AND (cart.session_id = '" . session_id() . "' OR cart.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_cart, 
+
+                            (SELECT COUNT(*) FROM favorite 
+                            WHERE favorite.product_id = products.id 
+                            AND (favorite.session_id = '" . session_id() . "' OR favorite.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_favorite 
+
+                            FROM products 
+                            LEFT JOIN categories ON products.category_name = categories.name 
+                            WHERE products.status = 1 AND products.featured = 'new' 
+                            ORDER BY RAND() LIMIT 8";
+
+
+
                         $product_query_run = mysqli_query($conn, $product_query);
 
                         if (mysqli_num_rows($product_query_run) > 0) {
                             while ($product = mysqli_fetch_assoc($product_query_run)) {
+
                         ?>
                                 <div class="col-lg-3 col-md-4 col-12 col-sm-6">
                                     <div class="product-cart-wrap mb-30">
@@ -341,8 +418,20 @@
                                             <div class="product-action-1">
                                                 <a aria-label="Quick view" class="action-btn hover-up quick-view-btn" data-product-id="<?= $product['id']; ?>" data-bs-toggle="modal" data-bs-target="#quickViewModal">
                                                     <i class="fi-rs-eye"></i>
-                                                </a> <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                </a>
+                                                <a aria-label="Add To Favorite" class="action-btn hover-up favorite-btn"
+                                                    href="javascript:void(0);"
+                                                    data-product-id="<?= $product['id']; ?>"
+                                                    data-product-name="<?= $product['product_name']; ?>"
+                                                    data-selling-price="<?= $product['selling_price']; ?>"
+                                                    data-image="<?= $product['image']; ?>">
+                                                    <?php if ($product['in_favorite'] > 0): ?>
+                                                        <i class="fi-rs-check"></i>
+                                                    <?php else: ?>
+                                                        <i class="fi-rs-heart"></i>
+                                                    <?php endif; ?>
+                                                </a>
+
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="hot">
@@ -389,7 +478,22 @@
                                                 <span class="old-price">Kes<?= $product['original_price']; ?></span>
                                             </div>
                                             <div class="product-action-1 show">
-                                                <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
+                                                <form id="cartForm_<?= $product['id'] ?>" method="POST">
+                                                    <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
+                                                    <input type="hidden" name="add_to_cart_btn" value="true" />
+                                                    <input type="hidden" name="product_name" value="<?= $product['product_name']; ?>">
+                                                    <input type="hidden" name="selling_price" value="<?= $product['selling_price']; ?>">
+                                                    <input type="hidden" name="image" value="<?= $product['image']; ?>">
+                                                    <input type="hidden" name="quantity" value="1">
+
+                                                    <?php if ($product['in_cart'] == 0): ?>
+                                                        <a aria-label="Add To Cart" class="action-btn hover-up" href="javascript:void(0);" onclick="addToCart('cartForm_<?= $product['id'] ?>');">
+                                                            <i class="fi-rs-shopping-bag-add"></i>
+                                                        </a>
+                                                    <?php else: ?>
+                                                        <span class="in-cart-message">Already in Cart</span>
+                                                    <?php endif; ?>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
@@ -408,16 +512,29 @@
                 <div class="tab-pane fade" id="tab-four" role="tabpanel" aria-labelledby="tab-four">
                     <div class="row product-grid-4">
                         <?php
+                        $product_query = "SELECT products.*, 
+                        categories.name AS category_name, 
+                            categories.id AS category_id, 
+                            (SELECT COUNT(*) FROM cart 
+                            WHERE cart.product_id = products.id 
+                            AND (cart.session_id = '" . session_id() . "' OR cart.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_cart, 
 
-                        $product_query = "SELECT products.*, categories.name AS category_name, categories.id AS category_id 
-                        FROM products 
-                        LEFT JOIN categories ON products.category_name = categories.name 
-                        WHERE products.status = 1 AND products.featured = 'trending' 
-                        ORDER BY RAND() LIMIT 8";
+                            (SELECT COUNT(*) FROM favorite 
+                            WHERE favorite.product_id = products.id 
+                            AND (favorite.session_id = '" . session_id() . "' OR favorite.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_favorite 
+                            
+                            FROM products 
+                            LEFT JOIN categories ON products.category_name = categories.name 
+                            WHERE products.status = 1 AND products.featured = 'tranding' 
+                            ORDER BY RAND() LIMIT 8";
+
+
+
                         $product_query_run = mysqli_query($conn, $product_query);
 
                         if (mysqli_num_rows($product_query_run) > 0) {
                             while ($product = mysqli_fetch_assoc($product_query_run)) {
+
                         ?>
                                 <div class="col-lg-3 col-md-4 col-12 col-sm-6">
                                     <div class="product-cart-wrap mb-30">
@@ -430,8 +547,20 @@
                                             <div class="product-action-1">
                                                 <a aria-label="Quick view" class="action-btn hover-up quick-view-btn" data-product-id="<?= $product['id']; ?>" data-bs-toggle="modal" data-bs-target="#quickViewModal">
                                                     <i class="fi-rs-eye"></i>
-                                                </a> <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                </a>
+                                                <a aria-label="Add To Favorite" class="action-btn hover-up favorite-btn"
+                                                    href="javascript:void(0);"
+                                                    data-product-id="<?= $product['id']; ?>"
+                                                    data-product-name="<?= $product['product_name']; ?>"
+                                                    data-selling-price="<?= $product['selling_price']; ?>"
+                                                    data-image="<?= $product['image']; ?>">
+                                                    <?php if ($product['in_favorite'] > 0): ?>
+                                                        <i class="fi-rs-check"></i>
+                                                    <?php else: ?>
+                                                        <i class="fi-rs-heart"></i>
+                                                    <?php endif; ?>
+                                                </a>
+
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="hot">
@@ -478,7 +607,22 @@
                                                 <span class="old-price">Kes<?= $product['original_price']; ?></span>
                                             </div>
                                             <div class="product-action-1 show">
-                                                <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
+                                                <form id="cartForm_<?= $product['id'] ?>" method="POST">
+                                                    <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
+                                                    <input type="hidden" name="add_to_cart_btn" value="true" />
+                                                    <input type="hidden" name="product_name" value="<?= $product['product_name']; ?>">
+                                                    <input type="hidden" name="selling_price" value="<?= $product['selling_price']; ?>">
+                                                    <input type="hidden" name="image" value="<?= $product['image']; ?>">
+                                                    <input type="hidden" name="quantity" value="1">
+
+                                                    <?php if ($product['in_cart'] == 0): ?>
+                                                        <a aria-label="Add To Cart" class="action-btn hover-up" href="javascript:void(0);" onclick="addToCart('cartForm_<?= $product['id'] ?>');">
+                                                            <i class="fi-rs-shopping-bag-add"></i>
+                                                        </a>
+                                                    <?php else: ?>
+                                                        <span class="in-cart-message">Already in Cart</span>
+                                                    <?php endif; ?>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
@@ -495,16 +639,29 @@
                 <div class="tab-pane fade" id="tab-five" role="tabpanel" aria-labelledby="tab-five">
                     <div class="row product-grid-4">
                         <?php
-                        // Fetch a maximum of 8 randomly selected products where `featured` is 'featured'
-                        $product_query = "SELECT products.*, categories.name AS category_name, categories.id AS category_id 
-                      FROM products 
-                      LEFT JOIN categories ON products.category_name = categories.name 
-                      WHERE products.status = 1 AND products.featured = 'best_selling' 
-                      ORDER BY RAND() LIMIT 8";
+                        $product_query = "SELECT products.*, 
+                         categories.name AS category_name, 
+                         categories.id AS category_id, 
+                         (SELECT COUNT(*) FROM cart 
+                         WHERE cart.product_id = products.id 
+                         AND (cart.session_id = '" . session_id() . "' OR cart.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_cart, 
+ 
+                         (SELECT COUNT(*) FROM favorite 
+                         WHERE favorite.product_id = products.id 
+                         AND (favorite.session_id = '" . session_id() . "' OR favorite.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_favorite 
+                         
+                         FROM products 
+                         LEFT JOIN categories ON products.category_name = categories.name 
+                         WHERE products.status = 1 AND products.featured = 'best_selling' 
+                         ORDER BY RAND() LIMIT 8";
+
+
+
                         $product_query_run = mysqli_query($conn, $product_query);
 
                         if (mysqli_num_rows($product_query_run) > 0) {
                             while ($product = mysqli_fetch_assoc($product_query_run)) {
+
                         ?>
                                 <div class="col-lg-3 col-md-4 col-12 col-sm-6">
                                     <div class="product-cart-wrap mb-30">
@@ -517,8 +674,20 @@
                                             <div class="product-action-1">
                                                 <a aria-label="Quick view" class="action-btn hover-up quick-view-btn" data-product-id="<?= $product['id']; ?>" data-bs-toggle="modal" data-bs-target="#quickViewModal">
                                                     <i class="fi-rs-eye"></i>
-                                                </a> <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                </a>
+                                                <a aria-label="Add To Favorite" class="action-btn hover-up favorite-btn"
+                                                    href="javascript:void(0);"
+                                                    data-product-id="<?= $product['id']; ?>"
+                                                    data-product-name="<?= $product['product_name']; ?>"
+                                                    data-selling-price="<?= $product['selling_price']; ?>"
+                                                    data-image="<?= $product['image']; ?>">
+                                                    <?php if ($product['in_favorite'] > 0): ?>
+                                                        <i class="fi-rs-check"></i>
+                                                    <?php else: ?>
+                                                        <i class="fi-rs-heart"></i>
+                                                    <?php endif; ?>
+                                                </a>
+
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="hot">
@@ -565,7 +734,22 @@
                                                 <span class="old-price">Kes<?= $product['original_price']; ?></span>
                                             </div>
                                             <div class="product-action-1 show">
-                                                <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
+                                                <form id="cartForm_<?= $product['id'] ?>" method="POST">
+                                                    <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
+                                                    <input type="hidden" name="add_to_cart_btn" value="true" />
+                                                    <input type="hidden" name="product_name" value="<?= $product['product_name']; ?>">
+                                                    <input type="hidden" name="selling_price" value="<?= $product['selling_price']; ?>">
+                                                    <input type="hidden" name="image" value="<?= $product['image']; ?>">
+                                                    <input type="hidden" name="quantity" value="1">
+
+                                                    <?php if ($product['in_cart'] == 0): ?>
+                                                        <a aria-label="Add To Cart" class="action-btn hover-up" href="javascript:void(0);" onclick="addToCart('cartForm_<?= $product['id'] ?>');">
+                                                            <i class="fi-rs-shopping-bag-add"></i>
+                                                        </a>
+                                                    <?php else: ?>
+                                                        <span class="in-cart-message">Already in Cart</span>
+                                                    <?php endif; ?>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
@@ -671,8 +855,25 @@
                 <div class="slider-arrow slider-arrow-2 carausel-6-columns-arrow" id="carausel-6-columns-2-arrows"></div>
                 <div class="carausel-6-columns carausel-arrow-center" id="carausel-6-columns-2">
                     <?php
-                    // Fetch a maximum of 8 randomly selected products where `featured` is 'featured'
-                    $product_query = "SELECT * FROM products WHERE status = 1 AND featured = 'new' ORDER BY RAND() LIMIT 8";
+
+                    $product_query = "SELECT products.*, 
+                            categories.name AS category_name, 
+                            categories.id AS category_id, 
+                            (SELECT COUNT(*) FROM cart 
+                            WHERE cart.product_id = products.id 
+                            AND (cart.session_id = '" . session_id() . "' OR cart.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_cart, 
+    
+                            (SELECT COUNT(*) FROM favorite 
+                            WHERE favorite.product_id = products.id 
+                            AND (favorite.session_id = '" . session_id() . "' OR favorite.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_favorite 
+                            
+                            FROM products 
+                            LEFT JOIN categories ON products.category_name = categories.name 
+                            WHERE products.status = 1 AND products.featured = 'new' 
+                            ORDER BY RAND() LIMIT 8";
+
+
+
                     $product_query_run = mysqli_query($conn, $product_query);
 
                     if (mysqli_num_rows($product_query_run) > 0) {
@@ -690,8 +891,18 @@
                                         <a aria-label="Quick view" class="action-btn hover-up quick-view-btn" data-product-id="<?= $product['id']; ?>" data-bs-toggle="modal" data-bs-target="#quickViewModal">
                                             <i class="fi-rs-eye"></i>
                                         </a>
-                                        <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="shop-wishlist.html" tabindex="0"><i class="fi-rs-heart"></i></a>
-                                        <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html" tabindex="0"><i class="fi-rs-shuffle"></i></a>
+                                        <a aria-label="Add To Favorite" class="action-btn hover-up favorite-btn"
+                                            href="javascript:void(0);"
+                                            data-product-id="<?= $product['id']; ?>"
+                                            data-product-name="<?= $product['product_name']; ?>"
+                                            data-selling-price="<?= $product['selling_price']; ?>"
+                                            data-image="<?= $product['image']; ?>">
+                                            <?php if ($product['in_favorite'] > 0): ?>
+                                                <i class="fi-rs-check"></i>
+                                            <?php else: ?>
+                                                <i class="fi-rs-heart"></i>
+                                            <?php endif; ?>
+                                        </a>
                                     </div>
                                     <div class="product-badges product-badges-position product-badges-mrg">
                                         <span class="hot">
@@ -850,11 +1061,24 @@
                                 <div class="carausel-4-columns carausel-arrow-center" id="carausel-4-columns">
                                     <?php
 
-                                    $product_query = "SELECT products.*, categories.name AS category_name, categories.id AS category_id 
-                                            FROM products 
-                                            LEFT JOIN categories ON products.category_name = categories.name 
-                                            WHERE products.status = 1 AND products.featured = 'featured' 
-                                            ORDER BY RAND() LIMIT 8";
+                                    $product_query = "SELECT products.*, 
+                                        categories.name AS category_name, 
+                                        categories.id AS category_id, 
+                                        (SELECT COUNT(*) FROM cart 
+                                        WHERE cart.product_id = products.id 
+                                        AND (cart.session_id = '" . session_id() . "' OR cart.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_cart, 
+
+                                        (SELECT COUNT(*) FROM favorite 
+                                        WHERE favorite.product_id = products.id 
+                                        AND (favorite.session_id = '" . session_id() . "' OR favorite.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_favorite 
+
+                                        FROM products 
+                                        LEFT JOIN categories ON products.category_name = categories.name 
+                                        WHERE products.status = 1 AND products.featured = 'featured' 
+                                        ORDER BY RAND() LIMIT 8";
+
+
+
                                     $product_query_run = mysqli_query($conn, $product_query);
 
                                     if (mysqli_num_rows($product_query_run) > 0) {
@@ -868,10 +1092,21 @@
                                                         </a>
                                                     </div>
                                                     <div class="product-action-1">
-                                                        <a aria-label="Quick view" class="action-btn small hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
-                                                            <i class="fi-rs-eye"></i></a>
-                                                        <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                        <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                        <a aria-label="Quick view" class="action-btn hover-up quick-view-btn" data-product-id="<?= $product['id']; ?>" data-bs-toggle="modal" data-bs-target="#quickViewModal">
+                                                            <i class="fi-rs-eye"></i>
+                                                        </a>
+                                                        <a aria-label="Add To Favorite" class="action-btn hover-up favorite-btn"
+                                                            href="javascript:void(0);"
+                                                            data-product-id="<?= $product['id']; ?>"
+                                                            data-product-name="<?= $product['product_name']; ?>"
+                                                            data-selling-price="<?= $product['selling_price']; ?>"
+                                                            data-image="<?= $product['image']; ?>">
+                                                            <?php if ($product['in_favorite'] > 0): ?>
+                                                                <i class="fi-rs-check"></i>
+                                                            <?php else: ?>
+                                                                <i class="fi-rs-heart"></i>
+                                                            <?php endif; ?>
+                                                        </a>
                                                     </div>
                                                     <div class="product-badges product-badges-position product-badges-mrg">
                                                         <span class="hot">
@@ -918,7 +1153,22 @@
                                                         <span class="old-price">Kes<?= $product['original_price']; ?></span>
                                                     </div>
                                                     <div class="product-action-1 show">
-                                                        <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
+                                                        <form id="cartForm_<?= $product['id'] ?>" method="POST">
+                                                            <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
+                                                            <input type="hidden" name="add_to_cart_btn" value="true" />
+                                                            <input type="hidden" name="product_name" value="<?= $product['product_name']; ?>">
+                                                            <input type="hidden" name="selling_price" value="<?= $product['selling_price']; ?>">
+                                                            <input type="hidden" name="image" value="<?= $product['image']; ?>">
+                                                            <input type="hidden" name="quantity" value="1">
+
+                                                            <?php if ($product['in_cart'] == 0): ?>
+                                                                <a aria-label="Add To Cart" class="action-btn hover-up" href="javascript:void(0);" onclick="addToCart('cartForm_<?= $product['id'] ?>');">
+                                                                    <i class="fi-rs-shopping-bag-add"></i>
+                                                                </a>
+                                                            <?php else: ?>
+                                                                <span class="in-cart-message">Already in Cart</span>
+                                                            <?php endif; ?>
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </div>
@@ -939,11 +1189,24 @@
                                 <div class="carausel-4-columns carausel-arrow-center" id="carausel-4-columns-2">
                                     <?php
 
-                                    $product_query = "SELECT products.*, categories.name AS category_name, categories.id AS category_id 
-                                    FROM products 
-                                    LEFT JOIN categories ON products.category_name = categories.name 
-                                    WHERE products.status = 1 AND products.featured = 'popular' 
-                                    ORDER BY RAND() LIMIT 8";
+                                    $product_query = "SELECT products.*, 
+                                        categories.name AS category_name, 
+                                        categories.id AS category_id, 
+                                        (SELECT COUNT(*) FROM cart 
+                                        WHERE cart.product_id = products.id 
+                                        AND (cart.session_id = '" . session_id() . "' OR cart.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_cart, 
+
+                                        (SELECT COUNT(*) FROM favorite 
+                                        WHERE favorite.product_id = products.id 
+                                        AND (favorite.session_id = '" . session_id() . "' OR favorite.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_favorite 
+
+                                        FROM products 
+                                        LEFT JOIN categories ON products.category_name = categories.name 
+                                        WHERE products.status = 1 AND products.featured = 'popular' 
+                                        ORDER BY RAND() LIMIT 8";
+
+
+
                                     $product_query_run = mysqli_query($conn, $product_query);
 
                                     if (mysqli_num_rows($product_query_run) > 0) {
@@ -959,8 +1222,18 @@
                                                     <div class="product-action-1">
                                                         <a aria-label="Quick view" class="action-btn small hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
                                                             <i class="fi-rs-eye"></i></a>
-                                                        <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                        <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                        <a aria-label="Add To Favorite" class="action-btn hover-up favorite-btn"
+                                                            href="javascript:void(0);"
+                                                            data-product-id="<?= $product['id']; ?>"
+                                                            data-product-name="<?= $product['product_name']; ?>"
+                                                            data-selling-price="<?= $product['selling_price']; ?>"
+                                                            data-image="<?= $product['image']; ?>">
+                                                            <?php if ($product['in_favorite'] > 0): ?>
+                                                                <i class="fi-rs-check"></i>
+                                                            <?php else: ?>
+                                                                <i class="fi-rs-heart"></i>
+                                                            <?php endif; ?>
+                                                        </a>
                                                     </div>
                                                     <div class="product-badges product-badges-position product-badges-mrg">
                                                         <span class="hot">
@@ -1007,7 +1280,22 @@
                                                         <span class="old-price">Kes<?= $product['original_price']; ?></span>
                                                     </div>
                                                     <div class="product-action-1 show">
-                                                        <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
+                                                        <form id="cartForm_<?= $product['id'] ?>" method="POST">
+                                                            <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
+                                                            <input type="hidden" name="add_to_cart_btn" value="true" />
+                                                            <input type="hidden" name="product_name" value="<?= $product['product_name']; ?>">
+                                                            <input type="hidden" name="selling_price" value="<?= $product['selling_price']; ?>">
+                                                            <input type="hidden" name="image" value="<?= $product['image']; ?>">
+                                                            <input type="hidden" name="quantity" value="1">
+
+                                                            <?php if ($product['in_cart'] == 0): ?>
+                                                                <a aria-label="Add To Cart" class="action-btn hover-up" href="javascript:void(0);" onclick="addToCart('cartForm_<?= $product['id'] ?>');">
+                                                                    <i class="fi-rs-shopping-bag-add"></i>
+                                                                </a>
+                                                            <?php else: ?>
+                                                                <span class="in-cart-message">Already in Cart</span>
+                                                            <?php endif; ?>
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1026,12 +1314,24 @@
                                 <div class="slider-arrow slider-arrow-2 carausel-4-columns-arrow" id="carausel-4-columns-3-arrows"></div>
                                 <div class="carausel-4-columns carausel-arrow-center" id="carausel-4-columns-3">
                                     <?php
+                                    $product_query = "SELECT products.*, 
+                                        categories.name AS category_name, 
+                                        categories.id AS category_id, 
+                                        (SELECT COUNT(*) FROM cart 
+                                        WHERE cart.product_id = products.id 
+                                        AND (cart.session_id = '" . session_id() . "' OR cart.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_cart, 
 
-                                    $product_query = "SELECT products.*, categories.name AS category_name, categories.id AS category_id 
-                                            FROM products 
-                                            LEFT JOIN categories ON products.category_name = categories.name 
-                                            WHERE products.status = 1 AND products.featured = 'new' 
-                                            ORDER BY RAND() LIMIT 8";
+                                        (SELECT COUNT(*) FROM favorite 
+                                        WHERE favorite.product_id = products.id 
+                                        AND (favorite.session_id = '" . session_id() . "' OR favorite.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_favorite 
+                                        
+                                        FROM products 
+                                        LEFT JOIN categories ON products.category_name = categories.name 
+                                        WHERE products.status = 1 AND products.featured = 'new' 
+                                        ORDER BY RAND() LIMIT 8";
+
+
+
                                     $product_query_run = mysqli_query($conn, $product_query);
 
                                     if (mysqli_num_rows($product_query_run) > 0) {
@@ -1047,8 +1347,18 @@
                                                     <div class="product-action-1">
                                                         <a aria-label="Quick view" class="action-btn small hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
                                                             <i class="fi-rs-eye"></i></a>
-                                                        <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                        <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                        <a aria-label="Add To Favorite" class="action-btn hover-up favorite-btn"
+                                                            href="javascript:void(0);"
+                                                            data-product-id="<?= $product['id']; ?>"
+                                                            data-product-name="<?= $product['product_name']; ?>"
+                                                            data-selling-price="<?= $product['selling_price']; ?>"
+                                                            data-image="<?= $product['image']; ?>">
+                                                            <?php if ($product['in_favorite'] > 0): ?>
+                                                                <i class="fi-rs-check"></i>
+                                                            <?php else: ?>
+                                                                <i class="fi-rs-heart"></i>
+                                                            <?php endif; ?>
+                                                        </a>
                                                     </div>
                                                     <div class="product-badges product-badges-position product-badges-mrg">
                                                         <span class="hot">
@@ -1095,7 +1405,22 @@
                                                         <span class="old-price">Kes<?= $product['original_price']; ?></span>
                                                     </div>
                                                     <div class="product-action-1 show">
-                                                        <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
+                                                        <form id="cartForm_<?= $product['id'] ?>" method="POST">
+                                                            <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
+                                                            <input type="hidden" name="add_to_cart_btn" value="true" />
+                                                            <input type="hidden" name="product_name" value="<?= $product['product_name']; ?>">
+                                                            <input type="hidden" name="selling_price" value="<?= $product['selling_price']; ?>">
+                                                            <input type="hidden" name="image" value="<?= $product['image']; ?>">
+                                                            <input type="hidden" name="quantity" value="1">
+
+                                                            <?php if ($product['in_cart'] == 0): ?>
+                                                                <a aria-label="Add To Cart" class="action-btn hover-up" href="javascript:void(0);" onclick="addToCart('cartForm_<?= $product['id'] ?>');">
+                                                                    <i class="fi-rs-shopping-bag-add"></i>
+                                                                </a>
+                                                            <?php else: ?>
+                                                                <span class="in-cart-message">Already in Cart</span>
+                                                            <?php endif; ?>
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </div>

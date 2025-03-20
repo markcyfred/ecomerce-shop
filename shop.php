@@ -89,9 +89,11 @@
                                                        </a>
                                                   </div>
                                                   <div class="product-action-1">
-                                                       <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
-                                                            <i class="fi-rs-search"></i></a>
-                                                       <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+                                                  <a aria-label="Quick view" class="action-btn hover-up quick-view-btn" data-product-id="<?= $product['id']; ?>" data-bs-toggle="modal" data-bs-target="#quickViewModal">
+                                            <i class="fi-rs-eye"></i>
+                                        </a>
+                                                       <a aria-label="Add To Wishl
+                                                       .ist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
                                                        <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
                                                   </div>
                                                   <div class="product-badges product-badges-position product-badges-mrg">

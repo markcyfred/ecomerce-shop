@@ -144,20 +144,42 @@ if (isset($_POST['login'])) {
             header('location: ../login.php');
             exit;
         }
+
+        // Verify the entered password with the stored hashed password
         if (password_verify($password, $user_data['password'])) {
             $_SESSION['auth'] = true;
-        
+
             // User data to be stored in the session
             $user_id = $user_data['id'];
             $user_email = $user_data['email'];
-        
+            $user_first_name = $user_data['first_name'];
+            $user_last_name = $user_data['last_name'];
+            $user_display_name = $user_data['display_name'];
+            $user_role = $user_data['role_as'];
+            $user_phone = $user_data['phone'];
+            $user_city = $user_data['city'];
+            $user_street_address = $user_data['street_address'];
+            $user_postal_code = $user_data['postal_code'];
+            $user_additional_info = $user_data['additional_info'];
+            $user_profile_picture = $user_data['profile_picture'];
+
             // Set session variables
             $_SESSION['auth_user'] = [
                 'id' => $user_id,
                 'email' => $user_email,
-                // Other user details...
+                'first_name' => $user_first_name,
+                'last_name' => $user_last_name,
+                'display_name' => $user_display_name,
+                'phone' => $user_phone,
+                'city' => $user_city,
+                'street_address' => $user_street_address,
+                'postal_code' => $user_postal_code,
+                'additional_info' => $user_additional_info,
+                'profile_picture' => $user_profile_picture
             ];
-        
+
+            $_SESSION['role_as'] = $user_role;
+
             // Now, update the cart for this user
             $session_id = session_id(); // Get the session ID of the user
             $update_cart_query = "
@@ -183,7 +205,27 @@ if (isset($_POST['login'])) {
             } else {
                 error_log("MySQL Prepare Error: " . mysqli_error($conn));
             }
+
+
+             // Now, update the favorites for this user
+             $update_favorite_query = "
+             UPDATE favorite
+             SET user_id = ?, email = ?
+             WHERE session_id = ? AND user_id IS NULL"; // Only update items that have user_id = NULL
+
+         if ($stmt_fav = mysqli_prepare($conn, $update_favorite_query)) {
+             mysqli_stmt_bind_param($stmt_fav, 'iss', $user_id, $user_email, $session_id);
+             
+             if (!mysqli_stmt_execute($stmt_fav)) {
+                 error_log("MySQL Error (favorite update): " . mysqli_error($conn));
+             }
+             mysqli_stmt_close($stmt_fav);
+         } else {
+             error_log("MySQL Prepare Error (favorite update): " . mysqli_error($conn));
+         }
+
         
+
             // Redirect based on the role
             if ($user_role == '1') {
                 $_SESSION['message'] = "Welcome to Admin dashboard";
@@ -198,8 +240,6 @@ if (isset($_POST['login'])) {
                 $_SESSION['messageType'] = "success";
                 header('location: ../index.php');
             }
-        
-        
         } else {
             // Invalid password
             $_SESSION['message'] = "Invalid credentials";

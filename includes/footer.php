@@ -153,29 +153,182 @@
 
 <?php
 if (isset($_SESSION['message'])) {
-    $icon = ($_SESSION['messageType'] == 'success') ? 'success' : 'error';
+     $icon = ($_SESSION['messageType'] == 'success') ? 'success' : 'error';
 ?>
-    <script>
-        Swal.fire({
-            position: 'top-end',
-            icon: '<?php echo $icon; ?>',
-            title: '<?php echo $_SESSION['message']; ?>',
-            showConfirmButton: false,
-            timer: 2000,
-            toast: true,
-            width: 'auto',
-            padding: '0.1em',
-            background: 'white',
-            customClass: {
-                popup: 'small-swal'
-            }
-        });
-    </script>
+     <script>
+          Swal.fire({
+               position: 'top-end',
+               icon: '<?php echo $icon; ?>',
+               title: '<?php echo $_SESSION['message']; ?>',
+               showConfirmButton: false,
+               timer: 2000,
+               toast: true,
+               width: 'auto',
+               padding: '0.1em',
+               background: 'white',
+               customClass: {
+                    popup: 'small-swal'
+               }
+          });
+     </script>
 <?php
-    unset($_SESSION['message']); // unset the session message after displaying
-    unset($_SESSION['messageType']); // unset the session message type after displaying
+     unset($_SESSION['message']); // unset the session message after displaying
+     unset($_SESSION['messageType']); // unset the session message type after displaying
 }
 ?>
+<script>
+     function addToCart(formId) {
+          var formData = $('#' + formId).serialize();
+          $.ajax({
+               url: 'ajax/code.php', // path to your PHP file inside the ajax folder
+               type: 'POST',
+               data: formData,
+               dataType: 'json',
+               success: function(response) {
+                    if (response.status === 'success') {
+                         // Show success message with SweetAlert2
+                         Swal.fire({
+                              position: 'top-end',
+                              icon: 'success',
+                              title: response.message,
+                              showConfirmButton: false,
+                              timer: 2000,
+                              toast: true,
+                              width: 'auto',
+                              padding: '0.1em',
+                              background: 'white',
+                              customClass: {
+                                   popup: 'small-swal'
+                              }
+                         });
+                         // Update UI: Replace the "Add To Cart" button with "Already in Cart" message
+                         $('#' + formId + ' .action-btn').replaceWith('<span class="in-cart-message">Already in Cart</span>');
+                    } else {
+                         // Show error message with SweetAlert2
+                         Swal.fire({
+                              position: 'top-end',
+                              icon: 'error',
+                              title: response.message,
+                              showConfirmButton: false,
+                              timer: 2000,
+                              toast: true,
+                              width: 'auto',
+                              padding: '0.1em',
+                              background: 'white',
+                              customClass: {
+                                   popup: 'small-swal'
+                              }
+                         });
+                    }
+               },
+               error: function(xhr, status, error) {
+                    console.error('AJAX Error:', error);
+                    // Show generic error message with SweetAlert2
+                    Swal.fire({
+                         position: 'top-end',
+                         icon: 'error',
+                         title: 'An error occurred while adding the product to the cart.',
+                         showConfirmButton: false,
+                         timer: 2000,
+                         toast: true,
+                         width: 'auto',
+                         padding: '0.1em',
+                         background: 'white',
+                         customClass: {
+                              popup: 'small-swal'
+                         }
+                    });
+               }
+          });
+     }
+</script>
+<script>
+     document.addEventListener("DOMContentLoaded", function() {
+          document.querySelectorAll(".favorite-btn").forEach(function(button) {
+               button.addEventListener("click", function() {
+                    let product_id = this.getAttribute("data-product-id");
+                    let product_name = this.getAttribute("data-product-name");
+                    let selling_price = this.getAttribute("data-selling-price");
+                    let image = this.getAttribute("data-image");
+
+                    let formData = new FormData();
+                    formData.append("add_to_favorite_btn", "true");
+                    formData.append("product_id", product_id);
+                    formData.append("product_name", product_name);
+                    formData.append("selling_price", selling_price);
+                    formData.append("image", image);
+
+                    // Save reference to the clicked button
+                    let favoriteButton = this;
+
+                    fetch("AJAX/CODE.php", {
+                              method: "POST",
+                              body: formData
+                         })
+                         .then(response => response.json())
+                         .then(data => {
+                              if (data.status === "success") {
+                                   // Show success message with SweetAlert2
+                                   Swal.fire({
+                                        position: 'top-end',
+                                        icon: 'success',
+                                        title: data.message,
+                                        showConfirmButton: false,
+                                        timer: 2000,
+                                        toast: true,
+                                        width: 'auto',
+                                        padding: '0.1em',
+                                        background: 'white',
+                                        customClass: {
+                                             popup: 'small-swal'
+                                        }
+                                   });
+                                   // Update icon to tick without refreshing
+                                   favoriteButton.innerHTML = '<i class="fi-rs-check"></i>';
+                              } else {
+                                   // Show error message with SweetAlert2
+                                   Swal.fire({
+                                        position: 'top-end',
+                                        icon: 'error',
+                                        title: data.message,
+                                        showConfirmButton: false,
+                                        timer: 2000,
+                                        toast: true,
+                                        width: 'auto',
+                                        padding: '0.1em',
+                                        background: 'white',
+                                        customClass: {
+                                             popup: 'small-swal'
+                                        }
+                                   });
+                                   // If product is already in favorites, update icon to tick
+                                   if (data.message === "Product already in favorites") {
+                                        favoriteButton.innerHTML = '<i class="fi-rs-check"></i>';
+                                   }
+                              }
+                         })
+                         .catch(error => {
+                              console.error("Error:", error);
+                              Swal.fire({
+                                   position: 'top-end',
+                                   icon: 'error',
+                                   title: 'An error occurred while processing your request.',
+                                   showConfirmButton: false,
+                                   timer: 2000,
+                                   toast: true,
+                                   width: 'auto',
+                                   padding: '0.1em',
+                                   background: 'white',
+                                   customClass: {
+                                        popup: 'small-swal'
+                                   }
+                              });
+                         });
+               });
+          });
+     });
+</script>
+
 </body>
 
 </html>

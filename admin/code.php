@@ -12,7 +12,7 @@ if (isset($_POST['add_category_btn'])) {
     $popularity = mysqli_real_escape_string($conn, $_POST['popularity']);
     $meta_title = mysqli_real_escape_string($conn, $_POST['meta_title']);
     $meta_description = mysqli_real_escape_string($conn, $_POST['meta_description']);
-    $meta_keywords = mysqli_real_escape_string($conn, $_POST['meta_keywords']); 
+    $meta_keywords = mysqli_real_escape_string($conn, $_POST['meta_keywords']);
 
     $image = $_FILES['image']['name'];
 
@@ -118,99 +118,51 @@ else if (isset($_POST['delete_category_btn'])) {
         redirect("categories.php", "Category not deleted", "error");
     }
 }
-//add product//category_id	rating	status	discount	product_name	description	original_price	selling_price	image	quantity	trending
-if (isset($_POST['add_to_cart_btn'])) {
-    $product_id = isset($_POST['product_id']) ? (int)$_POST['product_id'] : 0;
-    $product_name = $_POST['product_name'];
-    $selling_price = $_POST['selling_price'];
-    $image = $_POST['image'];
-    $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 1;
 
-    if ($product_id <= 0 || empty($product_name) || empty($selling_price) || empty($image)) {
-        redirect("cart.php", "Missing product details", "error");
-        exit();
+//add_product_btn
+else if (isset($_POST['add_product_btn'])) {
+    $category_name = mysqli_real_escape_string($conn, $_POST['category_name']);
+    $rating = mysqli_real_escape_string($conn, $_POST['rating']);
+    $status = mysqli_real_escape_string($conn, $_POST['status']);
+    $discount = mysqli_real_escape_string($conn, $_POST['discount']);
+    $product_name = mysqli_real_escape_string($conn, $_POST['product_name']);
+    $description = mysqli_real_escape_string($conn, $_POST['description']);
+    $original_price = mysqli_real_escape_string($conn, $_POST['original_price']);
+    $selling_price = mysqli_real_escape_string($conn, $_POST['selling_price']);
+    $quantity = mysqli_real_escape_string($conn, $_POST['quantity']);
+    $trending = mysqli_real_escape_string($conn, $_POST['trending']);
+    $size = mysqli_real_escape_string($conn, $_POST['size']);
+    $featured = mysqli_real_escape_string($conn, $_POST['featured']);
+
+    $image = $_FILES['image']['name'];
+
+    $path = "../uploads/shop";
+
+    $image_ext = pathinfo($image, PATHINFO_EXTENSION);
+    $filename = time() . "." . $image_ext;
+
+    // Perform basic validation
+    if (empty($category_name) || empty($rating) || empty($status) || empty($discount) || empty($product_name) || empty($description) || empty($original_price) || empty($selling_price) || empty($quantity) || empty($trending) || empty($size) || empty($featured)) {
+        redirect("products-add.php", "Please fill all fields to continue.", "error");
+        exit; // Stop further processing
     }
 
-    if ($quantity <= 0) {
-        redirect("cart.php", "Invalid quantity", "error");
-        exit();
-    }
+    $add_product_query = "INSERT INTO products
+            (category_name, rating, status, discount, product_name, description, original_price, selling_price, image, quantity, trending, size, featured) 
+            VALUES ('$category_name', '$rating', '$status', '$discount', '$product_name', '$description', '$original_price', '$selling_price', '$filename', '$quantity', '$trending', '$size', '$featured')";
 
-    if (isset($_SESSION['auth_user'])) {
-        // Logged-in user, fetch user_id and email
-        $user_id = $_SESSION['auth_user']['id'];
-        $email = $_SESSION['auth_user']['email'];
+    $add_product_query_run = mysqli_query($conn, $add_product_query);
+
+    if ($add_product_query_run) {
+        move_uploaded_file($_FILES['image']['tmp_name'], $path . '/' . $filename
+        );
+        redirect("products-add.php", "Product Created successfully", "success");
     } else {
-        // Not logged-in user
-        $user_id = NULL;
-        $email = NULL;
-    }
-
-    // Retrieve the current session ID
-    $session_id = session_id();
-    if (empty($session_id)) {
-        error_log("Session ID is empty");
-        redirect("cart.php", "Session issue. Try again.", "error");
-        exit();
-    }
-
-    // Insert or update cart entry
-    $cart_query = "
-        INSERT INTO cart (product_id, product_name, selling_price, image, quantity, user_id, email, session_id, cart_order)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)
-        ON DUPLICATE KEY UPDATE quantity = quantity + ?";
-
-    if ($stmt = mysqli_prepare($conn, $cart_query)) {
-        // Bind parameters
-        mysqli_stmt_bind_param($stmt, 'issssissi', $product_id, $product_name, $selling_price, $image, $quantity, $user_id, $email, $session_id, $quantity);
-
-        if (mysqli_stmt_execute($stmt)) {
-            redirect("../index.php", "Product added to cart successfully", "success");
-        } else {
-            error_log("MySQL Error: " . mysqli_error($conn));
-            redirect("../index.php", "Product not added to cart", "error");
-        }
-
-        // Close prepared statement
-        mysqli_stmt_close($stmt);
-    } else {
-        error_log("MySQL Prepare Error: " . mysqli_error($conn));
-        redirect("../index.php", "Error preparing statement", "error");
+        redirect("products-add.php", "Something went wrong", "error");
     }
 }
 
-// Handle updating the cart when the user logs in
-if (isset($_SESSION['auth_user'])) {
-    $user_id = $_SESSION['auth_user']['id'];
-    $email = $_SESSION['auth_user']['email'];
-    
-    // Update cart entries for this user
-    $update_query = "
-        UPDATE cart
-        SET user_id = ?, email = ?
-        WHERE session_id = ? AND user_id IS NULL";
-    
-    if ($stmt = mysqli_prepare($conn, $update_query)) {
-        // Bind parameters to update cart with user data
-        mysqli_stmt_bind_param($stmt, 'iss', $user_id, $email, $session_id);
-        
-        if (mysqli_stmt_execute($stmt)) {
-            // Optional: redirect or show success
-            redirect("cart.php", "Cart updated with your details", "success");
-        } else {
-            error_log("MySQL Error: " . mysqli_error($conn));
-        }
-        
-        // Close prepared statement
-        mysqli_stmt_close($stmt);
-    } else {
-        error_log("MySQL Prepare Error: " . mysqli_error($conn));
-    }
-}
-
-
-else if (isset($_POST['update_product_btn']))
-{
+else if (isset($_POST['update_product_btn'])) {
 
     //escape string values
     $product_id = mysqli_real_escape_string($conn, $_POST['product_id']);
@@ -258,10 +210,7 @@ else if (isset($_POST['update_product_btn']))
     } else {
         redirect("edit-product.php", "Product not updated", "error");
     }
-
-}
-else
-{
+} else {
     header("Location: ../index.php");
 }
 
@@ -364,7 +313,7 @@ if (isset($_POST['add_user'])) {
     // Check if the email already exists in the database
     $email_check_query = "SELECT * FROM users WHERE email = '$email' LIMIT 1";
     $email_check_result = mysqli_query($conn, $email_check_query);
-    
+
     if (mysqli_num_rows($email_check_result) > 0) {
         // Email already exists
         redirect("users-add.php", "Email is already registered", "error");
@@ -408,57 +357,9 @@ if (isset($_POST['delete_user_btn'])) {
         if (file_exists("../uploads/profile/" . $profile_picture)) {
             unlink("../uploads/profile/" . $profile_picture);
         }
-        
+
         redirect("users-manage.php", "User deleted successfully", "success");
     } else {
         redirect("users-manage.php", "User not deleted", "error");
-    }
-}
-if (isset($_POST['add_to_cart_btn'])) {
-    $product_id = isset($_POST['product_id']) ? (int)mysqli_real_escape_string($conn, $_POST['product_id']) : 0;
-    $product_name = mysqli_real_escape_string($conn, $_POST['product_name']);
-    $selling_price = mysqli_real_escape_string($conn, $_POST['selling_price']);
-    $image = mysqli_real_escape_string($conn, $_POST['image']);
-    $quantity = isset($_POST['quantity']) ? (int)mysqli_real_escape_string($conn, $_POST['quantity']) : 1;
-
-    if ($product_id <= 0 || empty($product_name) || empty($selling_price) || empty($image)) {
-        redirect("cart.php", "Missing product details", "error");
-        exit();
-    }
-
-    if ($quantity <= 0) {
-        redirect("cart.php", "Invalid quantity", "error");
-        exit();
-    }
-
-    if (isset($_SESSION['auth_user'])) {
-        $user_id = $_SESSION['auth_user']['id'];
-        $email = $_SESSION['auth_user']['email'];
-    } else {
-        $user_id = NULL;
-        $email = NULL;
-    }
-
-    // Retrieve the current session ID
-    $session_id = session_id();
-    if (empty($session_id)) {
-        error_log("Session ID is empty");
-        redirect("cart.php", "Session issue. Try again.", "error");
-        exit();
-    }
-
-    // Insert or update cart entry
-    $cart_query = "
-        INSERT INTO cart (product_id, product_name, selling_price, image, quantity, user_id, email, session_id, cart_order)
-        VALUES ('$product_id', '$product_name', '$selling_price', '$image', '$quantity', '$user_id', '$email', '$session_id', 1)
-        ON DUPLICATE KEY UPDATE quantity = quantity + '$quantity'";
-
-    $cart_query_run = mysqli_query($conn, $cart_query);
-
-    if ($cart_query_run) {
-        redirect("../index.php", "Product added to cart successfully", "success");
-    } else {
-        error_log("MySQL Error: " . mysqli_error($conn)); // Log errors
-        redirect("../index.php", "Product not added to cart", "error");
     }
 }

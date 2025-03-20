@@ -153,7 +153,12 @@ include('includes/header.php');
                                         <label for="original_price" class="form-label">Selling Price</label>
                                         <input type="number" class="form-control" id="selling_price" name="selling_price" placeholder="Enter Selling price" value="<?= $data['selling_price']; ?>">
                                     </div>
-
+                                    <!-- Apply Discount Button -->
+                                    <div class="col-md-3">
+                                        <button type="button" id="applyDiscountBtn" class="btn btn-info mt-4">
+                                            Apply Discount
+                                        </button>
+                                    </div>
                                     <div class="col-md-6">
                                         <label for="inputImage" class="form-label">Image</label>
                                         <div class="input-group">
@@ -210,6 +215,84 @@ include('includes/header.php');
     </section>
 
 </main><!-- End #main -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var discountSelect = document.getElementById('inputDiscountType');
+    var originalPriceInput = document.getElementById('original_price');
+    var sellingPriceInput = document.getElementById('selling_price');
+    var applyDiscountBtn = document.getElementById('applyDiscountBtn');
+    var discountApplied = false;
+
+    function updateSellingPrice() {
+        var discount = parseFloat(discountSelect.value) || 0;
+        var originalPrice = parseFloat(originalPriceInput.value) || 0;
+        if (originalPrice > 0) {
+            var discountAmount = originalPrice * (discount / 100);
+            var newSellingPrice = originalPrice - discountAmount;
+            // Round to nearest whole number
+            sellingPriceInput.value = Math.round(newSellingPrice);
+        }
+    }
+
+    // When discount selection changes, if discount was already applied,
+    // update the button text to indicate that a new discount is selected.
+    discountSelect.addEventListener("change", function() {
+        if (discountApplied) {
+            applyDiscountBtn.textContent = 'Apply new selected discount';
+            // Remove applied discount by resetting the selling price to original
+            sellingPriceInput.value = Math.round(parseFloat(originalPriceInput.value) || 0);
+            discountApplied = false;
+        }
+    });
+
+    applyDiscountBtn.addEventListener("click", function() {
+        if (!discountApplied) {
+            // Validate original price and discount selection
+            var originalPrice = parseFloat(originalPriceInput.value) || 0;
+            var discount = parseFloat(discountSelect.value) || 0;
+            if (originalPrice <= 0 || discount <= 0) {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Please enter a valid original price and select a discount.',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    toast: true,
+                    width: 'auto',
+                    padding: '0.1em',
+                    background: 'white',
+                    customClass: {
+                        popup: 'small-swal'
+                    }
+                });
+                return;
+            }
+
+            // Simulate a loading state when applying discount
+            applyDiscountBtn.disabled = true;
+            applyDiscountBtn.textContent = 'Applying Discount...';
+            setTimeout(function() {
+                updateSellingPrice();
+                discountApplied = true;
+                applyDiscountBtn.textContent = 'Remove Discount';
+                applyDiscountBtn.disabled = false;
+            }, 1000);
+        } else {
+            // Simulate a loading state when removing discount
+            applyDiscountBtn.disabled = true;
+            applyDiscountBtn.textContent = 'Removing Discount...';
+            setTimeout(function() {
+                // Reset selling price to the original price (no discount)
+                sellingPriceInput.value = Math.round(parseFloat(originalPriceInput.value) || 0);
+                discountApplied = false;
+                applyDiscountBtn.textContent = 'Apply Discount';
+                applyDiscountBtn.disabled = false;
+            }, 1000);
+        }
+    });
+});
+</script>
+
 <?php
 include('includes/footer.php')
 ?>
