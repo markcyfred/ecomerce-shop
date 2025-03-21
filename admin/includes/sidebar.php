@@ -17,24 +17,45 @@
         </a>
         <ul id="products-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="categories.php">
-              <i class="bi bi-circle"></i><span>Categories</span>
-            </a>
-          </li>
-          <!--add category-->
-          <li>
             <a href="add-category.php">
               <i class="bi bi-circle"></i><span>Add Category</span>
             </a>
           </li>
           <li>
+            <a href="categories.php">
+              <i class="bi bi-circle"></i><span>Categories</span>
+            </a>
+          </li>
+          <!--add category-->
+
+          <li>
+            <a href="products-add.php">
+              <i class="bi bi-circle"></i><span>Add Products</span>
+            </a>
+          </li>
+          
+          <li>
             <a href="products.php">
               <i class="bi bi-circle"></i><span>Products</span>
             </a>
           </li>
+          <!--ADD BRAND-->
           <li>
-            <a href="products-add.php">
-              <i class="bi bi-circle"></i><span>Add Products</span>
+            <a href="add-brand.php">
+              <i class="bi bi-circle"></i><span>Add Brand</span>
+            </a>
+          </li>
+          <!--edit brand-->
+          <li>
+            <a href="brands.php">
+              <i class="bi bi-circle"></i><span>Brands</span>
+            </a>
+          </li>
+          <!--edit brand-->
+          <!--BRANDS-->
+          <li>
+            <a href="brands.php">
+              <i class="bi bi-circle"></i><span>Brands</span>
             </a>
           </li>
         </ul>

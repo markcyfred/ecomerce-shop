@@ -363,3 +363,97 @@ if (isset($_POST['delete_user_btn'])) {
         redirect("users-manage.php", "User not deleted", "error");
     }
 }
+
+
+//add_brand_btn , image willl be saved to brands folder brand_name	brand_image	brand_description	status
+if (isset($_POST['add_brand_btn'])) {
+    $brand_name = mysqli_real_escape_string($conn, $_POST['brand_name']);
+    $brand_description = mysqli_real_escape_string($conn, $_POST['brand_description']);
+    $status = mysqli_real_escape_string($conn, $_POST['status']);
+
+    $brand_image = $_FILES['brand_image']['name'];
+
+    $path = "../uploads/brands";
+
+    $image_ext = pathinfo($brand_image, PATHINFO_EXTENSION);
+    $filename = time() . "." . $image_ext;
+
+    // Perform basic validation
+    if (empty($brand_name) || empty($brand_description)) {
+        redirect("add-brand.php", "Please fill all fields to continue.", "error");
+        exit; // Stop further processing
+    }
+
+    $add_brand_query = "INSERT INTO brands
+            (brand_name, brand_image, brand_description, status) 
+            VALUES ('$brand_name', '$filename', '$brand_description', '$status')";
+
+    $add_brand_query_run = mysqli_query($conn, $add_brand_query);
+
+    if ($add_brand_query_run) {
+        move_uploaded_file($_FILES['brand_image']['tmp_name'], $path . '/' . $filename);
+        redirect("add-brand.php", "Brand Created successfully", "success");
+    } else {
+        redirect("add-brand.php", "Something went wrong", "error");
+    }
+}
+//update_brand_btn
+else if (isset($_POST['update_brand_btn'])) {
+    //escape string values
+    $brand_id = mysqli_real_escape_string($conn, $_POST['brand_id']);
+    $brand_name = mysqli_real_escape_string($conn, $_POST['brand_name']);
+    $brand_description = mysqli_real_escape_string($conn, $_POST['brand_description']);
+    $status = mysqli_real_escape_string($conn, $_POST['status']);
+
+    $new_image = $_FILES['brand_image']['name'];
+    $old_image = $_POST['old_image'];
+
+    if ($new_image != "") {
+        $update_filename = $new_image;
+        $image_ext = pathinfo($new_image, PATHINFO_EXTENSION);
+        $update_filename = time() . "." . $image_ext;
+    } else {
+        $update_filename = $old_image;
+    }
+
+    $path = "../uploads/brands";
+    $update_query = "UPDATE brands SET brand_name='$brand_name', brand_description='$brand_description', status='$status', brand_image='$update_filename' WHERE id ='$brand_id'";
+    $update_query_run = mysqli_query($conn, $update_query);
+
+    if ($update_query_run) {
+        if ($_FILES['brand_image']['name'] != "") {
+            move_uploaded_file($_FILES['brand_image']['tmp_name'], $path . '/' . $update_filename);
+            if (file_exists(("../uploads/brands/" . $old_image)) && !empty($old_image)) {
+                unlink("../uploads/brands/" . $old_image);
+            }
+        }
+        redirect("brands.php", "Brand updated successfully", "success");
+    } else {
+        redirect("edit-brand.php", "Brand not updated", "error");
+    }
+}
+
+//delete_brand_btn
+else if (isset($_POST['delete_brand_btn'])) {
+    $brand_id = mysqli_real_escape_string($conn, $_POST['brand_id']);
+
+    $brand_query = "SELECT * FROM brands WHERE id='$brand_id'";
+    $brand_query_run = mysqli_query($conn, $brand_query);
+    $brand_data = mysqli_fetch_array($brand_query_run);
+    $image = $brand_data['brand_image'];
+
+    $delete_query = "DELETE FROM brands WHERE id='$brand_id'";
+
+    $delete_query_run = mysqli_query($conn, $delete_query);
+
+    if ($delete_query_run) {
+
+        if (file_exists("../uploads/brands/" . $image)) {
+            unlink("../uploads/brands/" . $image);
+        }
+
+        redirect("brands.php", "Brand deleted successfully", "success");
+    } else {
+        redirect("brands.php", "Brand not deleted", "error");
+    }
+}

@@ -231,20 +231,24 @@ if (isset($_POST['login'])) {
                 $_SESSION['message'] = "Welcome to Admin dashboard";
                 $_SESSION['messageType'] = "success";
                 header('location: ../admin/index.php');
+                exit();
             } elseif ($user_role == '2') {
                 $_SESSION['message'] = "Welcome to Supplier dashboard";
                 $_SESSION['messageType'] = "success";
                 header('location: ../supplier/index.php');
+                exit();
             } else {
                 $_SESSION['message'] = "You are now logged in";
                 $_SESSION['messageType'] = "success";
                 header('location: ../index.php');
+                exit();
             }
         } else {
             // Invalid password
             $_SESSION['message'] = "Invalid credentials";
             $_SESSION['messageType'] = "error";
             header('location: ../login.php');
+            exit();
         }
     } else {
         // User not found

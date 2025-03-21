@@ -121,6 +121,8 @@ include('includes/header.php');
                                 </select>
                             </div>
 
+                            <!-- Select Brand -->
+                             
                             <!-- Description -->
                             <div class="col-md-12">
                                 <label for="inputDescription" class="form-label">Description</label>
