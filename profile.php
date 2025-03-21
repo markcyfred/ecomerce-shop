@@ -206,6 +206,8 @@ include 'includes/header.php';
                                                                       <div class="form-group col-md-6">
                                                                            <label>Profile Picture</label>
                                                                            <input class="form-control square" name="profile_picture" type="file">
+                                                                           <input type="hidden" name="old_image" value="<?php echo $_SESSION['auth_user']['profile_picture']; ?>">
+
                                                                            <?php if (!empty($_SESSION['auth_user']['profile_picture'])): ?>
                                                                                 <img src="uploads/profile/<?php echo $_SESSION['auth_user']['profile_picture']; ?>" alt="profile picture" style="width: 100px; height: 100px;">
                                                                            <?php endif; ?>

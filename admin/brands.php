@@ -60,8 +60,9 @@ include('includes/header.php');
                                             <?= $item['brand_name']; ?>
                                         </td>
                                         <td>
-                                            <img src="<?= $item['brand_image']; ?>" alt="<?= $item['brand_name']; ?>" style="width: 50px; height: 50px;">
+                                            <img src="../uploads/brands/<?= $item['brand_image']; ?>" alt="<?= $item['brand_name']; ?>" style="width: 50px; height: 50px;">
                                         </td>
+                                        
                                         <td>
                                             <?= $item['brand_description']; ?>
                                         </td>
@@ -73,8 +74,8 @@ include('includes/header.php');
                                                 <i class="ri-edit-2-fill fs-4"></i>
                                             </a>
                                             <form action="code.php" method="POST" style="display: inline;">
-                                                  <input type="hidden" name="id" value="<?= $item['id']; ?>">
-                                                <button type="submit" name="delete_brand_btn" style="border: none; background: none; padding: 0; cursor: pointer;">
+                                            <input type="hidden" name="brand_id" value="<?= $item['id']; ?>">
+                                            <button type="submit" name="delete_brand_btn" style="border: none; background: none; padding: 0; cursor: pointer;">
                                                     <i class="bi bi-trash text-danger fs-4"></i>
                                                 </button>
                                             </form>

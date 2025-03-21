@@ -45,13 +45,7 @@
               <i class="bi bi-circle"></i><span>Add Brand</span>
             </a>
           </li>
-          <!--edit brand-->
-          <li>
-            <a href="brands.php">
-              <i class="bi bi-circle"></i><span>Brands</span>
-            </a>
-          </li>
-          <!--edit brand-->
+      
           <!--BRANDS-->
           <li>
             <a href="brands.php">
