@@ -36,31 +36,90 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <?php
 if (isset($_SESSION['message'])) {
-    $icon = ($_SESSION['messageType'] == 'success') ? 'success' : 'error';
+  $icon = ($_SESSION['messageType'] == 'success') ? 'success' : 'error';
 ?>
-    <script>
-        Swal.fire({
-            position: 'top-end',
-            icon: '<?php echo $icon; ?>',
-            title: '<?php echo $_SESSION['message']; ?>',
-            showConfirmButton: false,
-            timer: 2000,
-            toast: true,
-            width: 'auto',
-            padding: '0.1em',
-            background: 'white',
-            customClass: {
-                popup: 'small-swal'
-            }
-        });
-    </script>
+  <script>
+    Swal.fire({
+      position: 'top-end',
+      icon: '<?php echo $icon; ?>',
+      title: '<?php echo $_SESSION['message']; ?>',
+      showConfirmButton: false,
+      timer: 2000,
+      toast: true,
+      width: 'auto',
+      padding: '0.1em',
+      background: 'white',
+      customClass: {
+        popup: 'small-swal'
+      }
+    });
+  </script>
 <?php
-    unset($_SESSION['message']); // unset the session message after displaying
-    unset($_SESSION['messageType']); // unset the session message type after displaying
+  unset($_SESSION['message']); // unset the session message after displaying
+  unset($_SESSION['messageType']); // unset the session message type after displaying
 }
 ?>
+<style>
+     .breadcrumb {
+          display: flex;
+          justify-content: space-between;
+     }
 
+     .drop-zone {
+          border: 2px dashed #ccc;
+          border-radius: 10px;
+          padding: 20px;
+          text-align: center;
+          cursor: pointer;
+          transition: all 0.3s ease-in-out;
+          animation: pulse 1.5s infinite;
+     }
 
+     .drop-zone:hover {
+          border-color: #007bff;
+     }
+
+     .drop-zone.dragover {
+          background-color: #f0f8ff;
+     }
+
+     @keyframes pulse {
+          0% {
+               box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+          }
+          50% {
+               box-shadow: 0 0 20px rgba(0, 123, 255, 0.6);
+          }
+          100% {
+               box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+          }
+     }
+</style>
+<script>
+  const dropZone = document.getElementById("dropZone");
+  const fileInput = document.getElementById("brand_image");
+
+  dropZone.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropZone.classList.add("dragover");
+  });
+
+  dropZone.addEventListener("dragleave", () => {
+    dropZone.classList.remove("dragover");
+  });
+
+  dropZone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropZone.classList.remove("dragover");
+    const file = e.dataTransfer.files[0];
+    fileInput.files = e.dataTransfer.files;
+    dropZone.textContent = file.name;
+  });
+
+  dropZone.addEventListener("click", () => {
+    fileInput.click();
+  });
+</script>
 
 
 </body>

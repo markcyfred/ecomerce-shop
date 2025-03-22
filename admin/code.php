@@ -162,6 +162,103 @@ else if (isset($_POST['add_product_btn'])) {
     }
 }
 
+require '../vendor/autoload.php';
+use PhpOffice\PhpSpreadsheet\IOFactory;
+
+
+if(isset($_POST['bulk_upload_btn'])) {
+    if(isset($_FILES['bulk_file']) && $_FILES['bulk_file']['error'] == 0) {
+        $fileName = $_FILES['bulk_file']['name'];
+        $fileTmp  = $_FILES['bulk_file']['tmp_name'];
+        $fileExt  = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+        
+        $rows = [];
+        
+        if($fileExt === 'csv'){
+            if(($handle = fopen($fileTmp, "r")) !== FALSE) {
+                // Skip the header row
+                $header = fgetcsv($handle, 1000, ",");
+                while(($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                    $rows[] = $data;
+                }
+                fclose($handle);
+            } else {
+                redirect("products-add.php", "Could not open the CSV file", "error");
+                exit;
+            }
+        } elseif($fileExt === 'xlsx'){
+            try {
+                $spreadsheet = IOFactory::load($fileTmp);
+            } catch(Exception $e) {
+                redirect("products-add.php", "Error reading Excel file: " . $e->getMessage(), "error");
+                exit;
+            }
+            $sheet = $spreadsheet->getActiveSheet();
+            $rowsArray = $sheet->toArray();
+            array_shift($rowsArray); // remove header row
+            $rows = $rowsArray;
+        } else {
+            redirect("products-add.php", "Please upload a CSV or XLSX file.", "error");
+            exit;
+        }
+        
+        error_log("Rows read from file: " . count($rows));
+        if(count($rows) === 0) {
+            redirect("products-add.php", "No data found in file.", "error");
+            exit;
+        }
+        
+        // Process each row
+        foreach($rows as $index => $data) {
+            // Check if we have at least 9 columns in the row
+            if(count($data) < 9) {
+                error_log("Skipping row " . ($index+2) . " due to insufficient columns.");
+                continue;
+            }
+            
+            // Retrieve values
+            $category_name  = mysqli_real_escape_string($conn, trim($data[0]));
+            $rating         = mysqli_real_escape_string($conn, trim($data[1]));
+            $discount       = mysqli_real_escape_string($conn, trim($data[2]));
+            $product_name   = mysqli_real_escape_string($conn, trim($data[3]));
+            $description    = mysqli_real_escape_string($conn, trim($data[4]));
+            $original_price = mysqli_real_escape_string($conn, trim($data[5]));
+            $selling_price  = mysqli_real_escape_string($conn, trim($data[6]));
+            $quantity       = mysqli_real_escape_string($conn, trim($data[7]));
+            $featured       = mysqli_real_escape_string($conn, trim($data[8]));
+            
+            // Set default values for removed fields
+            $status   = 1;
+            $trending = 1;
+            $size     = 'medium';
+            
+            // Default image
+            $filename = 'default.png';
+            
+            // Skip if required fields are empty
+            if(empty($category_name) || empty($product_name)) {
+                error_log("Skipping row " . ($index+2) . " due to missing required fields.");
+                continue;
+            }
+            
+            $insert_query = "INSERT INTO products 
+                (category_name, rating, status, discount, product_name, description, original_price, selling_price, image, quantity, trending, size, featured) 
+                VALUES ('$category_name', '$rating', '$status', '$discount', '$product_name', '$description', '$original_price', '$selling_price', '$filename', '$quantity', '$trending', '$size', '$featured')";
+            
+            $result = mysqli_query($conn, $insert_query);
+            if(!$result) {
+                error_log("Insert error on row " . ($index+2) . ": " . mysqli_error($conn));
+            } else {
+                error_log("Row " . ($index+2) . " inserted successfully.");
+            }
+        }
+
+        redirect("products-add.php", "Bulk upload completed successfully", "success");
+    } else {
+        redirect("products-add.php", "Please upload a file to continue.", "error");
+    }
+}
+
 else if (isset($_POST['update_product_btn'])) {
 
     //escape string values

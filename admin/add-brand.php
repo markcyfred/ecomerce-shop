@@ -41,7 +41,8 @@ include('includes/header.php');
                                    </div>
                                    <div class="col-md-6">
                                         <label for="brand_image" class="form-label">Brand Image</label>
-                                        <input type="file" class="form-control" id="brand_image" name="brand_image" required>
+                                        <div class="drop-zone" id="dropZone">Drag & Drop Image Here</div>
+                                        <input type="file" class="form-control d-none" id="brand_image" name="brand_image">
                                    </div>
                                    <div class="col-md-6">
                                         <label for="brand_description" class="form-label">Brand Description</label>

@@ -63,12 +63,13 @@ include('includes/header.php');
                                     <option value="0">Not Popular</option>
                                 </select>
                             </div>
+                        
                             <div class="col-md-6">
-                                <label for="inputImage" class="form-label">Image</label>
-                                <div class="input-group">
-                                    <input type="file" class="form-control" name="image" aria-describedby="inputImageAddon">
-                                    <label class="input-group-text" for="inputImage" id="inputImageAddon">Upload</label>
-                                </div>
+                                <label for="brand_image" class="form-label">Category Image</label>
+                                <div class="drop-zone" id="dropZone">Drag & Drop Image Here</div>
+                                <input type="file" class="form-control d-none" id="brand_image" name="image">
+                                <br>
+                               
                             </div>
 
                             <div class="col-md-6">
@@ -83,12 +84,8 @@ include('includes/header.php');
                                 <label for="inputMetaKeywords" class="form-label">Meta Keywords</label>
                                 <input type="text" class="form-control" name="meta_keywords">
                             </div>
-                            <!--size for clothers for shoes -->
-                            <div class="col-md-6">
-                                <label for="inputSize" class="form-label">Size</label>
-                                <input type="text" class="form-control" name="size">
-                            </div>
-                            
+                           
+
                             <div class="col-12 text-center">
                                 <button type="submit" class="btn btn-primary" name="add_category_btn">Submit</button>
                                 <button type="reset" class="btn btn-secondary">Reset</button>

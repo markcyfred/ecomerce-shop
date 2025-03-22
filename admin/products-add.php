@@ -32,6 +32,21 @@ include('includes/header.php');
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Fill out</h5>
+                        <!-- Bulk Upload Form -->
+                        <div class="bulk-upload-container" style="text-align: center; margin-bottom: 20px;">
+                            <!-- Download Template Button -->
+                            <a href="download_template.php" class="btn btn-success">Download Excel Template</a>
+
+                            <br><br>
+                            <!-- Bulk Upload Form -->
+                            <form action="code.php" method="POST" enctype="multipart/form-data">
+                                <label for="bulkUpload" class="form-label">Bulk Upload (CSV/Excel File)</label>
+                                <input type="file" class="form-control" id="bulkUpload" name="bulk_file" accept=".csv, .xlsx" required>
+                                <br>
+                                <button type="submit" class="btn btn-primary" name="bulk_upload_btn">Bulk Upload</button>
+                            </form>
+                        </div>
+
 
                         <!-- Form add shop products -->
                         <form action="code.php" method="POST" enctype="multipart/form-data" class="row g-3">
@@ -120,9 +135,16 @@ include('includes/header.php');
                                     <option value="featured">Featured</option>
                                 </select>
                             </div>
+                            <div class="col-md-6">
+                                <label for="brand_image" class="form-label">product Image</label>
+                                <div class="drop-zone" id="dropZone">Drag & Drop Image Here</div>
+                                <input type="file" class="form-control d-none" id="image" name="image">
+                                <br>
+
+                            </div>
 
                             <!-- Select Brand -->
-                             
+
                             <!-- Description -->
                             <div class="col-md-12">
                                 <label for="inputDescription" class="form-label">Description</label>
@@ -147,13 +169,8 @@ include('includes/header.php');
                                 </button>
                             </div>
                             <!-- Image, Quantity, Trending fields ... -->
-                            <div class="col-md-6">
-                                <label for="inputImage" class="form-label">Image</label>
-                                <div class="input-group">
-                                    <input type="file" class="form-control" name="image" aria-describedby="inputImageAddon">
-                                    <label class="input-group-text" for="inputImage" id="inputImageAddon">Upload</label>
-                                </div>
-                            </div>
+
+
                             <div class="col-md-6">
                                 <label for="inputQuantity" class="form-label">Quantity</label>
                                 <input type="number" class="form-control" id="inputQuantity" name="quantity" placeholder="Enter Quantity">
@@ -182,79 +199,79 @@ include('includes/header.php');
 include('includes/footer.php');
 ?>
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    var discountSelect = document.getElementById('inputDiscountType');
-    var originalPriceInput = document.getElementById('original_price');
-    var sellingPriceInput = document.getElementById('selling_price');
-    var applyDiscountBtn = document.getElementById('applyDiscountBtn');
-    var discountApplied = false;
+    document.addEventListener("DOMContentLoaded", function() {
+        var discountSelect = document.getElementById('inputDiscountType');
+        var originalPriceInput = document.getElementById('original_price');
+        var sellingPriceInput = document.getElementById('selling_price');
+        var applyDiscountBtn = document.getElementById('applyDiscountBtn');
+        var discountApplied = false;
 
-    function updateSellingPrice() {
-        var discount = parseFloat(discountSelect.value) || 0;
-        var originalPrice = parseFloat(originalPriceInput.value) || 0;
-        if (originalPrice > 0) {
-            var discountAmount = originalPrice * (discount / 100);
-            var newSellingPrice = originalPrice - discountAmount;
-            // Round to nearest whole number
-            sellingPriceInput.value = Math.round(newSellingPrice);
-        }
-    }
-
-    // When discount selection changes, if discount was already applied,
-    // update the button text to indicate that a new discount is selected.
-    discountSelect.addEventListener("change", function() {
-        if (discountApplied) {
-            applyDiscountBtn.textContent = 'Apply new discount';
-            // Remove applied discount by resetting the selling price to original
-            sellingPriceInput.value = Math.round(parseFloat(originalPriceInput.value) || 0);
-            discountApplied = false;
-        }
-    });
-
-    applyDiscountBtn.addEventListener("click", function() {
-        if (!discountApplied) {
-            // Validate original price and discount selection
-            var originalPrice = parseFloat(originalPriceInput.value) || 0;
+        function updateSellingPrice() {
             var discount = parseFloat(discountSelect.value) || 0;
-            if (originalPrice <= 0 || discount <= 0) {
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'error',
-                    title: 'Please enter a valid original price and select a discount.',
-                    showConfirmButton: false,
-                    timer: 2000,
-                    toast: true,
-                    width: 'auto',
-                    padding: '0.1em',
-                    background: 'white',
-                    customClass: {
-                        popup: 'small-swal'
-                    }
-                });
-                return;
+            var originalPrice = parseFloat(originalPriceInput.value) || 0;
+            if (originalPrice > 0) {
+                var discountAmount = originalPrice * (discount / 100);
+                var newSellingPrice = originalPrice - discountAmount;
+                // Round to nearest whole number
+                sellingPriceInput.value = Math.round(newSellingPrice);
             }
+        }
 
-            // Simulate a loading state when applying discount
-            applyDiscountBtn.disabled = true;
-            applyDiscountBtn.textContent = 'Applying Discount...';
-            setTimeout(function() {
-                updateSellingPrice();
-                discountApplied = true;
-                applyDiscountBtn.textContent = 'Remove Discount';
-                applyDiscountBtn.disabled = false;
-            }, 1000);
-        } else {
-            // Simulate a loading state when removing discount
-            applyDiscountBtn.disabled = true;
-            applyDiscountBtn.textContent = 'Removing Discount...';
-            setTimeout(function() {
-                // Reset selling price to the original price (no discount)
+        // When discount selection changes, if discount was already applied,
+        // update the button text to indicate that a new discount is selected.
+        discountSelect.addEventListener("change", function() {
+            if (discountApplied) {
+                applyDiscountBtn.textContent = 'Apply new discount';
+                // Remove applied discount by resetting the selling price to original
                 sellingPriceInput.value = Math.round(parseFloat(originalPriceInput.value) || 0);
                 discountApplied = false;
-                applyDiscountBtn.textContent = 'Apply Discount';
-                applyDiscountBtn.disabled = false;
-            }, 1000);
-        }
+            }
+        });
+
+        applyDiscountBtn.addEventListener("click", function() {
+            if (!discountApplied) {
+                // Validate original price and discount selection
+                var originalPrice = parseFloat(originalPriceInput.value) || 0;
+                var discount = parseFloat(discountSelect.value) || 0;
+                if (originalPrice <= 0 || discount <= 0) {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'error',
+                        title: 'Please enter a valid original price and select a discount.',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        toast: true,
+                        width: 'auto',
+                        padding: '0.1em',
+                        background: 'white',
+                        customClass: {
+                            popup: 'small-swal'
+                        }
+                    });
+                    return;
+                }
+
+                // Simulate a loading state when applying discount
+                applyDiscountBtn.disabled = true;
+                applyDiscountBtn.textContent = 'Applying Discount...';
+                setTimeout(function() {
+                    updateSellingPrice();
+                    discountApplied = true;
+                    applyDiscountBtn.textContent = 'Remove Discount';
+                    applyDiscountBtn.disabled = false;
+                }, 1000);
+            } else {
+                // Simulate a loading state when removing discount
+                applyDiscountBtn.disabled = true;
+                applyDiscountBtn.textContent = 'Removing Discount...';
+                setTimeout(function() {
+                    // Reset selling price to the original price (no discount)
+                    sellingPriceInput.value = Math.round(parseFloat(originalPriceInput.value) || 0);
+                    discountApplied = false;
+                    applyDiscountBtn.textContent = 'Apply Discount';
+                    applyDiscountBtn.disabled = false;
+                }, 1000);
+            }
+        });
     });
-});
 </script>

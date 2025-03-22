@@ -89,15 +89,15 @@ include('includes/header.php');
 
 
 
+
                                     <div class="col-md-6">
-                                        <label for="inputImage" class="form-label">Image</label>
-                                        <div class="input-group">
-                                            <input type="file" class="form-control" name="image" id="inputImage" aria-describedby="inputImageAddon">
-                                            <label class="input-group-text" for="current image" id="inputImageAddon">Upload</label>
-                                        </div>
-                                        <input type="hidden" name="old_image" value="<?= $data['image'] ?>">
-                                        <img src="../uploads/<?= $data['image'] ?>" alt="<?= $data['name'] ?>" width="100" height="50">
-                                        <small class="form-text text-muted">These is your current image.</small>
+                                        <label for="brand_image" class="form-label">category Image</label>
+                                        <input type="hidden" name="old_image" value="<?= $data['image']; ?>">
+                                        <div class="drop-zone" id="dropZone">Drag & Drop Image Here</div>
+                                        <input type="file" class="form-control d-none" id="brand_image" name="image">
+                                        <br>
+                                        <label for="brand_image" class="form-label">Current Image</label>
+                                        <img src="../uploads/categories/<?= $data['image']; ?>" alt="brand image" style="width: 100px; height: 100px;">
                                     </div>
 
 
