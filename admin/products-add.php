@@ -42,15 +42,37 @@ include('includes/header.php');
                             <form action="code.php" method="POST" enctype="multipart/form-data">
                                 <label for="bulkUpload" class="form-label">Bulk Upload (CSV/Excel File)</label>
                                 <input type="file" class="form-control" id="bulkUpload" name="bulk_file" accept=".csv, .xlsx" required>
+
                                 <br>
+
+                                <label for="imageUpload" class="form-label">Upload Product Images (ZIP File)</label>
+                                <!--USER NOTE THAT IMAGES SHOULD BE NAMED AS SAME TO PRODUCT NAME-->
+                                <small class="text-danger">Note: Images should be named as same to product name in the excell</small>
+                                <input type="file" class="form-control" id="imageUpload" name="image_zip" accept=".zip" required>
+
+                                <br>
+
                                 <button type="submit" class="btn btn-primary" name="bulk_upload_btn">Bulk Upload</button>
                             </form>
+
                         </div>
 
 
                         <!-- Form add shop products -->
                         <form action="code.php" method="POST" enctype="multipart/form-data" class="row g-3">
                             <!-- Category, Rating, Status fields ... -->
+
+                            <?php
+                            if (isset($_SESSION['message'])) {
+                            ?>
+                                <div class="alert alert-success" role="alert">
+                                    <?= $_SESSION['message'] ?>
+                                </div>
+                            <?php
+                                unset($_SESSION['message']);
+                            }
+                            ?>
+
                             <div class="col-md-3">
                                 <label for="inputCategory" class="form-label">Select Category</label>
                                 <select class="form-select" id="inputCategory" name="category_name">

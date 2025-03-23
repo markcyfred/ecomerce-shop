@@ -1,37 +1,43 @@
 <?php
 require '../vendor/autoload.php';
+require '../admin/config/dbcon.php'; // Make sure this file sets $conn as your mysqli connection
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
 
-// Create a new spreadsheet instance
+// 1. Create the spreadsheet
 $spreadsheet = new Spreadsheet();
 $sheet = $spreadsheet->getActiveSheet();
 
-// Define where the table starts to simulate margins
-$startRow = 2;    // Leave row 1 empty (top margin)
-$startCol = 'B';  // Leave column A empty (left margin)
-
-// Define the template headers (without Status, Trending, and Size)
+// 2. Define headers in the order your bulk upload code expects
 $headers = [
-    'Category Name', 'Rating', 'Discount', 'Product Name', 'Description',
-    'Original Price', 'Selling Price', 'Quantity', 'Featured'
+    'Category Name', // data[0]
+    'Rating',        // data[1]
+    'Discount',      // data[2]
+    'Product Name',  // data[3]
+    'Description',   // data[4]
+    'Original Price',// data[5]
+    'Selling Price', // data[6]
+    'Quantity',      // data[7]
+    'Featured'       // data[8]
 ];
 
-// Set the headers starting at cell B2
+// 3. Write headers in row 1
+$startRow = 1;
+$startCol = 'A';
 $col = $startCol;
 foreach ($headers as $header) {
     $sheet->setCellValue($col . $startRow, $header);
     $col++;
 }
 
-// Calculate the last column letter for our header row
-$lastCol = chr(ord($startCol) + count($headers) - 1);
+// 4. Style the header row
+$lastCol = chr(ord($startCol) + count($headers) - 1); // E.g. 'I'
 $headerRange = $startCol . $startRow . ':' . $lastCol . $startRow;
 
-// Apply styling to the header row: green background, white bold centered text, and borders
 $sheet->getStyle($headerRange)->applyFromArray([
     'font' => [
         'bold' => true,
@@ -53,25 +59,110 @@ $sheet->getStyle($headerRange)->applyFromArray([
     ],
 ]);
 
-// Freeze pane so the header row remains visible. Since headers are in row 2, freeze starting at B3.
+// 5. Apply borders to all cells up to row 100
+$fullRange = $startCol . $startRow . ':' . $lastCol . '100';
+$sheet->getStyle($fullRange)->applyFromArray([
+    'borders' => [
+        'allBorders' => [
+            'borderStyle' => Border::BORDER_THIN,
+            'color' => ['rgb' => '000000'],
+        ],
+    ],
+]);
+
+// 6. Freeze the header row
 $sheet->freezePane($startCol . ($startRow + 1));
 
-// Optionally, set auto column width for better visibility
-for ($col = $startCol; $col <= $lastCol; $col++) {
-    $sheet->getColumnDimension($col)->setAutoSize(true);
+// 7. Auto-adjust column widths
+foreach (range($startCol, $lastCol) as $c) {
+    $sheet->getColumnDimension($c)->setAutoSize(true);
 }
 
-// Set custom page margins (for printing or page setup)
-$margins = $sheet->getPageMargins();
-$margins->setTop(1);
-$margins->setRight(0.75);
-$margins->setLeft(0.75);
-$margins->setBottom(1);
+// ------------------------------------------------------------------
+// 8. Data Validation
+// ------------------------------------------------------------------
 
-// Optionally define a print area that includes the header row only
-$sheet->getPageSetup()->setPrintArea($startCol . $startRow . ':' . $lastCol . $startRow);
+// (A) Category Name from DB (column A => A2:A100)
+$categories = [];
+$catQuery = "SELECT name FROM categories";
+$catResult = mysqli_query($conn, $catQuery);
+if ($catResult) {
+    while ($row = mysqli_fetch_assoc($catResult)) {
+        $categories[] = $row['name'];
+    }
+}
+// Fallback if no categories
+if (empty($categories)) {
+    $categories = ['Default Category'];
+}
+$categoryList = '"' . implode(',', $categories) . '"';
 
-// Set HTTP headers for download and output the Excel file
+for ($row = 2; $row <= 100; $row++) {
+    $validation = $sheet->getCell('A' . $row)->getDataValidation();
+    $validation->setType(DataValidation::TYPE_LIST);
+    $validation->setErrorStyle(DataValidation::STYLE_STOP);
+    $validation->setAllowBlank(false);
+    $validation->setShowInputMessage(true);
+    $validation->setShowErrorMessage(true);
+    $validation->setFormula1($categoryList);
+    $validation->setShowDropDown(true);
+
+    $validation->setErrorTitle("Invalid Category");
+    $validation->setError("Please select a valid category from the drop-down arrow.");
+}
+
+// (B) Rating (column B => B2:B100) => 1,2,3,4,5
+$ratingList = '"1,2,3,4,5"';
+for ($row = 2; $row <= 100; $row++) {
+    $validation = $sheet->getCell('B' . $row)->getDataValidation();
+    $validation->setType(DataValidation::TYPE_LIST);
+    $validation->setErrorStyle(DataValidation::STYLE_STOP);
+    $validation->setAllowBlank(false);
+    $validation->setShowInputMessage(true);
+    $validation->setShowErrorMessage(true);
+    $validation->setFormula1($ratingList);
+    $validation->setShowDropDown(true);
+
+    $validation->setErrorTitle("Invalid Rating");
+    $validation->setError("Please select a rating between 1 and 5 from the drop-down arrow.");
+}
+
+// (C) Featured (column I => I2:I100) => from enum('new','best_selling','trending','popular', etc.)
+$featuredEnum = [];
+$enumQuery = "SHOW COLUMNS FROM products LIKE 'featured'";
+$enumResult = mysqli_query($conn, $enumQuery);
+if ($enumResult && $enumRow = mysqli_fetch_assoc($enumResult)) {
+    // The Type might look like: enum('new','best_selling','trending','popular')
+    if (preg_match("/^enum\((.*)\)$/", $enumRow['Type'], $matches)) {
+        // $matches[1] => "'new','best_selling','trending','popular'"
+        $vals = explode(",", $matches[1]); // ["'new'","'best_selling'","'trending'","'popular'"]
+        $vals = array_map(function($v) {
+            return trim($v, " '");
+        }, $vals);
+        $featuredEnum = $vals;
+    }
+}
+// Fallback if empty
+if (empty($featuredEnum)) {
+    $featuredEnum = ['new','best_selling','trending','popular'];
+}
+$featuredList = '"' . implode(',', $featuredEnum) . '"';
+
+for ($row = 2; $row <= 100; $row++) {
+    $validation = $sheet->getCell('I' . $row)->getDataValidation();
+    $validation->setType(DataValidation::TYPE_LIST);
+    $validation->setErrorStyle(DataValidation::STYLE_STOP);
+    $validation->setAllowBlank(false);
+    $validation->setShowInputMessage(true);
+    $validation->setShowErrorMessage(true);
+    $validation->setFormula1($featuredList);
+    $validation->setShowDropDown(true);
+
+    $validation->setErrorTitle("Invalid Featured Value");
+    $validation->setError("Please select a valid 'featured' value from the drop-down arrow.");
+}
+
+// 9. Output the file as an Excel download
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 header('Content-Disposition: attachment; filename="bulk_upload_template.xlsx"');
 
