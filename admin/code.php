@@ -628,8 +628,6 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-
-
 if (isset($_POST['zip_for_me_btn'])) {
     // Validate that an Excel file and multiple image files were uploaded
     if (
