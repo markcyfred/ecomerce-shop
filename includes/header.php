@@ -28,7 +28,6 @@ include 'functions/userfunctions.php';
 </head>
 
 <body>
-    <!-- Modal -->
     <!-- <div class="modal fade custom-modal" id="onloadModal" tabindex="-1" aria-labelledby="onloadModalLabel" aria-hidden="true">
         <div class="modal-dialog">
         <div class="modal-content">
@@ -53,7 +52,6 @@ include 'functions/userfunctions.php';
         </div>
         </div>
     </div> -->
-    <!-- Modal end -->
     <header class="header-area header-style-1 header-height-2">
         <div class="header-top header-top-ptb-1 d-none d-lg-block">
             <div class="container">

@@ -9,6 +9,33 @@ include('includes/header.php');
         justify-content: space-between;
     }
 </style>
+<!-- JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<?php
+if (isset($_SESSION['message'])) {
+  $icon = ($_SESSION['messageType'] == 'success') ? 'success' : 'error';
+?>
+  <script>
+    Swal.fire({
+      position: 'top-end',
+      icon: '<?php echo $icon; ?>',
+      title: '<?php echo $_SESSION['message']; ?>',
+      showConfirmButton: false,
+      timer: 2000,
+      toast: true,
+      width: 'auto',
+      padding: '0.1em',
+      background: 'white',
+      customClass: {
+        popup: 'small-swal'
+      }
+    });
+  </script>
+<?php
+  unset($_SESSION['message']); // unset the session message after displaying
+  unset($_SESSION['messageType']); // unset the session message type after displaying
+}
+?>
 <main id="main" class="main">
     <div class="pagetitle">
         <h1>Products Add</h1>
@@ -39,16 +66,16 @@ include('includes/header.php');
 
                             <br><br>
                             <!-- Bulk Upload Form -->
-                            <form action="code.php" method="POST" enctype="multipart/form-data">
+                            <form action="bulk.php" method="POST" enctype="multipart/form-data">
                                 <label for="bulkUpload" class="form-label">Bulk Upload (CSV/Excel File)</label>
-                                <input type="file" class="form-control" id="bulkUpload" name="bulk_file" accept=".csv, .xlsx" required>
+                                <input type="file" class="form-control" id="bulkUpload" name="bulk_file" accept=".csv, .xlsx" >
 
                                 <br>
 
                                 <label for="imageUpload" class="form-label">Upload Product Images (ZIP File)</label>
                                 <!--USER NOTE THAT IMAGES SHOULD BE NAMED AS SAME TO PRODUCT NAME-->
                                 <small class="text-danger">Note: Images should be named as same to product name in the excell</small>
-                                <input type="file" class="form-control" id="imageUpload" name="image_zip" accept=".zip" required>
+                                <input type="file" class="form-control" id="imageUpload" name="image_zip" accept=".zip" >
 
                                 <br>
 
@@ -128,13 +155,30 @@ include('includes/header.php');
 
 
                             <!-- Product Name -->
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label for="inputName" class="form-label">Product Name</label>
                                 <input type="text" class="form-control" name="product_name">
                             </div>
+                            <!--product brand -->
+                            <div class="col-md-4">
+                                <label for="inputBrand" class="form-label">Select Brand</label>
+                                <select class="form-select" id="inputBrand" name="brand_name">
+                                    <option selected>Select Brand</option>
+                                    <?php
+                                    $brands = getAll("brands");
+                                    if (mysqli_num_rows($brands) > 0) {
+                                        foreach ($brands as $item) {
+                                    ?>
+                                            <option value="<?= $item['brand_name'] ?>"><?= $item['brand_name'] ?></option>
+                                    <?php
+                                        }
+                                    }
+                                    ?>
+                                </select>
+                            </div>
 
                             <!-- Select Size -->
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label for="inputSize" class="form-label">Select Size</label>
                                 <select class="form-select" id="inputSize" name="size">
                                     <option selected>Select Size</option>
@@ -160,7 +204,7 @@ include('includes/header.php');
                             <div class="col-md-6">
                                 <label for="brand_image" class="form-label">product Image</label>
                                 <div class="drop-zone" id="dropZone">Drag & Drop Image Here</div>
-                                <input type="file" class="form-control d-none" id="image" name="image">
+                                <input type="file" class="form-control d-none" id="brand_image" name="image">
                                 <br>
 
                             </div>
@@ -172,6 +216,7 @@ include('includes/header.php');
                                 <label for="inputDescription" class="form-label">Description</label>
                                 <textarea class="form-control" name="description" rows="4"></textarea>
                             </div>
+
 
                             <!-- Original Price -->
                             <div class="col-md-3">
@@ -204,6 +249,71 @@ include('includes/header.php');
                                     <option value="0">Inactive</option>
                                 </select>
                             </div>
+                            <!-- Deal of the Day Card -->
+                            <div class="card my-4 shadow-sm">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">Deal of the Day Settings</h5>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Toggle Switch -->
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="dealOfTheDay" name="deal_of_day">
+                                        <label class="form-check-label" for="dealOfTheDay">Enable Deal of the Day</label>
+                                    </div>
+                                    <!-- Deal Time Inputs (hidden by default) -->
+                                    <div id="dealTimeInputs" style="display: none;">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label for="deal_start" class="form-label">Deal Start</label>
+                                                <input type="datetime-local" class="form-control" id="deal_start" name="deal_start">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="deal_end" class="form-label">Deal End</label>
+                                                <input type="datetime-local" class="form-control" id="deal_end" name="deal_end">
+                                            </div>
+                                        </div>
+                                        <small class="text-muted">Note: You cannot select a date/time before the current moment.</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function() {
+                                    const dealCheckbox = document.getElementById('dealOfTheDay');
+                                    const dealInputs = document.getElementById('dealTimeInputs');
+                                    const dealStartInput = document.getElementById('deal_start');
+                                    const dealEndInput = document.getElementById('deal_end');
+
+                                    // Function to get current date-time in format yyyy-MM-ddThh:mm
+                                    function getCurrentDateTimeLocal() {
+                                        const now = new Date();
+                                        const localISO = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+                                            .toISOString().slice(0, 16);
+                                        return localISO;
+                                    }
+
+                                    // Toggle the visibility of deal time inputs and set min values
+                                    dealCheckbox.addEventListener('change', function() {
+                                        if (this.checked) {
+                                            dealInputs.style.display = 'block';
+                                            const nowLocal = getCurrentDateTimeLocal();
+                                            dealStartInput.min = nowLocal;
+                                            dealEndInput.min = nowLocal;
+                                        } else {
+                                            dealInputs.style.display = 'none';
+                                            dealStartInput.value = '';
+                                            dealEndInput.value = '';
+                                        }
+                                    });
+
+                                    // Ensure the deal end is not earlier than the deal start
+                                    dealStartInput.addEventListener('change', function() {
+                                        if (this.value) {
+                                            dealEndInput.min = this.value;
+                                        }
+                                    });
+                                });
+                            </script>
+
 
                             <div class="col-12 text-center">
                                 <button type="submit" class="btn btn-primary" name="add_product_btn">Submit</button>

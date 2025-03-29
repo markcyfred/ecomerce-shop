@@ -118,293 +118,154 @@ else if (isset($_POST['delete_category_btn'])) {
         redirect("categories.php", "Category not deleted", "error");
     }
 }
-
 //add_product_btn
-else if (isset($_POST['add_product_btn'])) {
+if (isset($_POST['add_product_btn'])) {
     $category_name = mysqli_real_escape_string($conn, $_POST['category_name']);
-    $rating = mysqli_real_escape_string($conn, $_POST['rating']);
-    $status = mysqli_real_escape_string($conn, $_POST['status']);
-    $discount = mysqli_real_escape_string($conn, $_POST['discount']);
-    $product_name = mysqli_real_escape_string($conn, $_POST['product_name']);
-    $description = mysqli_real_escape_string($conn, $_POST['description']);
-    $original_price = mysqli_real_escape_string($conn, $_POST['original_price']);
-    $selling_price = mysqli_real_escape_string($conn, $_POST['selling_price']);
-    $quantity = mysqli_real_escape_string($conn, $_POST['quantity']);
-    $trending = mysqli_real_escape_string($conn, $_POST['trending']);
-    $size = mysqli_real_escape_string($conn, $_POST['size']);
-    $featured = mysqli_real_escape_string($conn, $_POST['featured']);
+    $rating        = (isset($_POST['rating']) && is_numeric($_POST['rating'])) ? $_POST['rating'] : 0;
+    $status        = isset($_POST['status']) ? 1 : 0;
+    $discount      = (isset($_POST['discount']) && is_numeric($_POST['discount'])) ? $_POST['discount'] : 0;
+    $product_name  = mysqli_real_escape_string($conn, $_POST['product_name']);
+    $description   = mysqli_real_escape_string($conn, $_POST['description']);
+    $original_price= (isset($_POST['original_price']) && is_numeric($_POST['original_price'])) ? $_POST['original_price'] : 0;
+    $selling_price = (isset($_POST['selling_price']) && is_numeric($_POST['selling_price'])) ? $_POST['selling_price'] : 0;
+    $quantity      = (isset($_POST['quantity']) && is_numeric($_POST['quantity'])) ? $_POST['quantity'] : 0;
+    $trending      = isset($_POST['trending']) ? 1 : 0;
+    $size          = mysqli_real_escape_string($conn, $_POST['size']);
+    $featured      = isset($_POST['featured']) ? 1 : 0;
 
-    $image = $_FILES['image']['name'];
+    // Handle Image Upload
+    if (!empty($_FILES['image']['name'])) {
+        $image         = $_FILES['image']['name'];
+        $path          = "../uploads/shop";
+        $image_ext     = pathinfo($image, PATHINFO_EXTENSION);
+        $filename      = time() . "." . $image_ext;
+        $image_tmp     = $_FILES['image']['tmp_name'];
 
-    $path = "../uploads/shop";
-
-    $image_ext = pathinfo($image, PATHINFO_EXTENSION);
-    $filename = time() . "." . $image_ext;
-
-    // Perform basic validation
-    if (empty($category_name) || empty($rating) || empty($status) || empty($discount) || empty($product_name) || empty($description) || empty($original_price) || empty($selling_price) || empty($quantity) || empty($trending) || empty($size) || empty($featured)) {
-        redirect("products-add.php", "Please fill all fields to continue.", "error");
-        exit; // Stop further processing
+        // Validate image extension (optional but recommended)
+        $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        if (!in_array(strtolower($image_ext), $allowed_extensions)) {
+            redirect("products-add.php", "Invalid image format. Only JPG, PNG, and GIF allowed.", "error");
+            exit;
+        }
+    } else {
+        $filename = NULL; // No image uploaded
     }
 
-    $add_product_query = "INSERT INTO products
-            (category_name, rating, status, discount, product_name, description, original_price, selling_price, image, quantity, trending, size, featured) 
-            VALUES ('$category_name', '$rating', '$status', '$discount', '$product_name', '$description', '$original_price', '$selling_price', '$filename', '$quantity', '$trending', '$size', '$featured')";
+    // Capture Deal of the Day inputs
+    $deal_of_day = isset($_POST['deal_of_day']) ? 1 : 0;
+    $deal_start = NULL;
+    $deal_end   = NULL;
+    
+    if ($deal_of_day) {
+        if (!empty($_POST['deal_start']) && !empty($_POST['deal_end'])) {
+            $deal_start = mysqli_real_escape_string($conn, $_POST['deal_start']);
+            $deal_end   = mysqli_real_escape_string($conn, $_POST['deal_end']);
+        }
+    }
+
+    // Basic validation: Ensure required fields are filled
+    if (empty($category_name) || empty($product_name) || empty($description) || empty($size)) {
+        redirect("products-add.php", "Please fill all required fields.", "error");
+        exit;
+    }
+
+    // Insert product into the database
+    $add_product_query = "INSERT INTO products 
+            (category_name, rating, status, discount, product_name, description, original_price, selling_price, image, quantity, trending, size, featured, deal_of_day, deal_start, deal_end) 
+            VALUES (
+                '$category_name', 
+                '$rating', 
+                '$status', 
+                '$discount', 
+                '$product_name', 
+                '$description', 
+                '$original_price', 
+                '$selling_price', 
+                " . ($filename ? "'$filename'" : "NULL") . ", 
+                '$quantity', 
+                '$trending', 
+                '$size', 
+                '$featured', 
+                '$deal_of_day', 
+                " . (!empty($deal_start) ? "'$deal_start'" : "NULL") . ", 
+                " . (!empty($deal_end) ? "'$deal_end'" : "NULL") . "
+            )";
 
     $add_product_query_run = mysqli_query($conn, $add_product_query);
 
     if ($add_product_query_run) {
-        move_uploaded_file($_FILES['image']['tmp_name'], $path . '/' . $filename
-        );
-        redirect("products-add.php", "Product Created successfully", "success");
+        if ($filename) {
+            move_uploaded_file($image_tmp, "$path/$filename");
+        }
+        redirect("products-add.php", "Product Created Successfully", "success");
     } else {
         redirect("products-add.php", "Something went wrong", "error");
     }
 }
-require '../vendor/autoload.php';
-use PhpOffice\PhpSpreadsheet\IOFactory;
-
-// --- Step 1: Process the Bulk Upload files ---
-if (isset($_POST['bulk_upload_btn'])) {
-    // Ensure both files are provided
-    if (isset($_FILES['bulk_file']) && $_FILES['bulk_file']['error'] == 0 &&
-        isset($_FILES['image_zip']) && $_FILES['image_zip']['error'] == 0) {
-
-        // Process bulk file (CSV/Excel)
-        $fileName = $_FILES['bulk_file']['name'];
-        $fileTmp  = $_FILES['bulk_file']['tmp_name'];
-        $fileExt  = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-
-        $rows = [];
-        $errorMessages = [];
-
-        if ($fileExt === 'csv') {
-            if (($handle = fopen($fileTmp, "r")) !== FALSE) {
-                $header = fgetcsv($handle, 1000, ","); // Skip header row
-                while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-                    $rows[] = $data;
-                }
-                fclose($handle);
-            } else {
-                redirect("products-add.php", "Unable to open the CSV file for reading.", "error");
-                exit;
-            }
-        } elseif ($fileExt === 'xlsx') {
-            try {
-                $spreadsheet = IOFactory::load($fileTmp);
-                $sheet = $spreadsheet->getActiveSheet();
-                $rowsArray = $sheet->toArray();
-                array_shift($rowsArray); // Remove header row
-                $rows = $rowsArray;
-            } catch(Exception $e) {
-                redirect("products-add.php", "An error occurred while reading the Excel file: " . $e->getMessage(), "error");
-                exit;
-            }
-        } else {
-            redirect("products-add.php", "Please upload a file in CSV or XLSX format.", "error");
-            exit;
-        }
-
-        // Filter out rows that are completely blank
-        $rows = array_filter($rows, function($row) {
-            return !empty(array_filter($row, function($cell) {
-                return trim($cell) !== '';
-            }));
-        });
-
-        if (count($rows) === 0) {
-            redirect("products-add.php", "No data found in the file. Please check the content.", "error");
-            exit;
-        }
-
-        // --- Step 2: Extract Images from the ZIP file ---
-        $imagesMap = [];
-        $zip = new ZipArchive;
-        if ($zip->open($_FILES['image_zip']['tmp_name']) === TRUE) {
-            // Loop through all files in the zip
-            for ($i = 0; $i < $zip->numFiles; $i++) {
-                $entry = $zip->getNameIndex($i);
-                // Skip directories
-                if (substr($entry, -1) == '/') {
-                    continue;
-                }
-                $ext = strtolower(pathinfo($entry, PATHINFO_EXTENSION));
-                // Check if it is an allowed image type
-                if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif'])) {
-                    // Use the base name (without extension) as the key (normalized)
-                    $baseName = strtolower(trim(pathinfo($entry, PATHINFO_FILENAME)));
-                    // Get file content
-                    $fileContent = $zip->getFromIndex($i);
-                    $imagesMap[$baseName] = [
-                        'content'   => $fileContent,
-                        'extension' => $ext,
-                        'original'  => $entry // keep the original name if needed
-                    ];
-                }
-            }
-            $zip->close();
-        } else {
-            redirect("products-add.php", "Failed to open the image zip file.", "error");
-            exit;
-        }
-
-        // --- Step 3: Process Each Row from the Bulk File ---
-        foreach ($rows as $index => $data) {
-            // Expecting at least 9 columns per your current structure
-            if (count($data) < 9) {
-                $errorMessages[] = "Row " . ($index+2) . ": Missing one or more required columns.";
-                continue;
-            }
-
-            // Retrieve values and sanitize inputs (make sure $conn is your DB connection)
-            $category_name  = mysqli_real_escape_string($conn, trim($data[0]));
-            $rating         = mysqli_real_escape_string($conn, trim($data[1]));
-            $discount       = mysqli_real_escape_string($conn, trim($data[2]));
-            $product_name   = mysqli_real_escape_string($conn, trim($data[3]));
-            $description    = mysqli_real_escape_string($conn, trim($data[4]));
-            $original_price = mysqli_real_escape_string($conn, trim($data[5]));
-            $selling_price  = mysqli_real_escape_string($conn, trim($data[6]));
-            $quantity       = mysqli_real_escape_string($conn, trim($data[7]));
-            $featured       = mysqli_real_escape_string($conn, trim($data[8]));
-
-            // Set defaults
-            $status   = 1;
-            $trending = 1;
-            $size     = 'medium';
-            $productImage = 'default.png';
-
-            // Check required fields
-            if (empty($category_name) || empty($product_name)) {
-                $errorMessages[] = "Row " . ($index+2) . ": Both Category and Product Name fields are required.";
-                continue;
-            }
-
-            // Check for duplicate product names
-            $check_query = "SELECT id FROM products WHERE product_name = '$product_name'";
-            $check_result = mysqli_query($conn, $check_query);
-            if (mysqli_num_rows($check_result) > 0) {
-                $errorMessages[] = "Row " . ($index+2) . ": Product '$product_name' already exists.";
-                continue;
-            }
-
-            // --- Step 4: Match the product name to an image from the ZIP ---
-            $productKey = strtolower(trim($product_name));
-            if (isset($imagesMap[$productKey])) {
-                $imageData = $imagesMap[$productKey];
-                // Create a safe filename (you can adjust this to your naming conventions)
-                $newFilename = preg_replace('/\s+/', '_', $product_name) . '.' . $imageData['extension'];
-                $destinationFolder = '../uploads/shop/';
-                if (!is_dir($destinationFolder)) {
-                    if (!mkdir($destinationFolder, 0755, true)) {
-                        $errorMessages[] = "Row " . ($index+2) . ": The directory '$destinationFolder' does not exist and could not be created.";
-                        continue;
-                    }
-                }
-                // Check if the directory is writable
-                if (!is_writable($destinationFolder)) {
-                    $errorMessages[] = "Row " . ($index+2) . ": The directory '$destinationFolder' is not writable.";
-                    continue;
-                }
-
-                // Save the image file to the destination folder
-                $imageSavePath = $destinationFolder . $newFilename;
-                $imageSaveResult = file_put_contents($imageSavePath, $imageData['content']);
-
-                if ($imageSaveResult !== false) {
-                    $productImage = $newFilename;
-                    // Remove the image from the map so that later we know which images were unmatched
-                    unset($imagesMap[$productKey]);
-                } else {
-                    $errorMessages[] = "Row " . ($index+2) . ": Failed to save the image for product '$product_name' at '$imageSavePath'.";
-                    
-                    // Additional directory checks
-                    if (!is_dir($destinationFolder)) {
-                        $errorMessages[] = "Error: The directory '$destinationFolder' does not exist.";
-                    } elseif (!is_writable($destinationFolder)) {
-                        $errorMessages[] = "Error: The directory '$destinationFolder' is not writable.";
-                    }
-                }
-            } else {
-                // Optionally add an error message if the product did not have a matching image
-                $errorMessages[] = "Row " . ($index+2) . ": No matching image found for product '$product_name'.";
-            }
-
-            // Insert into the database with the appropriate image
-            $insert_query = "INSERT INTO products 
-                (category_name, rating, status, discount, product_name, description, original_price, selling_price, image, quantity, trending, size, featured) 
-                VALUES ('$category_name', '$rating', '$status', '$discount', '$product_name', '$description', '$original_price', '$selling_price', '$productImage', '$quantity', '$trending', '$size', '$featured')";
-
-            if (!mysqli_query($conn, $insert_query)) {
-                $errorMessages[] = "Row " . ($index+2) . ": Failed to insert record - " . mysqli_error($conn);
-            }
-        }
-
-        // --- Step 5: Report any unmatched images ---
-        if (!empty($imagesMap)) {
-            $unmatched = [];
-            foreach ($imagesMap as $key => $data) {
-                $unmatched[] = $data['original'];
-            }
-            $errorMessages[] = "The following images did not match any product: " . implode(', ', $unmatched);
-        }
-
-        // --- Step 6: Redirect with message ---
-        if (count($errorMessages) > 0) {
-            $message = "Bulk upload completed with errors. Please review the following messages:<br><ul>";
-            foreach ($errorMessages as $error) {
-                $message .= "<li>$error</li>";
-            }
-            $message .= "</ul>";
-            redirect("products-add.php", $message, "error");
-        } else {
-            redirect("products-add.php", "Bulk upload completed successfully.", "success");
-        }
-    } else {
-        redirect("products-add.php", "Please upload both the bulk file and the image ZIP file to continue.", "error");
-    }
-}
-
-
-//update_product_btn
-
 
 else if (isset($_POST['update_product_btn'])) {
-
-    //escape string values
-    $product_id = mysqli_real_escape_string($conn, $_POST['product_id']);
+    // Escape string values
+    $product_id    = mysqli_real_escape_string($conn, $_POST['product_id']);
     $category_name = mysqli_real_escape_string($conn, $_POST['category_name']);
-    $rating = mysqli_real_escape_string($conn, $_POST['rating']);
-    $status = mysqli_real_escape_string($conn, $_POST['status']);
-    $discount = mysqli_real_escape_string($conn, $_POST['discount']);
-    $product_name = mysqli_real_escape_string($conn, $_POST['product_name']);
-    $description = mysqli_real_escape_string($conn, $_POST['description']);
-    $original_price = mysqli_real_escape_string($conn, $_POST['original_price']);
+    $rating        = mysqli_real_escape_string($conn, $_POST['rating']);
+    $status        = mysqli_real_escape_string($conn, $_POST['status']);
+    $discount      = mysqli_real_escape_string($conn, $_POST['discount']);
+    $product_name  = mysqli_real_escape_string($conn, $_POST['product_name']);
+    $description   = mysqli_real_escape_string($conn, $_POST['description']);
+    $original_price= mysqli_real_escape_string($conn, $_POST['original_price']);
     $selling_price = mysqli_real_escape_string($conn, $_POST['selling_price']);
-    $quantity = mysqli_real_escape_string($conn, $_POST['quantity']);
-    $trending = mysqli_real_escape_string($conn, $_POST['trending']);
-    $size = mysqli_real_escape_string($conn, $_POST['size']);
-    $featured = mysqli_real_escape_string($conn, $_POST['featured']);
+    $quantity      = mysqli_real_escape_string($conn, $_POST['quantity']);
+    $trending      = mysqli_real_escape_string($conn, $_POST['trending']);
+    $size          = mysqli_real_escape_string($conn, $_POST['size']);
+    $featured      = mysqli_real_escape_string($conn, $_POST['featured']);
+    $brand_name    = mysqli_real_escape_string($conn, $_POST['brand_name']);
 
-
-    $image = $_FILES['image']['name'];
-
-    $path = "../uploads/shop";
-
-
-    $new_image = $_FILES['image']['name'];
-    $old_image = $_POST['old_image'];
-
+    // Image update
+    $path          = "../uploads/shop";
+    $old_image     = $_POST['old_image'];
+    $new_image     = $_FILES['image']['name'];
     if ($new_image != "") {
-        $update_filename = $new_image;
         $image_ext = pathinfo($new_image, PATHINFO_EXTENSION);
         $update_filename = time() . "." . $image_ext;
     } else {
         $update_filename = $old_image;
     }
+    
+    // Deal of the Day inputs
+    $deal_of_day = isset($_POST['deal_of_day']) ? 1 : 0;
+    if ($deal_of_day) {
+        $deal_start = (!empty($_POST['deal_start'])) ? mysqli_real_escape_string($conn, $_POST['deal_start']) : "";
+        $deal_end   = (!empty($_POST['deal_end'])) ? mysqli_real_escape_string($conn, $_POST['deal_end']) : "";
+    } else {
+        $deal_start = "";
+        $deal_end   = "";
+    }
+    // Capture deal status from the dropdown.
+    $deal_status = isset($_POST['deal_of_day_status']) ? mysqli_real_escape_string($conn, $_POST['deal_of_day_status']) : "";
+    $deal_status_sql = ($deal_status === "" || $deal_status === "NULL") ? "NULL" : "'$deal_status'";
 
-    $update_product_query = "UPDATE products SET category_name='$category_name', rating='$rating', status='$status', discount='$discount', product_name='$product_name', description='$description', original_price='$original_price', selling_price='$selling_price', image='$update_filename', quantity='$quantity', trending='$trending', size='$size', featured='$featured' WHERE id ='$product_id'";
+    // Build update query, including deal fields and deal status.
+    $update_product_query = "UPDATE products SET 
+        category_name = '$category_name', 
+        rating = '$rating', 
+        status = '$status', 
+        discount = '$discount', 
+        product_name = '$product_name', 
+        description = '$description', 
+        original_price = '$original_price', 
+        selling_price = '$selling_price', 
+        image = '$update_filename', 
+        quantity = '$quantity', 
+        trending = '$trending',
+        brand_name = '$brand_name', 
+        size = '$size', 
+        featured = '$featured', 
+        deal_start = " . (!empty($deal_start) ? "'$deal_start'" : "NULL") . ", 
+        deal_end = " . (!empty($deal_end) ? "'$deal_end'" : "NULL") . ", 
+        deal_of_day_status = $deal_status_sql
+        WHERE id ='$product_id'";
+    
     $update_product_query_run = mysqli_query($conn, $update_product_query);
-
     if ($update_product_query_run) {
         if ($_FILES['image']['name'] != "") {
             move_uploaded_file($_FILES['image']['tmp_name'], $path . '/' . $update_filename);
@@ -414,349 +275,12 @@ else if (isset($_POST['update_product_btn'])) {
         }
         redirect("products.php", "Product updated successfully", "success");
     } else {
-        redirect("edit-product.php", "Product not updated", "error");
+        redirect("edit-product.php?id=" . $product_id, "Product not updated", "error");
     }
 } else {
     header("Location: ../index.php");
 }
 
-// --- Bulk Edit Backend ---
-if (isset($_POST['bulk_edit_btn'])) {
-    // Ensure both files are provided
-    if (
-        isset($_FILES['excel_file']) && $_FILES['excel_file']['error'] == 0 &&
-        isset($_FILES['images_zip_edited']) && $_FILES['images_zip_edited']['error'] == 0
-    ) {
-
-        // Process bulk edit file (CSV/Excel)
-        $fileName = $_FILES['excel_file']['name'];
-        $fileTmp  = $_FILES['excel_file']['tmp_name'];
-        $fileExt  = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-
-        $rows = [];
-        $errorMessages = [];
-
-        if ($fileExt === 'csv') {
-            if (($handle = fopen($fileTmp, "r")) !== FALSE) {
-                $header = fgetcsv($handle, 1000, ","); // Skip header row
-                while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-                    $rows[] = $data;
-                }
-                fclose($handle);
-            } else {
-                redirect("products.php", "Unable to open the CSV file for reading.", "error");
-                exit;
-            }
-        } elseif ($fileExt === 'xlsx') {
-            try {
-                $spreadsheet = IOFactory::load($fileTmp);
-                $sheet = $spreadsheet->getActiveSheet();
-                $rowsArray = $sheet->toArray();
-                array_shift($rowsArray); // Remove header row
-                $rows = $rowsArray;
-            } catch(Exception $e) {
-                redirect("products.php", "An error occurred while reading the Excel file: " . $e->getMessage(), "error");
-                exit;
-            }
-        } else {
-            redirect("products.php", "Please upload a file in CSV or XLSX format.", "error");
-            exit;
-        }
-
-        // Filter out rows that are completely blank
-        $rows = array_filter($rows, function($row) {
-            return !empty(array_filter($row, function($cell) {
-                return trim($cell) !== '';
-            }));
-        });
-
-        if (count($rows) === 0) {
-            redirect("products.php", "No data found in the file. Please check the content.", "error");
-            exit;
-        }
-
-        // --- Step 2: Extract Images from the ZIP file ---
-        $imagesMap = [];
-        $zip = new ZipArchive;
-        if ($zip->open($_FILES['images_zip_edited']['tmp_name']) === TRUE) {
-            // Loop through all files in the zip
-            for ($i = 0; $i < $zip->numFiles; $i++) {
-                $entry = $zip->getNameIndex($i);
-                // Skip directories
-                if (substr($entry, -1) == '/') {
-                    continue;
-                }
-                $ext = strtolower(pathinfo($entry, PATHINFO_EXTENSION));
-                if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif'])) {
-                    // Use the base name (without extension) as the key (normalized)
-                    $baseName = strtolower(trim(pathinfo($entry, PATHINFO_FILENAME)));
-                    $fileContent = $zip->getFromIndex($i);
-                    $imagesMap[$baseName] = [
-                        'content'   => $fileContent,
-                        'extension' => $ext,
-                        'original'  => $entry
-                    ];
-                }
-            }
-            $zip->close();
-        } else {
-            redirect("products.php", "Failed to open the image ZIP file.", "error");
-            exit;
-        }
-
-        // --- Step 3: Process Each Row from the Bulk Edit File ---
-        $destinationFolder = '../uploads/shop/';
-        foreach ($rows as $index => $data) {
-            // Expecting at least 10 columns per row:
-            // [0] Product ID, [1] Category, [2] Rating, [3] Discount, [4] Product Name, [5] Description, 
-            // [6] Original Price, [7] Selling Price, [8] Quantity, [9] Featured
-            if (count($data) < 10) {
-                $errorMessages[] = "Row " . ($index + 2) . ": Missing one or more required columns.";
-                continue;
-            }
-
-            // Retrieve and sanitize inputs (ensure $conn is your DB connection)
-            $product_id     = mysqli_real_escape_string($conn, trim($data[0]));
-            $category_name  = mysqli_real_escape_string($conn, trim($data[1]));
-            $rating         = mysqli_real_escape_string($conn, trim($data[2]));
-            $discount       = mysqli_real_escape_string($conn, trim($data[3]));
-            $product_name   = mysqli_real_escape_string($conn, trim($data[4]));
-            $description    = mysqli_real_escape_string($conn, trim($data[5]));
-            $original_price = mysqli_real_escape_string($conn, trim($data[6]));
-            $selling_price  = mysqli_real_escape_string($conn, trim($data[7]));
-            $quantity       = mysqli_real_escape_string($conn, trim($data[8]));
-            $featured       = mysqli_real_escape_string($conn, trim($data[9]));
-
-            // Set defaults (you can modify these as needed)
-            $status   = 1;
-            $trending = 1;
-            $size     = 'medium';
-            $productImage = ''; // Will be set if a matching new image is found
-
-            // Check required fields
-            if (empty($product_id) || empty($category_name) || empty($product_name)) {
-                $errorMessages[] = "Row " . ($index + 2) . ": Product ID, Category and Product Name are required.";
-                continue;
-            }
-
-            // --- Step 4: Check for a matching image in the ZIP ---
-            $productKey = strtolower(trim($product_name));
-            if (isset($imagesMap[$productKey])) {
-                $imageData = $imagesMap[$productKey];
-                $image_ext = $imageData['extension'];
-                // Generate new filename similar to normal edit
-                $update_filename = time() . "." . $image_ext;
-                if (!is_dir($destinationFolder)) {
-                    if (!mkdir($destinationFolder, 0755, true)) {
-                        $errorMessages[] = "Row " . ($index + 2) . ": The directory '$destinationFolder' could not be created.";
-                        continue;
-                    }
-                }
-                if (!is_writable($destinationFolder)) {
-                    $errorMessages[] = "Row " . ($index + 2) . ": The directory '$destinationFolder' is not writable.";
-                    continue;
-                }
-                $imageSavePath = $destinationFolder . $update_filename;
-                $imageSaveResult = file_put_contents($imageSavePath, $imageData['content']);
-                if ($imageSaveResult !== false) {
-                    $productImage = $update_filename;
-                    // Remove the image from map so unmatched images can be reported later
-                    unset($imagesMap[$productKey]);
-                } else {
-                    $errorMessages[] = "Row " . ($index + 2) . ": Failed to save the image for product '$product_name'.";
-                }
-            }
-
-            // --- Step 5: Update the existing product in the database ---
-            // If a new image is found, retrieve the current image to remove it after a successful update
-            $old_image = "";
-            if (!empty($productImage)) {
-                $selectQuery = "SELECT image FROM products WHERE id='$product_id'";
-                $selectResult = mysqli_query($conn, $selectQuery);
-                if ($selectResult && mysqli_num_rows($selectResult) > 0) {
-                    $row = mysqli_fetch_assoc($selectResult);
-                    $old_image = $row['image'];
-                }
-            }
-
-            // Build the update query. If a new image was saved, include it in the update.
-            $updateFields = "category_name='$category_name', rating='$rating', discount='$discount', product_name='$product_name', description='$description', original_price='$original_price', selling_price='$selling_price', quantity='$quantity', featured='$featured', status='$status', trending='$trending', size='$size'";
-            if (!empty($productImage)) {
-                $updateFields .= ", image='$productImage'";
-            }
-            $update_query = "UPDATE products SET $updateFields WHERE id='$product_id'";
-
-            if (!mysqli_query($conn, $update_query)) {
-                $errorMessages[] = "Row " . ($index + 2) . ": Failed to update product ID '$product_id' - " . mysqli_error($conn);
-            } else {
-                // If update is successful and a new image was provided, delete the old image file
-                if (!empty($productImage) && !empty($old_image) && file_exists($destinationFolder . $old_image)) {
-                    unlink($destinationFolder . $old_image);
-                }
-            }
-        }
-
-        // --- Step 6: Report any unmatched images ---
-        if (!empty($imagesMap)) {
-            $unmatched = [];
-            foreach ($imagesMap as $key => $data) {
-                $unmatched[] = $data['original'];
-            }
-            $errorMessages[] = "The following images did not match any product: " . implode(', ', $unmatched);
-        }
-
-        // --- Step 7: Redirect with appropriate message ---
-        if (count($errorMessages) > 0) {
-            $message = "Bulk edit completed with errors. Please review the following messages:<br><ul>";
-            foreach ($errorMessages as $error) {
-                $message .= "<li>$error</li>";
-            }
-            $message .= "</ul>";
-            redirect("products.php", $message, "error");
-        } else {
-            redirect("products.php", "Your edit is up to date. No changes made.", "success");
-        }
-
-    } else {
-        redirect("products.php", "Please upload both the Excel file and the image ZIP file to continue.", "error");
-    }
-} else {
-    header("Location: ../index.php");
-}
-// Enable error reporting for debugging
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-if (isset($_POST['zip_for_me_btn'])) {
-    // Validate that an Excel file and multiple image files were uploaded
-    if (
-        isset($_FILES['excel_file']) && $_FILES['excel_file']['error'] == 0 &&
-        isset($_FILES['images']) && !empty($_FILES['images']['name'][0])
-    ) {
-        // --- Step 1: Process the Excel File ---
-        $fileName = $_FILES['excel_file']['name'];
-        $fileTmp  = $_FILES['excel_file']['tmp_name'];
-        $fileExt  = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-        $rows = [];
-
-        if ($fileExt === 'csv') {
-            if (($handle = fopen($fileTmp, "r")) !== false) {
-                // Assume first row is header
-                $header = fgetcsv($handle, 1000, ",");
-                while (($data = fgetcsv($handle, 1000, ",")) !== false) {
-                    $rows[] = $data;
-                }
-                fclose($handle);
-            } else {
-                die("Error: Unable to open the CSV file.");
-            }
-        } elseif ($fileExt === 'xlsx') {
-            try {
-                $spreadsheet = IOFactory::load($fileTmp);
-                $sheet = $spreadsheet->getActiveSheet();
-                $rowsArray = $sheet->toArray();
-                array_shift($rowsArray); // Remove header row
-                $rows = $rowsArray;
-            } catch(Exception $e) {
-                die("Error reading Excel file: " . $e->getMessage());
-            }
-        } else {
-            die("Error: Please upload a CSV or XLSX file.");
-        }
-        
-        // Build mapping: Assume column 0 is Product ID and column 4 is Product Name
-        $mapping = [];
-        foreach ($rows as $row) {
-            if (count($row) >= 5) {
-                $productId = trim($row[0]);
-                $productName = trim($row[4]);
-                $mapping[$productId] = $productName;
-            }
-        }
-        if (empty($mapping)) {
-            die("Error: No valid product data found in the Excel file.");
-        }
-        
-        // --- Step 2: Process the Uploaded Images ---
-        // Create a new temporary ZIP archive for renamed images
-        $newZipFile = tempnam(sys_get_temp_dir(), 'zip_') . '.zip';
-        $newZip = new ZipArchive;
-        if ($newZip->open($newZipFile, ZipArchive::CREATE) !== true) {
-            die("Error: Could not create a new ZIP archive.");
-        }
-        
-        // Loop through each uploaded image file
-        $numFiles = count($_FILES['images']['name']);
-        for ($i = 0; $i < $numFiles; $i++) {
-            if ($_FILES['images']['error'][$i] === 0) {
-                $originalName = $_FILES['images']['name'][$i];
-                $tmpName = $_FILES['images']['tmp_name'][$i];
-                $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
-                if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif'])) {
-                    $baseName = pathinfo($originalName, PATHINFO_FILENAME);
-                    // Extract numeric product id from the file name (digits at the end)
-                    if (preg_match('/(\d+)$/', $baseName, $matches)) {
-                        $prodId = $matches[1];
-                        if (isset($mapping[$prodId])) {
-                            // New file name: "ProductName [ID].ext"
-                            $newFileName = $mapping[$prodId] . ' ' . $prodId . '.' . $ext;
-                            $fileContent = file_get_contents($tmpName);
-                            $newZip->addFromString($newFileName, $fileContent);
-                        } else {
-                            echo "Warning: No mapping found for image $originalName<br>";
-                        }
-                    } else {
-                        echo "Warning: Could not extract product ID from $originalName<br>";
-                    }
-                } else {
-                    echo "Warning: Unsupported file type for $originalName<br>";
-                }
-            } else {
-                echo "Warning: Error uploading file $originalName<br>";
-            }
-        }
-        $newZip->close();
-        
-        // --- Step 3: Prompt the User to Download the New ZIP ---
-        header('Content-Type: application/zip');
-        header('Content-Disposition: attachment; filename="renamed_images.zip"');
-        header('Content-Length: ' . filesize($newZipFile));
-        readfile($newZipFile);
-        unlink($newZipFile);
-        exit;
-        
-    } else {
-        die("Error: Please upload both an edited Excel file and the product images.");
-    }
-} else {
-    die("Error: Invalid request.");
-}
-
-//delete product with dialog of confirm to delete
-if (isset($_POST['delete_product_btn'])) {
-    $product_id = mysqli_real_escape_string($conn, $_POST['product_id']);
-
-    $product_query = "SELECT * FROM products WHERE id='$product_id'";
-    $product_query_run = mysqli_query($conn, $product_query);
-    $product_data = mysqli_fetch_array($product_query_run);
-    $image = $product_data['image'];
-
-    $delete_query = "DELETE FROM products WHERE id='$product_id'";
-
-    $delete_query_run = mysqli_query($conn, $delete_query);
-
-    if ($delete_query_run) {
-
-        if (file_exists("../uploads/shop/" . $image)) {
-            unlink("../uploads/shop/" . $image);
-        }
-
-        redirect("products.php", "Product deleted successfully", "success");
-    } else {
-        redirect("products.php", "Product not deleted", "error");
-    }
-}
 
 if (isset($_POST['update_user_btn'])) {
     $user_id = $_POST['user_id'];

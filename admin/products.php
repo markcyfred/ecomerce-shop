@@ -8,16 +8,19 @@ include('includes/header.php');
         display: flex;
         justify-content: space-between;
     }
+
     /* Hide the Zip For Me upload form initially */
     #zipUploadForm {
         display: none;
         margin-top: 20px;
     }
+
     /* Place the Zip For Me button in the top right */
     .zip-for-me-btn {
         float: right;
         margin: 10px 0;
     }
+
     /* Style for processing message */
     #processingMsg {
         display: none;
@@ -26,7 +29,33 @@ include('includes/header.php');
         color: #007bff;
     }
 </style>
-
+<!-- JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<?php
+if (isset($_SESSION['message'])) {
+    $icon = ($_SESSION['messageType'] == 'success') ? 'success' : 'error';
+?>
+    <script>
+        Swal.fire({
+            position: 'top-end',
+            icon: '<?php echo $icon; ?>',
+            title: '<?php echo $_SESSION['message']; ?>',
+            showConfirmButton: false,
+            timer: 2000,
+            toast: true,
+            width: 'auto',
+            padding: '0.1em',
+            background: 'white',
+            customClass: {
+                popup: 'small-swal'
+            }
+        });
+    </script>
+<?php
+    unset($_SESSION['message']); // unset the session message after displaying
+    unset($_SESSION['messageType']); // unset the session message type after displaying
+}
+?>
 <main id="main" class="main">
     <div class="pagetitle">
         <h1>View Products</h1>
@@ -45,26 +74,27 @@ include('includes/header.php');
                 </li>
             </ol>
         </nav>
-        <!-- Zip For Me button in the right corner -->
-        <button id="toggleZipUpload" class="btn btn-secondary zip-for-me-btn">Zip For Me</button>
+
     </div><!-- End Page Title -->
+
 
     <!-- Bulk Upload Edit Section (visible by default) -->
     <div id="bulkUploadSection">
-        <form action="code.php" method="POST" enctype="multipart/form-data">
+        <form action="bulk.php" method="POST" enctype="multipart/form-data">
             <?php if (isset($_SESSION['message'])) { ?>
                 <div class="alert alert-success" role="alert">
                     <?= $_SESSION['message'] ?>
                 </div>
-            <?php unset($_SESSION['message']); } ?>
+            <?php unset($_SESSION['message']);
+            } ?>
             <div class="row">
                 <div class="col-md-6">
                     <label for="excel_file" class="form-label">Bulk Upload Edit (CSV/Excel File)</label>
-                    <input type="file" class="form-control" id="excel_file" name="excel_file" accept=".csv, .xlsx" required>
+                    <input type="file" class="form-control" id="excel_file" name="excel_file" accept=".csv, .xlsx">
                 </div>
                 <div class="col-md-6">
                     <label for="imageUpload" class="form-label">Upload Product Images (ZIP File)</label>
-                    <input type="file" class="form-control" id="imageUpload" name="images_zip_edited" accept=".zip" required>
+                    <input type="file" class="form-control" id="imageUpload" name="images_zip_edited" accept=".zip">
                     <small class="text-danger">Images should be named as per the product name in the Excel.</small>
                 </div>
             </div>
@@ -73,38 +103,7 @@ include('includes/header.php');
             </div>
         </form>
     </div>
-
-    <!-- Hidden Zip For Me Form (for renaming multiple selected images) -->
-    <div id="zipUploadForm" class="card-body">
-        <form id="zipForm" action="code.php" method="POST" enctype="multipart/form-data" onsubmit="showProcessingMsg()">
-            <?php if (isset($_SESSION['message'])) { ?>
-                <div class="alert alert-success" role="alert">
-                    <?= $_SESSION['message'] ?>
-                </div>
-            <?php unset($_SESSION['message']); } ?>
-            <div class="row">
-                <div class="col-md-6">
-                    <label for="excel_file_zip" class="form-label">Edited Bulk Upload File (CSV/Excel)</label>
-                    <input type="file" class="form-control" id="excel_file_zip" name="excel_file" accept=".csv, .xlsx" required>
-                </div>
-                <div class="col-md-6">
-                    <label for="imagesInput" class="form-label">Select All Product Images</label>
-                    <input type="file" class="form-control" id="imagesInput" name="images[]" accept="image/*" multiple required>
-                    <small class="text-danger">
-                        Each image file must include the product id at the end of its name (e.g., "food30.jpg"). The system will use the id from the Excel to rename the image to the corresponding product name.
-                    </small>
-                </div>
-            </div>
-            <div class="mt-3">
-                <button type="submit" class="btn btn-primary" name="zip_for_me_btn">
-                    Process and Download Renamed ZIP
-                </button>
-            </div>
-        </form>
-        <div id="processingMsg">Zipping and renaming for you... Please wait.</div>
-    </div>
-
-    <!-- Existing page content such as export form and products table -->
+    <!-- Bulk Export Form -->
     <form id="bulkEditForm" method="post" action="export_bulk_edit.php">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
@@ -114,24 +113,23 @@ include('includes/header.php');
                 </button>
             </div>
             <div class="card-body">
-                <!-- Table with stripped rows -->
                 <div class="table-responsive">
                     <table class="table datatable">
                         <thead>
                             <tr>
-                                <th scope="col">
+                                <th>
                                     <input type="checkbox" id="selectAll">
                                 </th>
-                                <th scope="col">#</th>
-                                <th scope="col">Category</th>
-                                <th scope="col">Rating</th>
-                                <th scope="col">Status</th>
-                                <th scope="col">Discount</th>
-                                <th scope="col">Product</th>
-                                <th scope="col">Selling</th>
-                                <th scope="col">Image</th>
-                                <th scope="col">Trending</th>
-                                <th scope="col">Action</th>
+                                <th>#</th>
+                                <th>Category</th>
+                                <th>Rating</th>
+                                <th>Status</th>
+                                <th>Discount</th>
+                                <th>Product</th>
+                                <th>Selling</th>
+                                <th>Image</th>
+                                <th>Trending</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -175,13 +173,39 @@ include('includes/header.php');
                                             <?php endif; ?>
                                         </td>
                                         <td>
+                                            <!-- Separate delete button (outside the bulk export form) -->
                                             <a href="edit-product.php?id=<?= $item['id']; ?>" class="text-primary me-2"><i class="ri-edit-2-fill fs-4"></i></a>
-                                            <form action="code.php" method="POST" style="display: inline;">
-                                                <input type="hidden" name="product_id" value="<?= $item['id']; ?>">
-                                                <button type="submit" name="delete_product_btn" style="border: none; background: none; padding: 0; cursor: pointer;">
-                                                    <i class="bi bi-trash text-danger fs-4"></i>
-                                                </button>
-                                            </form>
+                                            <a href="delete-product.php?id=<?= $item['id']; ?>" class="text-danger delete-btn">
+                                                <i class="bi bi-trash fs-4"></i>
+                                            </a>
+                                            <script>
+                                                document.addEventListener('DOMContentLoaded', function() {
+                                                    // Attach event listener to all delete buttons
+                                                    document.querySelectorAll('.delete-btn').forEach(function(button) {
+                                                        button.addEventListener('click', function(e) {
+                                                            e.preventDefault(); // Prevent the default link action
+                                                            const deleteUrl = this.getAttribute('href');
+
+                                                            Swal.fire({
+                                                                title: 'Are you sure?',
+                                                                text: "This action cannot be undone!",
+                                                                icon: 'warning',
+                                                                showCancelButton: true,
+                                                                confirmButtonColor: '#3085d6',
+                                                                cancelButtonColor: '#d33',
+                                                                confirmButtonText: 'Yes, delete it!'
+                                                            }).then((result) => {
+                                                                if (result.isConfirmed) {
+                                                                    // Redirect to the delete URL if confirmed
+                                                                    window.location.href = deleteUrl;
+                                                                }
+                                                            });
+                                                        });
+                                                    });
+                                                });
+                                            </script>
+
+
                                         </td>
                                     </tr>
                             <?php
@@ -192,11 +216,12 @@ include('includes/header.php');
                             ?>
                         </tbody>
                     </table>
-                    <!-- End Table with stripped rows -->
                 </div>
             </div>
         </div>
     </form>
+
+
 
     <script>
         // Toggle the visibility of the two forms when the "Zip For Me" button is clicked

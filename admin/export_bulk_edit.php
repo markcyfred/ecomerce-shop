@@ -2,16 +2,21 @@
 require '../vendor/autoload.php';
 require '../admin/config/dbcon.php'; // Ensure $conn is set
 
+
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
 
-// Ensure products were selected
 if (!isset($_POST['bulk_edit_export_btn']) || empty($_POST['selected_products'])) {
-    die("No products selected for bulk edit.");
+    session_start();
+    $_SESSION['message'] = "No products selected for bulk edit export.";
+    $_SESSION['messageType'] = "error";
+    header("Location: {$_SERVER['HTTP_REFERER']}");
+    exit();
 }
+
 
 // Get the selected product IDs
 $selected_ids = $_POST['selected_products'];
@@ -32,7 +37,8 @@ $headers = [
     'Original Price', // data[5]
     'Selling Price',  // data[6]
     'Quantity',       // data[7]
-    'Featured'        // data[8]
+    'Featured',        // data[8]
+    'Brand Name'      // data[9]
 ];
 
 // 3. Write headers in row 1
@@ -105,6 +111,7 @@ if ($result && mysqli_num_rows($result) > 0) {
         $sheet->setCellValue('H' . $rowNum, $product['selling_price']);
         $sheet->setCellValue('I' . $rowNum, $product['quantity']);
         $sheet->setCellValue('J' . $rowNum, $product['featured']);
+        $sheet->setCellValue('K' . $rowNum, $product['brand_name']);
         $rowNum++;
     }
 } else {
@@ -156,6 +163,36 @@ for ($row = 2; $row <= 100; $row++) {
     $validation->setError("Please select a rating between 1 and 5 from the drop-down arrow.");
 }
 
+//to have drop down of the current brand_name
+// (C) Brand Name from DB (Column K => K2:K100)
+$brands = [];
+$brandQuery = "SELECT brand_name FROM brands"; // Corrected column name
+$brandResult = mysqli_query($conn, $brandQuery);
+
+if ($brandResult) {
+    while ($row = mysqli_fetch_assoc($brandResult)) {
+        $brands[] = $row['brand_name']; // Corrected array key
+    }
+}
+
+if (empty($brands)) {
+    $brands = ['Default Brand'];
+}
+
+$brandList = '"' . implode(',', $brands) . '"';
+
+for ($row = 2; $row <= 100; $row++) {
+    $validation = $sheet->getCell('K' . $row)->getDataValidation();
+    $validation->setType(DataValidation::TYPE_LIST);
+    $validation->setErrorStyle(DataValidation::STYLE_STOP);
+    $validation->setAllowBlank(false);
+    $validation->setShowInputMessage(true);
+    $validation->setShowErrorMessage(true);
+    $validation->setFormula1($brandList);
+    $validation->setShowDropDown(true);
+    $validation->setErrorTitle("Invalid Brand Name");
+    $validation->setError("Please select a valid brand name from the drop-down arrow.");
+}
 // (C) Featured (Column J => J2:J100)
 // Fetch enum values from the products table for the 'featured' column
 $featuredEnum = [];
@@ -217,7 +254,7 @@ foreach ($productsData as $product) {
          $sanitizedName = preg_replace('/[^a-zA-Z0-9_ -]/', '', $product['product_name']);
          $sanitizedName = str_replace('_', ' ', $sanitizedName);
          $ext = pathinfo($originalImage, PATHINFO_EXTENSION);
-         $newFileName = $sanitizedName . ' ' . $product['id'] . '.' . $ext;
+         $newFileName = $sanitizedName . '.' . $ext;
          
          // Add the image to the ZIP using the new file name
          $zip->addFile($imagePath, $newFileName);

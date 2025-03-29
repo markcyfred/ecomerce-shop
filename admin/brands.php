@@ -70,7 +70,7 @@ include('includes/header.php');
                                             <?= $item['status'] == 1 ? 'Active' : 'Inactive'; ?>
                                         </td>
                                         <td>
-                                            <a href="edit-brand.php.php?id=<?= $item['id']; ?>" class="text-primary me-2">
+                                            <a href="edit-brand.php?id=<?= $item['id']; ?>" class="text-primary me-2">
                                                 <i class="ri-edit-2-fill fs-4"></i>
                                             </a>
                                             <form action="code.php" method="POST" style="display: inline;">

@@ -951,77 +951,80 @@
             </div>
         </div>
     </section>
+    <?php
+    // Connect to your database (assuming $conn is your connection variable)
+    $query = "SELECT * FROM products 
+          WHERE deal_of_day_status = 'open' 
+          AND NOW() BETWEEN deal_start AND deal_end";
+    $deal_result = mysqli_query($conn, $query);
+    ?>
+
     <section class="deals section-padding">
         <div class="container">
             <div class="row">
-                <div class="col-lg-6 deal-co">
-                    <div class="deal wow fadeIn animated mb-md-4 mb-sm-4 mb-lg-0" style="background-image: url('assets/images/menu-banner-7.jpg');">
-                        <div class="deal-top">
-                            <h2 class="text-brand">Deal of the Day</h2>
-                            <h5>Limited quantities.</h5>
+                <?php if (mysqli_num_rows($deal_result) > 0): ?>
+                    <?php while ($deal = mysqli_fetch_assoc($deal_result)): ?>
+                        <div class="col-lg-6 deal-co">
+                            <div class="deal wow fadeIn animated mb-md-4 mb-sm-4 mb-lg-0" style="background-image: url('uploads/shop/<?= $deal['image']; ?>');">
+                                <div class="deal-top">
+                                    <h2 class="text-brand">Deal of the Day</h2>
+                                    <h5>Limited quantities.</h5>
+                                </div>
+                                <div class="deal-content">
+                                    <h6 class="product-title">
+                                        <a href="shop.php?id=<?= $deal['id']; ?>">
+                                            <?= $deal['product_name']; ?>
+                                        </a>
+                                    </h6>
+                                    <div class="product-price">
+                                        <span class="new-price">$<?= $deal['selling_price']; ?></span>
+                                        <span class="old-price">$<?= $deal['original_price']; ?></span>
+                                    </div>
+                                </div>
+                                <div class="deal-bottom">
+                                    <p>Hurry Up! Offer End In:</p>
+                                    <div class="deals-countdown" data-countdown="<?= date('Y/m/d H:i:s', strtotime($deal['deal_end'])); ?>"></div>
+                                    <a class="btn hover-up" href="shop.php?id=<?= $deal['id']; ?>">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                                </div>
+                            </div>
                         </div>
-                        <div class="deal-content">
-                            <h6 class="product-title"><a href="shop.php">Summer Collection New Morden Design</a></h6>
-                            <div class="product-price"><span class="new-price">$139.00</span><span class="old-price">$160.99</span></div>
-                        </div>
-                        <div class="deal-bottom">
-                            <p>Hurry Up! Offer End In:</p>
-                            <div class="deals-countdown" data-countdown="2025/03/25 00:00:00"></div>
-                            <a class="btn hover-up">Shop Now <i class="fi-rs-arrow-right"></i></a>
-                        </div>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <div class="col-12">
+                        <p class="text-center">No active Deal of the Day available at the moment.</p>
                     </div>
-                </div>
-                <div class="col-lg-6 deal-co">
-                    <div class="deal wow fadeIn animated" style="background-image: url('assets/images/menu-banner-8.jpg');">
-                        <div class="deal-top">
-                            <h2 class="text-brand">Men Clothing</h2>
-                            <h5>Shirt &amp; Bag</h5>
-                        </div>
-                        <div class="deal-content">
-                            <h6 class="product-title"><a href="shop.php">Try something new on vacation</a></h6>
-                            <div class="product-price"><span class="new-price">$178.00</span><span class="old-price">$256.99</span></div>
-                        </div>
-                        <div class="deal-bottom">
-                            <p>Hurry Up! Offer End In:</p>
-                            <div class="deals-countdown" data-countdown="2026/03/25 00:00:00"></div>
-                            <a class="btn hover-up">Shop Now <i class="fi-rs-arrow-right"></i></a>
-                        </div>
-                    </div>
-                </div>
+                <?php endif; ?>
             </div>
         </div>
     </section>
+    <?php
+    // Database connection (ensure $conn is defined)
+
+    // Fetch the latest brands from the database
+    $brand_query = "SELECT * FROM brands ORDER BY created_at";
+    $brand_result = mysqli_query($conn, $brand_query);
+
+    if (!$brand_result) {
+        die("Query Failed: " . mysqli_error($conn));
+    }
+    ?>
+
     <section class="section-padding">
         <div class="container">
             <h3 class="section-title mb-20 wow fadeIn animated"><span>Featured</span> Brands</h3>
             <div class="carausel-6-columns-cover position-relative wow fadeIn animated">
                 <div class="slider-arrow slider-arrow-2 carausel-6-columns-arrow" id="carausel-6-columns-3-arrows"></div>
                 <div class="carausel-6-columns text-center" id="carausel-6-columns-3">
-                    <div class="brand-logo">
-                        <img class="img-grey-hover" src="assets/images/brand-1.png" alt="">
-                    </div>
-                    <div class="brand-logo">
-                        <img class="img-grey-hover" src="assets/images/brand-2.png" alt="">
-                    </div>
-                    <div class="brand-logo">
-                        <img class="img-grey-hover" src="assets/images/brand-3.png" alt="">
-                    </div>
-                    <div class="brand-logo">
-                        <img class="img-grey-hover" src="assets/images/brand-4.png" alt="">
-                    </div>
-                    <div class="brand-logo">
-                        <img class="img-grey-hover" src="assets/images/brand-5.png" alt="">
-                    </div>
-                    <div class="brand-logo">
-                        <img class="img-grey-hover" src="assets/images/brand-6.png" alt="">
-                    </div>
-                    <div class="brand-logo">
-                        <img class="img-grey-hover" src="assets/images/brand-3.png" alt="">
-                    </div>
+                    <?php while ($brand = mysqli_fetch_assoc($brand_result)) : ?>
+                        <div class="brand-logo">
+                            <img class="img-grey-hover" src="uploads/brands/<?php echo htmlspecialchars($brand['image']); ?>" alt="<?php echo htmlspecialchars($brand['name']); ?>">
+                        </div>
+                    <?php endwhile; ?>
                 </div>
             </div>
         </div>
     </section>
+
     <section class="bg-grey-9 section-padding">
         <div class="container pt-25 pb-25">
             <div class="heading-tab d-flex">

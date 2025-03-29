@@ -61,5 +61,13 @@ function getCategories()
     return $query_run = mysqli_query($conn, $query);
 }
 
+//brands
+function getBrands()
+{
+    global $conn;
+    $query = "SELECT * FROM brands";
+    return $query_run = mysqli_query($conn, $query);
+}
+
 
 ?>
