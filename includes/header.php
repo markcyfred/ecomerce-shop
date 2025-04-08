@@ -124,14 +124,117 @@ include 'functions/userfunctions.php';
                     </div>
                     <div class="header-right">
                         <div class="search-style-2">
-                            <form action="#">
-                                <select class="select-active">
-                                    <option>All Categories</option>
-                                    <option>Women's</option>
-
+                            <!-- Search Form -->
+                            <form id="ajax-search-form">
+                                <select class="select-active" name="category">
+                                    <option value="">All Categories</option>
+                                    <?php
+                                    $category_query = "SELECT * FROM categories WHERE status = 1";
+                                    $category_result = mysqli_query($conn, $category_query);
+                                    while ($category = mysqli_fetch_assoc($category_result)): ?>
+                                        <option value="<?php echo htmlspecialchars($category['name']); ?>">
+                                            <?php echo htmlspecialchars($category['name']); ?>
+                                        </option>
+                                    <?php endwhile; ?>
                                 </select>
-                                <input type="text" placeholder="Search for items...">
+                                <input type="text" name="search" placeholder="Search for items…">
+                                <button type="submit"><i class="fi-rs-search"></i></button>
                             </form>
+
+                            <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="searchModalLabel">Search Results</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <!-- Loading container -->
+                                            <div id="loading" style="display: none; position: relative; height: 300px;">
+                                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                                    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+                                                    <dotlottie-player
+                                                        src="https://lottie.host/c11637a5-4006-467c-8c9f-de0eda7d70e4/jf7UbkGrkG.lottie"
+                                                        background="transparent"
+                                                        speed="1"
+                                                        style="width: 300px; height: 300px;"
+                                                        loop
+                                                        autoplay>
+                                                    </dotlottie-player>
+                                                </div>
+                                            </div>
+                                            <!-- Search results container -->
+                                            <div id="search-results">
+                                                <!-- Search results will be injected here -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- jQuery Library -->
+                            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                            <script>
+                                $(document).ready(function() {
+                                    // Handle the search form submission
+                                    $("#ajax-search-form").on("submit", function(e) {
+                                        e.preventDefault(); // Prevent default form submission
+
+                                        var formData = $(this).serialize();
+                                        $("#search-results").empty();
+                                        $("#loading").show();
+                                        $("#searchModal").modal("show");
+
+                                        $.ajax({
+                                            url: 'search_products.php',
+                                            type: 'GET',
+                                            data: formData,
+                                            success: function(response) {
+                                                setTimeout(function() {
+                                                    $("#loading").hide();
+                                                    $("#search-results").html(response);
+                                                }, 4000);
+                                            },
+                                            error: function() {
+                                                setTimeout(function() {
+                                                    $("#loading").hide();
+                                                    alert("There was an error processing your search.");
+                                                }, 4000);
+                                            }
+                                        });
+                                    });
+
+                                    // Handle pagination link clicks
+                                    $(document).on("click", ".pagination-link", function(e) {
+                                        e.preventDefault();
+                                        var page = $(this).data("page");
+                                        var formData = $("#ajax-search-form").serialize() + "&page=" + page;
+
+                                        $("#search-results").empty();
+                                        $("#loading").show();
+
+                                        $.ajax({
+                                            url: 'search_products.php',
+                                            type: 'GET',
+                                            data: formData,
+                                            success: function(response) {
+                                                setTimeout(function() {
+                                                    $("#loading").hide();
+                                                    $("#search-results").html(response);
+                                                }, 4000);
+                                            },
+                                            error: function() {
+                                                setTimeout(function() {
+                                                    $("#loading").hide();
+                                                    alert("There was an error processing your request.");
+                                                }, 4000);
+                                            }
+                                        });
+                                    });
+                                });
+                            </script>
+
+
                         </div>
                         <div class="header-action-right">
                             <div class="header-action-2">
