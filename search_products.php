@@ -34,18 +34,26 @@ $result = mysqli_query($conn, $query);
 if ($result && mysqli_num_rows($result) > 0) {
     echo "<div class='products-container'>";
     while ($product = mysqli_fetch_assoc($result)) {
+        // Wrap the entire product block within an anchor tag
         echo "<div class='product shoe-product'>";
+        echo "<a href='shop-product.php?id=" . htmlspecialchars($product['id']) . "' style='text-decoration: none; color: inherit;'>";
         echo    "<h3>" . htmlspecialchars($product['product_name']) . "</h3>";
         echo    "<p>" . htmlspecialchars($product['description']) . "</p>";
-        echo    "<p>Price: $" . htmlspecialchars($product['selling_price']) . "</p>";
-        if (!empty($product['image'])) {
-          echo "<img src='uploads/shop/" . htmlspecialchars($product['image']) . "' alt='" . htmlspecialchars($product['product_name']) . "' style='max-width: 120px; max-height: 120px; border-radius: 8px; object-fit: cover; margin-top: 10px;'>";
-
+        //ORIGINAL_PRICE
+        if ($product['original_price'] > 0) {
+            echo    "<p style='text-decoration: line-through; color: #888;'>Kes" . htmlspecialchars($product['original_price']) . "</p>";
         }
+        //SELLING_PRICE
+        echo    "<p>Price: Kes" . htmlspecialchars($product['selling_price']) . "</p>";
+        if (!empty($product['image'])) {
+            echo "<img src='uploads/shop/" . htmlspecialchars($product['image']) . "' alt='" . htmlspecialchars($product['product_name']) . "' style='max-width: 120px; max-height: 120px; border-radius: 8px; object-fit: cover; margin-top: 10px;'>";
+        }
+        echo "</a>";
         echo "</div>";
     }
     echo "</div>";
 
+    // Pagination
     if ($total_pages > 1) {
         echo "<nav aria-label='Page navigation'>";
         echo   "<ul class='pagination justify-content-center'>";
@@ -70,21 +78,20 @@ if ($result && mysqli_num_rows($result) > 0) {
         echo "</nav>";
     }
 } else {
-  echo "
-  <div style='text-align: center; padding: 40px;'>
-      <script src='https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs' type='module'></script>
-      <dotlottie-player
-          src='https://lottie.host/4d90d9e8-11b2-46c0-8032-61f6db73591b/VZqRxP5O84.lottie'
-          background='transparent'
-          speed='1'
-          style='width: 250px; height: 250px; margin: 0 auto;'
-          loop
-          autoplay>
-      </dotlottie-player>
-      <h4 style='margin-top: 20px; color: #888;'>No items found matching your search</h4>
-      <p style='color: #aaa;'>Try checking the spelling or choosing a different category.</p>
-  </div>
-  ";
-  
+    echo "
+    <div style='text-align: center; padding: 40px;'>
+        <script src='https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs' type='module'></script>
+        <dotlottie-player
+            src='https://lottie.host/4d90d9e8-11b2-46c0-8032-61f6db73591b/VZqRxP5O84.lottie'
+            background='transparent'
+            speed='1'
+            style='width: 250px; height: 250px; margin: 0 auto;'
+            loop
+            autoplay>
+        </dotlottie-player>
+        <h4 style='margin-top: 20px; color: #888;'>No items found matching your search</h4>
+        <p style='color: #aaa;'>Try checking the spelling or choosing a different category.</p>
+    </div>
+    ";
 }
 ?>

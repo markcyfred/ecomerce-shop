@@ -160,20 +160,56 @@
 
      /*------ Timer Countdown ----*/
 
-    $('[data-countdown]').each(function() {
-        var $this = $(this), finalDate = $(this).data('countdown');
-        $this.countdown(finalDate, function(event) {
-            $(this).html(
-                event.strftime(''
-                    + '<span class="countdown-section"><span class="countdown-amount hover-up">%d</span><span class="countdown-period"> days </span></span>'
-                    + '<span class="countdown-section"><span class="countdown-amount hover-up">%H</span><span class="countdown-period"> hours </span></span>'
-                    + '<span class="countdown-section"><span class="countdown-amount hover-up">%M</span><span class="countdown-period"> mins </span></span>'
-                    + '<span class="countdown-section"><span class="countdown-amount hover-up">%S</span><span class="countdown-period"> sec </span></span>'
-                )
-            );
+     document.addEventListener("DOMContentLoaded", function() {
+        // Select all elements with the data-countdown attribute
+        const countdownElements = document.querySelectorAll('[data-countdown]');
+        
+        countdownElements.forEach(function(elem) {
+            // Retrieve and trim the target date string
+            const targetDateStr = elem.getAttribute('data-countdown').trim();
+            const targetDate = new Date(targetDateStr);
+    
+            // Check if the date is valid
+            if (isNaN(targetDate.getTime())) {
+                console.error("Invalid date for countdown:", targetDateStr);
+                elem.innerHTML = "Invalid date";
+                return;
+            }
+            
+            // Function to update the countdown
+            function updateCountdown() {
+                const now = new Date();
+                let diff = targetDate - now;
+    
+                // If the countdown is finished, set diff to 0
+                if (diff < 0) {
+                    diff = 0;
+                }
+                
+                // Calculate days, hours, minutes, and seconds
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                // Update the element's HTML with the countdown values
+                elem.innerHTML =
+                    '<span class="countdown-section"><span class="countdown-amount hover-up">' + days + '</span><span class="countdown-period"> days </span></span>' +
+                    '<span class="countdown-section"><span class="countdown-amount hover-up">' + hours + '</span><span class="countdown-period"> hours </span></span>' +
+                    '<span class="countdown-section"><span class="countdown-amount hover-up">' + minutes + '</span><span class="countdown-period"> mins </span></span>' +
+                    '<span class="countdown-section"><span class="countdown-amount hover-up">' + seconds + '</span><span class="countdown-period"> sec </span></span>';
+                
+                // Stop updating if the countdown is complete
+                if (diff === 0) {
+                    clearInterval(interval);
+                }
+            }
+            
+            // Update immediately and then every second
+            updateCountdown();
+            let interval = setInterval(updateCountdown, 1000);
         });
     });
-
     /*------ Product slider active 1 ----*/
     $('.product-slider-active-1').slick({
         slidesToShow: 5,

@@ -997,8 +997,10 @@
             </div>
         </div>
     </section>
+
+    
     <?php
-    // Database connection (ensure $conn is defined)
+    include('admin/config/dbcon.php');
 
     // Fetch the latest brands from the database
     $brand_query = "SELECT * FROM brands ORDER BY created_at";
@@ -1009,6 +1011,32 @@
     }
     ?>
 
+    <!-- You can put this style in your main CSS file instead -->
+    <style>
+        .brand-logo {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .brand-logo img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 12px;
+            /* use 50% for circle shape */
+            border: 1px solid #eee;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .brand-logo:hover img {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+
     <section class="section-padding">
         <div class="container">
             <h3 class="section-title mb-20 wow fadeIn animated"><span>Featured</span> Brands</h3>
@@ -1017,13 +1045,15 @@
                 <div class="carausel-6-columns text-center" id="carausel-6-columns-3">
                     <?php while ($brand = mysqli_fetch_assoc($brand_result)) : ?>
                         <div class="brand-logo">
-                            <img class="img-grey-hover" src="uploads/brands/<?php echo htmlspecialchars($brand['image']); ?>" alt="<?php echo htmlspecialchars($brand['name']); ?>">
+                            <img class="img-grey-hover" src="uploads/brands/<?php echo htmlspecialchars($brand['brand_image']); ?>" alt="<?php echo htmlspecialchars($brand['brand_name']); ?>">
                         </div>
                     <?php endwhile; ?>
                 </div>
             </div>
         </div>
     </section>
+
+
 
     <section class="bg-grey-9 section-padding">
         <div class="container pt-25 pb-25">

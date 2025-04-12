@@ -124,6 +124,105 @@ include 'functions/userfunctions.php';
                     </div>
                     <div class="header-right">
                         <div class="search-style-2">
+                            <style>
+                                /* Container for all the products */
+                                .products-container {
+                                    display: flex;
+                                    flex-wrap: wrap;
+                                    justify-content: center;
+                                    gap: 20px;
+                                    margin: 20px auto;
+                                    max-width: 1200px;
+                                }
+
+                                /* Individual product styling */
+                                .product {
+                                    background-color: #fff;
+                                    border: 1px solid #ddd;
+                                    border-radius: 8px;
+                                    padding: 15px;
+                                    text-align: center;
+                                    transition: box-shadow 0.3s ease;
+                                    width: 280px;
+                                    /* Fixed width for consistent appearance */
+                                    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                                }
+
+                                /* Hover effect to indicate clickable area */
+                                .product:hover {
+                                    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+                                }
+
+                                /* Styling for the product title */
+                                .product h3 {
+                                    font-size: 1.2em;
+                                    margin-bottom: 10px;
+                                    color: #333;
+                                }
+
+                                /* Styling for the product description and prices */
+                                .product p {
+                                    margin: 5px 0;
+                                    font-size: 1em;
+                                    color: #444;
+                                }
+
+                                /* Override default styling for product link to blend in with card */
+                                .product a {
+                                    text-decoration: none;
+                                    color: inherit;
+                                    display: block;
+                                }
+
+                                /* Ensure product images fit nicely in the card */
+                                .product img {
+                                    margin-top: 10px;
+                                    max-width: 100%;
+                                    height: auto;
+                                    border-radius: 8px;
+                                    object-fit: cover;
+                                }
+
+                                /* Pagination styling */
+                                .pagination {
+                                    margin-top: 30px;
+                                }
+
+                                .pagination li {
+                                    list-style: none;
+                                    display: inline-block;
+                                }
+
+                                .pagination li a,
+                                .pagination li span {
+                                    padding: 8px 16px;
+                                    margin: 0 4px;
+                                    background-color: #f1f1f1;
+                                    border: 1px solid #ccc;
+                                    border-radius: 4px;
+                                    color: #333;
+                                    text-decoration: none;
+                                }
+
+                                /* Hover effect for pagination links */
+                                .pagination li a:hover {
+                                    background-color: #ddd;
+                                }
+
+                                /* Active page highlight */
+                                .pagination li.active span {
+                                    background-color: #007bff;
+                                    color: #fff;
+                                    border-color: #007bff;
+                                }
+
+                                /* Disabled styling for unavailable pagination controls */
+                                .pagination li.disabled span {
+                                    color: #aaa;
+                                    background-color: #f1f1f1;
+                                    border-color: #ccc;
+                                }
+                            </style>
                             <!-- Search Form -->
                             <form id="ajax-search-form">
                                 <select class="select-active" name="category">
@@ -221,13 +320,13 @@ include 'functions/userfunctions.php';
                                                 setTimeout(function() {
                                                     $("#loading").hide();
                                                     $("#search-results").html(response);
-                                                }, 4000);
+                                                }, 1000);
                                             },
                                             error: function() {
                                                 setTimeout(function() {
                                                     $("#loading").hide();
                                                     alert("There was an error processing your request.");
-                                                }, 4000);
+                                                }, 1000);
                                             }
                                         });
                                     });
