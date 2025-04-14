@@ -124,105 +124,7 @@ include 'functions/userfunctions.php';
                     </div>
                     <div class="header-right">
                         <div class="search-style-2">
-                            <style>
-                                /* Container for all the products */
-                                .products-container {
-                                    display: flex;
-                                    flex-wrap: wrap;
-                                    justify-content: center;
-                                    gap: 20px;
-                                    margin: 20px auto;
-                                    max-width: 1200px;
-                                }
 
-                                /* Individual product styling */
-                                .product {
-                                    background-color: #fff;
-                                    border: 1px solid #ddd;
-                                    border-radius: 8px;
-                                    padding: 15px;
-                                    text-align: center;
-                                    transition: box-shadow 0.3s ease;
-                                    width: 280px;
-                                    /* Fixed width for consistent appearance */
-                                    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-                                }
-
-                                /* Hover effect to indicate clickable area */
-                                .product:hover {
-                                    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-                                }
-
-                                /* Styling for the product title */
-                                .product h3 {
-                                    font-size: 1.2em;
-                                    margin-bottom: 10px;
-                                    color: #333;
-                                }
-
-                                /* Styling for the product description and prices */
-                                .product p {
-                                    margin: 5px 0;
-                                    font-size: 1em;
-                                    color: #444;
-                                }
-
-                                /* Override default styling for product link to blend in with card */
-                                .product a {
-                                    text-decoration: none;
-                                    color: inherit;
-                                    display: block;
-                                }
-
-                                /* Ensure product images fit nicely in the card */
-                                .product img {
-                                    margin-top: 10px;
-                                    max-width: 100%;
-                                    height: auto;
-                                    border-radius: 8px;
-                                    object-fit: cover;
-                                }
-
-                                /* Pagination styling */
-                                .pagination {
-                                    margin-top: 30px;
-                                }
-
-                                .pagination li {
-                                    list-style: none;
-                                    display: inline-block;
-                                }
-
-                                .pagination li a,
-                                .pagination li span {
-                                    padding: 8px 16px;
-                                    margin: 0 4px;
-                                    background-color: #f1f1f1;
-                                    border: 1px solid #ccc;
-                                    border-radius: 4px;
-                                    color: #333;
-                                    text-decoration: none;
-                                }
-
-                                /* Hover effect for pagination links */
-                                .pagination li a:hover {
-                                    background-color: #ddd;
-                                }
-
-                                /* Active page highlight */
-                                .pagination li.active span {
-                                    background-color: #007bff;
-                                    color: #fff;
-                                    border-color: #007bff;
-                                }
-
-                                /* Disabled styling for unavailable pagination controls */
-                                .pagination li.disabled span {
-                                    color: #aaa;
-                                    background-color: #f1f1f1;
-                                    border-color: #ccc;
-                                }
-                            </style>
                             <!-- Search Form -->
                             <form id="ajax-search-form">
                                 <select class="select-active" name="category">
@@ -270,103 +172,103 @@ include 'functions/userfunctions.php';
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- jQuery Library -->
-                            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                            <script>
-                                $(document).ready(function() {
-                                    // Handle the search form submission
-                                    $("#ajax-search-form").on("submit", function(e) {
-                                        e.preventDefault(); // Prevent default form submission
-
-                                        var formData = $(this).serialize();
-                                        $("#search-results").empty();
-                                        $("#loading").show();
-                                        $("#searchModal").modal("show");
-
-                                        $.ajax({
-                                            url: 'search_products.php',
-                                            type: 'GET',
-                                            data: formData,
-                                            success: function(response) {
-                                                setTimeout(function() {
-                                                    $("#loading").hide();
-                                                    $("#search-results").html(response);
-                                                }, 4000);
-                                            },
-                                            error: function() {
-                                                setTimeout(function() {
-                                                    $("#loading").hide();
-                                                    alert("There was an error processing your search.");
-                                                }, 4000);
-                                            }
-                                        });
-                                    });
-
-                                    // Handle pagination link clicks
-                                    $(document).on("click", ".pagination-link", function(e) {
-                                        e.preventDefault();
-                                        var page = $(this).data("page");
-                                        var formData = $("#ajax-search-form").serialize() + "&page=" + page;
-
-                                        $("#search-results").empty();
-                                        $("#loading").show();
-
-                                        $.ajax({
-                                            url: 'search_products.php',
-                                            type: 'GET',
-                                            data: formData,
-                                            success: function(response) {
-                                                setTimeout(function() {
-                                                    $("#loading").hide();
-                                                    $("#search-results").html(response);
-                                                }, 1000);
-                                            },
-                                            error: function() {
-                                                setTimeout(function() {
-                                                    $("#loading").hide();
-                                                    alert("There was an error processing your request.");
-                                                }, 1000);
-                                            }
-                                        });
-                                    });
-                                });
-                            </script>
-
-
                         </div>
+                        <?php
+                        // Determine session and user ID
+                        $session_id = session_id();
+                        $user_id = isset($_SESSION['auth_user']['id']) ? $_SESSION['auth_user']['id'] : null;
+
+                        // Fetch cart items
+                        $cart_query = "SELECT * FROM cart WHERE session_id = '$session_id'" . ($user_id ? " OR user_id = '$user_id'" : "");
+                        $cart_result = mysqli_query($conn, $cart_query);
+
+                        $total_items = 0;
+                        $total_price = 0;
+                        $cart_items = [];
+
+                        if ($cart_result && mysqli_num_rows($cart_result) > 0) {
+                            while ($row = mysqli_fetch_assoc($cart_result)) {
+                                $cart_items[] = $row;
+                                $total_items += $row['quantity'];
+                                $total_price += ($row['selling_price'] * $row['quantity']);
+                            }
+                        }
+
+                        // Fetch favorites count
+                        $fav_query = "SELECT COUNT(*) AS total_favorites FROM favorite WHERE session_id = '$session_id'" . ($user_id ? " OR user_id = '$user_id'" : "");
+                        $fav_result = mysqli_query($conn, $fav_query);
+                        $fav_count = 0;
+                        if ($fav_result) {
+                            $fav_row = mysqli_fetch_assoc($fav_result);
+                            $fav_count = $fav_row['total_favorites'];
+                        }
+                        ?>
+
                         <div class="header-action-right">
                             <div class="header-action-2">
+                                <!-- Wishlist Icon -->
                                 <div class="header-action-icon-2">
-                                    <a href="shop-wishlist.html">
+                                    <a href="shop-wishlist.php">
                                         <img class="svgInject" alt="Evara" src="assets/images/icon-heart.svg">
-                                        <span class="pro-count blue">4</span>
+                                        <span class="pro-count blue"><?php echo $fav_count; ?></span>
                                     </a>
                                 </div>
+
                                 <div class="header-action-icon-2">
-                                    <a class="mini-cart-icon" href="shop-cart.html">
+                                    <a class="mini-cart-icon" href="shop-cart.php">
                                         <img alt="Evara" src="assets/images/icon-cart.svg">
-                                        <span class="pro-count blue">2</span>
+                                        <span class="pro-count blue"><?php echo $total_items; ?></span>
                                     </a>
                                     <div class="cart-dropdown-wrap cart-dropdown-hm2">
                                         <ul>
-                                            <li>
-                                                <div class="shopping-cart-img">
-                                                    <a href="shop-product-right.html"><img alt="Evara" src="assets/images/thumbnail-3.jpg"></a>
-                                                </div>
-                                                <div class="shopping-cart-title">
-                                                    <h4><a href="shop-product-right.html">Daisy Casual Bag</a></h4>
-                                                    <h4><span>1 × </span>$800.00</h4>
-                                                </div>
-                                                <div class="shopping-cart-delete">
-                                                    <a href="#"><i class="fi-rs-cross-small"></i></a>
-                                                </div>
-                                            </li>
+                                            <?php if (!empty($cart_items)): ?>
+                                                <?php if (!empty($cart_items)): ?>
+                                                    <?php foreach (array_slice($cart_items, 0, 3) as $item): ?>
+                                                        <li>
+                                                            <div class="shopping-cart-img">
+                                                                <a href="shop-product.php?id=<?php echo $item['product_id']; ?>">
+                                                                    <img alt="Evara" src="uploads/shop/<?php echo $item['image']; ?>">
+                                                                </a>
+                                                            </div>
+                                                            <div class="shopping-cart-title">
+                                                                <a href="shop-product.php?id=<?php echo $item['product_id']; ?>">
+                                                                    <?php
+                                                                    $name = $item['product_name'];
+                                                                    $short_name = mb_substr($name, 0, 10);
+                                                                    echo htmlspecialchars($short_name) . (mb_strlen($name) > 10 ? '...' : '');
+                                                                    ?>
+                                                                </a>
+                                                                <h4>
+                                                                    <span><?php echo $item['quantity']; ?> ×</span>
+                                                                    kes<?php echo number_format($item['selling_price'], 2); ?>
+                                                                </h4>
+                                                            </div>
+                                                            <div class="shopping-cart-delete">
+                                                                <a href="#"><i class="fi-rs-cross-small"></i></a>
+                                                            </div>
+                                                        </li>
+                                                    <?php endforeach; ?>
+                                                <?php else: ?>
+                                                    <li>
+                                                        <div class="shopping-cart-title">
+                                                            <h4>No items in cart</h4>
+                                                        </div>
+                                                    </li>
+                                                <?php endif; ?>
+
+                                            <?php else: ?>
+                                                <li>
+                                                    <div class="shopping-cart-title">
+                                                        <h4>No items in cart</h4>
+                                                    </div>
+                                                </li>
+                                            <?php endif; ?>
+
 
                                         </ul>
                                         <div class="shopping-cart-footer">
                                             <div class="shopping-cart-total">
-                                                <h4>Total <span>$4000.00</span></h4>
+                                                <h4>Total <span>Kes<?php echo number_format($total_price, 2); ?></span></h4>
                                             </div>
                                             <div class="shopping-cart-button">
                                                 <a href="shop-cart.html" class="outline">View cart</a>
@@ -517,12 +419,10 @@ include 'functions/userfunctions.php';
                 </div>
             </div>
             <div class="mobile-header-content-area">
-                <div class="mobile-search search-style-3 mobile-header-border">
-                    <form action="#">
-                        <input type="text" placeholder="Search for items…">
-                        <button type="submit"><i class="fi-rs-search"></i></button>
-                    </form>
-                </div>
+
+                <!-- Container for Mobile Search Results -->
+                <div id="mobile-search-results"></div>
+
                 <div class="mobile-menu-wrap mobile-header-border">
                     <div class="main-categori-wrap mobile-header-border">
                         <a class="categori-button-active-2" href="#">
@@ -606,3 +506,200 @@ include 'functions/userfunctions.php';
             </div>
         </div>
     </div>
+
+
+
+
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+
+
+    <!-- jQuery Library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Handle the search form submission
+            $("#ajax-search-form").on("submit", function(e) {
+                e.preventDefault(); // Prevent default form submission
+
+                var formData = $(this).serialize();
+                $("#search-results").empty();
+                $("#loading").show();
+                $("#searchModal").modal("show");
+
+                $.ajax({
+                    url: 'search_products.php',
+                    type: 'GET',
+                    data: formData,
+                    success: function(response) {
+                        setTimeout(function() {
+                            $("#loading").hide();
+                            $("#search-results").html(response);
+                        }, 4000);
+                    },
+                    error: function() {
+                        setTimeout(function() {
+                            $("#loading").hide();
+                            alert("There was an error processing your search.");
+                        }, 4000);
+                    }
+                });
+            });
+
+            // Handle pagination link clicks
+            $(document).on("click", ".pagination-link", function(e) {
+                e.preventDefault();
+                var page = $(this).data("page");
+                var formData = $("#ajax-search-form").serialize() + "&page=" + page;
+
+                $("#search-results").empty();
+                $("#loading").show();
+
+                $.ajax({
+                    url: 'search_products.php',
+                    type: 'GET',
+                    data: formData,
+                    success: function(response) {
+                        setTimeout(function() {
+                            $("#loading").hide();
+                            $("#search-results").html(response);
+                        }, 1000);
+                    },
+                    error: function() {
+                        setTimeout(function() {
+                            $("#loading").hide();
+                            alert("There was an error processing your request.");
+                        }, 1000);
+                    }
+                });
+            });
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.querySelector('#ajax-search-form input[name="search"]');
+            const searchForm = document.getElementById('ajax-search-form');
+            let timeout;
+
+            // Detect user typing
+            searchInput.addEventListener('input', function() {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    // Clear input and optionally reset form
+                    searchInput.value = '';
+                    // Optional: clear other filters
+                    // searchForm.reset();
+                    console.log('Search cleared due to inactivity');
+                }, 5000); // 5000ms = 5 seconds
+            });
+
+            // Optional: Clear when user clicks outside the form
+            document.addEventListener('click', function(e) {
+                if (!searchForm.contains(e.target)) {
+                    clearTimeout(timeout);
+                    searchInput.value = '';
+                    // searchForm.reset(); // optional
+                }
+            });
+        });
+    </script>
+
+    <style>
+        /* Container for all the products */
+        .products-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px auto;
+            max-width: 1200px;
+        }
+
+        /* Individual product styling */
+        .product {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: box-shadow 0.3s ease;
+            width: 280px;
+            /* Fixed width for consistent appearance */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Hover effect to indicate clickable area */
+        .product:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Styling for the product title */
+        .product h3 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        /* Styling for the product description and prices */
+        .product p {
+            margin: 5px 0;
+            font-size: 1em;
+            color: #444;
+        }
+
+        /* Override default styling for product link to blend in with card */
+        .product a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        /* Ensure product images fit nicely in the card */
+        .product img {
+            margin-top: 10px;
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        /* Pagination styling */
+        .pagination {
+            margin-top: 30px;
+        }
+
+        .pagination li {
+            list-style: none;
+            display: inline-block;
+        }
+
+        .pagination li a,
+        .pagination li span {
+            padding: 8px 16px;
+            margin: 0 4px;
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        /* Hover effect for pagination links */
+        .pagination li a:hover {
+            background-color: #ddd;
+        }
+
+        /* Active page highlight */
+        .pagination li.active span {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+
+        /* Disabled styling for unavailable pagination controls */
+        .pagination li.disabled span {
+            color: #aaa;
+            background-color: #f1f1f1;
+            border-color: #ccc;
+        }
+    </style>
