@@ -179,7 +179,9 @@ include 'functions/userfunctions.php';
                         $user_id = isset($_SESSION['auth_user']['id']) ? $_SESSION['auth_user']['id'] : null;
 
                         // Fetch cart items
-                        $cart_query = "SELECT * FROM cart WHERE session_id = '$session_id'" . ($user_id ? " OR user_id = '$user_id'" : "");
+                        $cart_query = "SELECT * FROM cart WHERE  cart_status = 'unprocessed' AND (session_id = '$session_id'" . ($user_id ? " OR user_id = '$user_id'" : "") . ")";
+                 
+
                         $cart_result = mysqli_query($conn, $cart_query);
 
                         $total_items = 0;
@@ -662,44 +664,11 @@ include 'functions/userfunctions.php';
             border-radius: 8px;
             object-fit: cover;
         }
-
         /* Pagination styling */
         .pagination {
-            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
         }
 
-        .pagination li {
-            list-style: none;
-            display: inline-block;
-        }
-
-        .pagination li a,
-        .pagination li span {
-            padding: 8px 16px;
-            margin: 0 4px;
-            background-color: #f1f1f1;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            color: #333;
-            text-decoration: none;
-        }
-
-        /* Hover effect for pagination links */
-        .pagination li a:hover {
-            background-color: #ddd;
-        }
-
-        /* Active page highlight */
-        .pagination li.active span {
-            background-color: #007bff;
-            color: #fff;
-            border-color: #007bff;
-        }
-
-        /* Disabled styling for unavailable pagination controls */
-        .pagination li.disabled span {
-            color: #aaa;
-            background-color: #f1f1f1;
-            border-color: #ccc;
-        }
     </style>

@@ -1,500 +1,767 @@
 <?php include 'includes/header.php'; ?>
 <main class="main">
-     <div class="page-header breadcrumb-wrap">
-          <div class="container">
-               <div class="breadcrumb">
-                    <a href="index.html" rel="nofollow">Home</a>
-                    <span></span> Shop
-                    <span></span> Your Cart
-               </div>
-          </div>
-     </div>
-     <section class="mt-50 mb-50">
-          <div class="container">
-               <div class="row">
-                    <div class="col-12">
-                         <div class="table-responsive">
-                              <table class="table shopping-summery text-center clean">
-                                   <thead>
-                                        <tr class="main-heading">
-                                             <th scope="col">Image</th>
-                                             <th scope="col">Name</th>
-                                             <th scope="col">Price</th>
-                                             <th scope="col">Quantity</th>
-                                             <th scope="col">Subtotal</th>
-                                             <th scope="col">Remove</th>
-                                        </tr>
-                                   </thead>
-                                   <tbody>
-                                        <?php
+    <div class="page-header breadcrumb-wrap">
+         <div class="container">
+              <div class="breadcrumb">
+                   <a href="index.html" rel="nofollow">Home</a>
+                   <span></span> Shop
+                   <span></span> Your Cart
+              </div>
+         </div>
+    </div>
+    <section class="mt-50 mb-50">
+         <div class="container">
+              <div class="row">
+                   <div class="col-12">
+                        <!-- Cart Items Table -->
+                        <div class="table-responsive">
+                             <table class="table shopping-summery text-center clean">
+                                  <thead>
+                                       <tr class="main-heading">
+                                            <th scope="col">Image</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Price</th>
+                                            <th scope="col">Quantity</th>
+                                            <th scope="col">Subtotal</th>
+                                            <th scope="col">Remove</th>
+                                       </tr>
+                                  </thead>
+                                  <tbody>
+                                       <?php
+                                          $session_id = session_id();
+                                          $user_id = isset($_SESSION['auth_user']['id']) ? $_SESSION['auth_user']['id'] : null;
+                                          // Fetch cart items using session or user id if logged in, only unprocessed items.
+                                          $cart_query = "SELECT * FROM cart WHERE cart_status = 'unprocessed' AND (session_id = '$session_id'" . ($user_id ? " OR user_id = '$user_id'" : "") . ")";
+                                          $cart_result = mysqli_query($conn, $cart_query);
+                                          $total_items = 0;
+                                          $total_price = 0;
+                                          $cart_items = [];
+                                          if ($cart_result && mysqli_num_rows($cart_result) > 0) {
+                                              while ($row = mysqli_fetch_assoc($cart_result)) {
+                                                   $cart_items[] = $row;
+                                                   $total_items += $row['quantity'];
+                                                   $total_price += ($row['selling_price'] * $row['quantity']);
+                                              }
+                                          }
+                                          if (!empty($cart_items)) :
+                                              foreach ($cart_items as $item) :
+                                       ?>
+                                               <tr data-id="<?php echo $item['id']; ?>">
+                                                    <td class="image product-thumbnail">
+                                                         <a href="shop-product.php?id=<?php echo $item['product_id']; ?>">
+                                                              <img src="uploads/shop/<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['product_name']); ?>">
+                                                         </a>
+                                                    </td>
+                                                    <td class="product-des product-name">
+                                                         <h5 class="product-name">
+                                                              <a href="shop-product.php?id=<?php echo $item['product_id']; ?>">
+                                                                   <?php echo htmlspecialchars($item['product_name']); ?>
+                                                              </a>
+                                                         </h5>
+                                                         <?php if (!empty($item['description'])): ?>
+                                                              <p class="font-xs">
+                                                                   <?php echo htmlspecialchars($item['description']); ?>
+                                                              </p>
+                                                         <?php endif; ?>
+                                                    </td>
+                                                    <td class="price" data-title="Price">
+                                                         <span>Kes <?php echo number_format($item['selling_price'], 2); ?></span>
+                                                    </td>
+                                                    <td class="text-center" data-title="Quantity">
+                                                         <div class="detail-qty border radius m-auto">
+                                                              <!-- Decrease quantity -->
+                                                              <a href="update_cart.php?action=decrease&id=<?php echo $item['id']; ?>" class="qty-down">
+                                                                   <i class="fi-rs-angle-small-down"></i>
+                                                              </a>
+                                                              <span class="qty-val"><?php echo htmlspecialchars($item['quantity']); ?></span>
+                                                              <!-- Increase quantity -->
+                                                              <a href="update_cart.php?action=increase&id=<?php echo $item['id']; ?>" class="qty-up">
+                                                                   <i class="fi-rs-angle-small-up"></i>
+                                                              </a>
+                                                         </div>
+                                                    </td>
+                                                    <td class="text-right" data-title="Subtotal">
+                                                         <span>Kes <?php echo number_format($item['selling_price'] * $item['quantity'], 2); ?></span>
+                                                    </td>
+                                                    <td class="action" data-title="Remove">
+                                                         <a href="#" class="text-muted delete-cart" data-id="<?php echo $item['id']; ?>">
+                                                              <i class="fi-rs-trash"></i>
+                                                         </a>
+                                                    </td>
+                                               </tr>
+                                       <?php
+                                              endforeach;
+                                          else:
+                                       ?>
+                                               <tr>
+                                                    <td colspan="6" class="text-center">Your cart is empty.</td>
+                                               </tr>
+                                       <?php endif; ?>
+                                       <tr>
+                                            <td colspan="6" class="text-end">
+                                                 <a href="#" class="text-muted clear-cart">
+                                                      <i class="fi-rs-cross-small"></i> Clear Cart
+                                                 </a>
+                                            </td>
+                                       </tr>
+                                  </tbody>
+                             </table>
+                        </div>
+                        
+                        <div class="cart-action text-end">
+                             <a class="btn mr-10 mb-sm-15"><i class="fi-rs-shuffle mr-10"></i>Update Cart</a>
+                             <a class="btn"><i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
+                        </div>
 
-                                        $session_id = session_id();
-                                        $user_id = isset($_SESSION['auth_user']['id']) ? $_SESSION['auth_user']['id'] : null;
+                        <?php
+                        // Only display Shipping Calculator, Coupon, and Cart Totals if the cart is not empty.
+                        if (!empty($cart_items)) :
+                        ?>
+                        <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
+                        
+                        <div class="row mb-50">
+                             <div class="col-lg-6 col-md-12">
+                                  <div class="heading_s1 mb-3">
+                                       <h4>Calculate Shipping</h4>
+                                  </div>
+                                  <p class="mt-15 mb-30">
+                                      Flat rate: <span class="font-xl text-brand fw-900">5%</span> (base product cost)
+                                  </p>
+                                  <!-- Shipping Calculator Form -->
+                                  <form class="field_form shipping_calculator">
+                                       <!-- Destination selection -->
+                                       <div class="form-row">
+                                            <div class="form-group col-lg-12">
+                                                 <label>Select Destination Place</label>
+                                                 <div class="custom_select">
+                                                      <select id="destination" class="form-control select-active">
+                                                           <option value="">-- Select Destination --</option>
+                                                           <option value="Nairobi" data-lat="-1.286389" data-lng="36.817223">Nairobi</option>
+                                                           <option value="Mombasa" data-lat="-4.043477" data-lng="39.668206">Mombasa</option>
+                                                           <option value="Kisumu" data-lat="-0.091702" data-lng="34.7680">Kisumu</option>
+                                                               <option value="Nakuru" data-lat="-0.303099" data-lng="36.0662">Nakuru</option>
+                                                               <option value="Eldoret" data-lat="0.5128" data-lng="35.2694">Eldoret</option>
+                                                               <option value="Nyeri" data-lat="-0.4194" data-lng="36.9532">Nyeri</option>
+                                                                 <option value="Meru" data-lat="-0.0474" data-lng="37.6462">Meru</option>
+                                                                 <option value="Machakos" data-lat="-1.5167" data-lng="37.2542">Machakos</option>
+                                                                 <option value="Embu" data-lat="-0.4167" data-lng="37.45">Embu</option>
+                                                                 <option value="Kitui" data-lat="-1.3667" data-lng="38.0833">Kitui</option>
+                                                                 <option value="Garissa" data-lat="-1.4531" data-lng="39.6594">Garissa</option>
+                                                                 <option value="Lamu" data-lat="-2.2700" data-lng="40.9000">Lamu</option>
+                                                                 <option value="Kajiado" data-lat="-1.8833" data-lng="36.7833">Kajiado</option>
 
-                                        // Fetch cart items (using session or user id if logged in)
-                                        $cart_query = "SELECT * FROM cart WHERE session_id = '$session_id'" . ($user_id ? " OR user_id = '$user_id'" : "");
-                                        $cart_result = mysqli_query($conn, $cart_query);
-
-                                        $total_items = 0;
-                                        $total_price = 0;
-                                        $cart_items = [];
-
-                                        if ($cart_result && mysqli_num_rows($cart_result) > 0) {
-                                             while ($row = mysqli_fetch_assoc($cart_result)) {
-                                                  $cart_items[] = $row;
-                                                  $total_items += $row['quantity'];
-                                                  $total_price += ($row['selling_price'] * $row['quantity']);
-                                             }
-                                        }
-
-                                        // Check if there are any items in the cart
-                                        if (!empty($cart_items)) :
-                                             foreach ($cart_items as $item) :
-                                        ?>
-                                                  <tr data-id="<?php echo $item['id']; ?>">
-                                                       <td class="image product-thumbnail">
-                                                            <a href="shop-product.php?id=<?php echo $item['product_id']; ?>">
-                                                                 <img src="uploads/shop/<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['product_name']); ?>">
-                                                            </a>
-                                                       </td>
-                                                       <td class="product-des product-name">
-                                                            <h5 class="product-name">
-                                                                 <a href="shop-product.php?id=<?php echo $item['product_id']; ?>">
-                                                                      <?php echo htmlspecialchars($item['product_name']); ?>
-                                                                 </a>
-                                                            </h5>
-                                                            <?php if (!empty($item['description'])): ?>
-                                                                 <p class="font-xs">
-                                                                      <?php echo htmlspecialchars($item['description']); ?>
-                                                                 </p>
-                                                            <?php endif; ?>
-                                                       </td>
-                                                       <td class="price" data-title="Price">
-                                                            <span>Kes <?php echo number_format($item['selling_price'], 2); ?></span>
-                                                       </td>
-                                                       <td class="text-center" data-title="Quantity">
-                                                            <div class="detail-qty border radius m-auto">
-                                                                 <!-- Decrease quantity -->
-                                                                 <a href="update_cart.php?action=decrease&id=<?php echo $item['id']; ?>" class="qty-down">
-                                                                      <i class="fi-rs-angle-small-down"></i>
-                                                                 </a>
-                                                                 <span class="qty-val"><?php echo htmlspecialchars($item['quantity']); ?></span>
-                                                                 <!-- Increase quantity -->
-                                                                 <a href="update_cart.php?action=increase&id=<?php echo $item['id']; ?>" class="qty-up">
-                                                                      <i class="fi-rs-angle-small-up"></i>
-                                                                 </a>
-                                                            </div>
-                                                       </td>
-                                                       <td class="text-right" data-title="Subtotal">
-                                                            <span>Kes <?php echo number_format($item['selling_price'] * $item['quantity'], 2); ?></span>
-                                                       </td>
-                                                       <td class="action" data-title="Remove">
-                                                            <a href="remove_from_cart.php?id=<?php echo $item['id']; ?>" class="text-muted">
-                                                                 <i class="fi-rs-trash"></i>
-                                                            </a>
-                                                       </td>
-                                                  </tr>
-
-                                             <?php
-                                             endforeach;
-                                        else:
-                                             ?>
-                                             <tr>
-                                                  <td colspan="6" class="text-center">Your cart is empty.</td>
-                                             </tr>
-                                        <?php endif; ?>
-                                        <tr>
-                                             <td colspan="6" class="text-end">
-                                                  <a href="clear_cart.php" class="text-muted">
-                                                       <i class="fi-rs-cross-small"></i> Clear Cart
-                                                  </a>
-                                             </td>
-                                        </tr>
-                                   </tbody>
-                              </table>
-                              
-                              <!-- Make sure jQuery is included -->
-                              <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-                              <script>
-                                   $(document).ready(function() {
-                                        $('.qty-up, .qty-down').on('click', function(e) {
-                                             e.preventDefault(); // Prevent default behavior
-
-                                             // Determine whether to increase or decrease the quantity
-                                             var $button = $(this);
-                                             var action = $button.hasClass('qty-up') ? 'increase' : 'decrease';
-
-                                             // Get the cart item ID from the closest table row’s data attribute
-                                             var $row = $button.closest('tr');
-                                             var cartItemId = $row.data('id');
-
-                                             // Send the AJAX request to the common file with a new parameter "update"
-                                             $.ajax({
-                                                  url: 'ajax/code.php', // Common file for your AJAX actions
-                                                  method: 'POST',
-                                                  data: {
-                                                       update: 'update_added_to_cart', // identifies this as a quantity update for cart items
-                                                       action: action,
-                                                       id: cartItemId // The cart item ID
-                                                  },
-                                                  dataType: 'json',
-                                                  success: function(response) {
-                                                       if (response.status === "success") {
-                                                            // Update the DOM with the new values from response
-                                                            $row.find('.qty-val').text(response.new_quantity);
-                                                            $row.find('td[data-title="Subtotal"] span').text('Kes ' + response.new_subtotal);
-
-                                                            // Optionally update a global cart total element, if present
-                                                            if ($('#cart_total').length) {
-                                                                 $('#cart_total').text('Kes ' + response.new_total);
-                                                            }
-                                                       } else {
-                                                            alert(response.message);
-                                                       }
-                                                  },
-                                                  error: function(xhr, status, error) {
-                                                       alert("An error occurred while updating the cart.");
-                                                  }
-                                             });
-                                        });
-                                   });
-                              </script>
-
-                         </div>
-                         <div class="cart-action text-end">
-                              <a class="btn  mr-10 mb-sm-15"><i class="fi-rs-shuffle mr-10"></i>Update Cart</a>
-                              <a class="btn "><i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
-                         </div>
-
-
-                         <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
-                         <div class="row mb-50">
-                              <div class="col-lg-6 col-md-12">
-                                   <div class="heading_s1 mb-3">
-                                        <h4>Calculate Shipping</h4>
-                                   </div>
-                                   <p class="mt-15 mb-30">Flat rate: <span class="font-xl text-brand fw-900">5%</span></p>
-                                   <form class="field_form shipping_calculator">
-                                        <div class="form-row">
-                                             <div class="form-group col-lg-12">
-                                                  <div class="custom_select">
-                                                       <select class="form-control select-active">
-                                                            <option value="">Choose a option...</option>
-                                                            <option value="AX">Aland Islands</option>
-                                                            <option value="AF">Afghanistan</option>
-                                                            <option value="AL">Albania</option>
-                                                            <option value="DZ">Algeria</option>
-                                                            <option value="AD">Andorra</option>
-                                                            <option value="AO">Angola</option>
-                                                            <option value="AI">Anguilla</option>
-                                                            <option value="AQ">Antarctica</option>
-                                                            <option value="AG">Antigua and Barbuda</option>
-                                                            <option value="AR">Argentina</option>
-                                                            <option value="AM">Armenia</option>
-                                                            <option value="AW">Aruba</option>
-                                                            <option value="AU">Australia</option>
-                                                            <option value="AT">Austria</option>
-                                                            <option value="AZ">Azerbaijan</option>
-                                                            <option value="BS">Bahamas</option>
-                                                            <option value="BH">Bahrain</option>
-                                                            <option value="BD">Bangladesh</option>
-                                                            <option value="BB">Barbados</option>
-                                                            <option value="BY">Belarus</option>
-                                                            <option value="PW">Belau</option>
-                                                            <option value="BE">Belgium</option>
-                                                            <option value="BZ">Belize</option>
-                                                            <option value="BJ">Benin</option>
-                                                            <option value="BM">Bermuda</option>
-                                                            <option value="BT">Bhutan</option>
-                                                            <option value="BO">Bolivia</option>
-                                                            <option value="BQ">Bonaire, Saint Eustatius and Saba</option>
-                                                            <option value="BA">Bosnia and Herzegovina</option>
-                                                            <option value="BW">Botswana</option>
-                                                            <option value="BV">Bouvet Island</option>
-                                                            <option value="BR">Brazil</option>
-                                                            <option value="IO">British Indian Ocean Territory</option>
-                                                            <option value="VG">British Virgin Islands</option>
-                                                            <option value="BN">Brunei</option>
-                                                            <option value="BG">Bulgaria</option>
-                                                            <option value="BF">Burkina Faso</option>
-                                                            <option value="BI">Burundi</option>
-                                                            <option value="KH">Cambodia</option>
-                                                            <option value="CM">Cameroon</option>
-                                                            <option value="CA">Canada</option>
-                                                            <option value="CV">Cape Verde</option>
-                                                            <option value="KY">Cayman Islands</option>
-                                                            <option value="CF">Central African Republic</option>
-                                                            <option value="TD">Chad</option>
-                                                            <option value="CL">Chile</option>
-                                                            <option value="CN">China</option>
-                                                            <option value="CX">Christmas Island</option>
-                                                            <option value="CC">Cocos (Keeling) Islands</option>
-                                                            <option value="CO">Colombia</option>
-                                                            <option value="KM">Comoros</option>
-                                                            <option value="CG">Congo (Brazzaville)</option>
-                                                            <option value="CD">Congo (Kinshasa)</option>
-                                                            <option value="CK">Cook Islands</option>
-                                                            <option value="CR">Costa Rica</option>
-                                                            <option value="HR">Croatia</option>
-                                                            <option value="CU">Cuba</option>
-                                                            <option value="CW">CuraÇao</option>
-                                                            <option value="CY">Cyprus</option>
-                                                            <option value="CZ">Czech Republic</option>
-                                                            <option value="DK">Denmark</option>
-                                                            <option value="DJ">Djibouti</option>
-                                                            <option value="DM">Dominica</option>
-                                                            <option value="DO">Dominican Republic</option>
-                                                            <option value="EC">Ecuador</option>
-                                                            <option value="EG">Egypt</option>
-                                                            <option value="SV">El Salvador</option>
-                                                            <option value="GQ">Equatorial Guinea</option>
-                                                            <option value="ER">Eritrea</option>
-                                                            <option value="EE">Estonia</option>
-                                                            <option value="ET">Ethiopia</option>
-                                                            <option value="FK">Falkland Islands</option>
-                                                            <option value="FO">Faroe Islands</option>
-                                                            <option value="FJ">Fiji</option>
-                                                            <option value="FI">Finland</option>
-                                                            <option value="FR">France</option>
-                                                            <option value="GF">French Guiana</option>
-                                                            <option value="PF">French Polynesia</option>
-                                                            <option value="TF">French Southern Territories</option>
-                                                            <option value="GA">Gabon</option>
-                                                            <option value="GM">Gambia</option>
-                                                            <option value="GE">Georgia</option>
-                                                            <option value="DE">Germany</option>
-                                                            <option value="GH">Ghana</option>
-                                                            <option value="GI">Gibraltar</option>
-                                                            <option value="GR">Greece</option>
-                                                            <option value="GL">Greenland</option>
-                                                            <option value="GD">Grenada</option>
-                                                            <option value="GP">Guadeloupe</option>
-                                                            <option value="GT">Guatemala</option>
-                                                            <option value="GG">Guernsey</option>
-                                                            <option value="GN">Guinea</option>
-                                                            <option value="GW">Guinea-Bissau</option>
-                                                            <option value="GY">Guyana</option>
-                                                            <option value="HT">Haiti</option>
-                                                            <option value="HM">Heard Island and McDonald Islands</option>
-                                                            <option value="HN">Honduras</option>
-                                                            <option value="HK">Hong Kong</option>
-                                                            <option value="HU">Hungary</option>
-                                                            <option value="IS">Iceland</option>
-                                                            <option value="IN">India</option>
-                                                            <option value="ID">Indonesia</option>
-                                                            <option value="IR">Iran</option>
-                                                            <option value="IQ">Iraq</option>
-                                                            <option value="IM">Isle of Man</option>
-                                                            <option value="IL">Israel</option>
-                                                            <option value="IT">Italy</option>
-                                                            <option value="CI">Ivory Coast</option>
-                                                            <option value="JM">Jamaica</option>
-                                                            <option value="JP">Japan</option>
-                                                            <option value="JE">Jersey</option>
-                                                            <option value="JO">Jordan</option>
-                                                            <option value="KZ">Kazakhstan</option>
-                                                            <option value="KE">Kenya</option>
-                                                            <option value="KI">Kiribati</option>
-                                                            <option value="KW">Kuwait</option>
-                                                            <option value="KG">Kyrgyzstan</option>
-                                                            <option value="LA">Laos</option>
-                                                            <option value="LV">Latvia</option>
-                                                            <option value="LB">Lebanon</option>
-                                                            <option value="LS">Lesotho</option>
-                                                            <option value="LR">Liberia</option>
-                                                            <option value="LY">Libya</option>
-                                                            <option value="LI">Liechtenstein</option>
-                                                            <option value="LT">Lithuania</option>
-                                                            <option value="LU">Luxembourg</option>
-                                                            <option value="MO">Macao S.A.R., China</option>
-                                                            <option value="MK">Macedonia</option>
-                                                            <option value="MG">Madagascar</option>
-                                                            <option value="MW">Malawi</option>
-                                                            <option value="MY">Malaysia</option>
-                                                            <option value="MV">Maldives</option>
-                                                            <option value="ML">Mali</option>
-                                                            <option value="MT">Malta</option>
-                                                            <option value="MH">Marshall Islands</option>
-                                                            <option value="MQ">Martinique</option>
-                                                            <option value="MR">Mauritania</option>
-                                                            <option value="MU">Mauritius</option>
-                                                            <option value="YT">Mayotte</option>
-                                                            <option value="MX">Mexico</option>
-                                                            <option value="FM">Micronesia</option>
-                                                            <option value="MD">Moldova</option>
-                                                            <option value="MC">Monaco</option>
-                                                            <option value="MN">Mongolia</option>
-                                                            <option value="ME">Montenegro</option>
-                                                            <option value="MS">Montserrat</option>
-                                                            <option value="MA">Morocco</option>
-                                                            <option value="MZ">Mozambique</option>
-                                                            <option value="MM">Myanmar</option>
-                                                            <option value="NA">Namibia</option>
-                                                            <option value="NR">Nauru</option>
-                                                            <option value="NP">Nepal</option>
-                                                            <option value="NL">Netherlands</option>
-                                                            <option value="AN">Netherlands Antilles</option>
-                                                            <option value="NC">New Caledonia</option>
-                                                            <option value="NZ">New Zealand</option>
-                                                            <option value="NI">Nicaragua</option>
-                                                            <option value="NE">Niger</option>
-                                                            <option value="NG">Nigeria</option>
-                                                            <option value="NU">Niue</option>
-                                                            <option value="NF">Norfolk Island</option>
-                                                            <option value="KP">North Korea</option>
-                                                            <option value="NO">Norway</option>
-                                                            <option value="OM">Oman</option>
-                                                            <option value="PK">Pakistan</option>
-                                                            <option value="PS">Palestinian Territory</option>
-                                                            <option value="PA">Panama</option>
-                                                            <option value="PG">Papua New Guinea</option>
-                                                            <option value="PY">Paraguay</option>
-                                                            <option value="PE">Peru</option>
-                                                            <option value="PH">Philippines</option>
-                                                            <option value="PN">Pitcairn</option>
-                                                            <option value="PL">Poland</option>
-                                                            <option value="PT">Portugal</option>
-                                                            <option value="QA">Qatar</option>
-                                                            <option value="IE">Republic of Ireland</option>
-                                                            <option value="RE">Reunion</option>
-                                                            <option value="RO">Romania</option>
-                                                            <option value="RU">Russia</option>
-                                                            <option value="RW">Rwanda</option>
-                                                            <option value="ST">São Tomé and Príncipe</option>
-                                                            <option value="BL">Saint Barthélemy</option>
-                                                            <option value="SH">Saint Helena</option>
-                                                            <option value="KN">Saint Kitts and Nevis</option>
-                                                            <option value="LC">Saint Lucia</option>
-                                                            <option value="SX">Saint Martin (Dutch part)</option>
-                                                            <option value="MF">Saint Martin (French part)</option>
-                                                            <option value="PM">Saint Pierre and Miquelon</option>
-                                                            <option value="VC">Saint Vincent and the Grenadines</option>
-                                                            <option value="SM">San Marino</option>
-                                                            <option value="SA">Saudi Arabia</option>
-                                                            <option value="SN">Senegal</option>
-                                                            <option value="RS">Serbia</option>
-                                                            <option value="SC">Seychelles</option>
-                                                            <option value="SL">Sierra Leone</option>
-                                                            <option value="SG">Singapore</option>
-                                                            <option value="SK">Slovakia</option>
-                                                            <option value="SI">Slovenia</option>
-                                                            <option value="SB">Solomon Islands</option>
-                                                            <option value="SO">Somalia</option>
-                                                            <option value="ZA">South Africa</option>
-                                                            <option value="GS">South Georgia/Sandwich Islands</option>
-                                                            <option value="KR">South Korea</option>
-                                                            <option value="SS">South Sudan</option>
-                                                            <option value="ES">Spain</option>
-                                                            <option value="LK">Sri Lanka</option>
-                                                            <option value="SD">Sudan</option>
-                                                            <option value="SR">Suriname</option>
-                                                            <option value="SJ">Svalbard and Jan Mayen</option>
-                                                            <option value="SZ">Swaziland</option>
-                                                            <option value="SE">Sweden</option>
-                                                            <option value="CH">Switzerland</option>
-                                                            <option value="SY">Syria</option>
-                                                            <option value="TW">Taiwan</option>
-                                                            <option value="TJ">Tajikistan</option>
-                                                            <option value="TZ">Tanzania</option>
-                                                            <option value="TH">Thailand</option>
-                                                            <option value="TL">Timor-Leste</option>
-                                                            <option value="TG">Togo</option>
-                                                            <option value="TK">Tokelau</option>
-                                                            <option value="TO">Tonga</option>
-                                                            <option value="TT">Trinidad and Tobago</option>
-                                                            <option value="TN">Tunisia</option>
-                                                            <option value="TR">Turkey</option>
-                                                            <option value="TM">Turkmenistan</option>
-                                                            <option value="TC">Turks and Caicos Islands</option>
-                                                            <option value="TV">Tuvalu</option>
-                                                            <option value="UG">Uganda</option>
-                                                            <option value="UA">Ukraine</option>
-                                                            <option value="AE">United Arab Emirates</option>
-                                                            <option value="GB">United Kingdom (UK)</option>
-                                                            <option value="US">USA (US)</option>
-                                                            <option value="UY">Uruguay</option>
-                                                            <option value="UZ">Uzbekistan</option>
-                                                            <option value="VU">Vanuatu</option>
-                                                            <option value="VA">Vatican</option>
-                                                            <option value="VE">Venezuela</option>
-                                                            <option value="VN">Vietnam</option>
-                                                            <option value="WF">Wallis and Futuna</option>
-                                                            <option value="EH">Western Sahara</option>
-                                                            <option value="WS">Western Samoa</option>
-                                                            <option value="YE">Yemen</option>
-                                                            <option value="ZM">Zambia</option>
-                                                            <option value="ZW">Zimbabwe</option>
-                                                       </select>
-                                                  </div>
-                                             </div>
-                                        </div>
-                                        <div class="form-row row">
-                                             <div class="form-group col-lg-6">
-                                                  <input required="required" placeholder="State / Country" name="name" type="text">
-                                             </div>
-                                             <div class="form-group col-lg-6">
-                                                  <input required="required" placeholder="PostCode / ZIP" name="name" type="text">
-                                             </div>
-                                        </div>
-                                        <div class="form-row">
-                                             <div class="form-group col-lg-12">
-                                                  <button class="btn  btn-sm"><i class="fi-rs-shuffle mr-10"></i>Update</button>
-                                             </div>
-                                        </div>
-                                   </form>
-                                   <div class="mb-30 mt-50">
-                                        <div class="heading_s1 mb-3">
-                                             <h4>Apply Coupon</h4>
-                                        </div>
-                                        <div class="total-amount">
-                                             <div class="left">
-                                                  <div class="coupon">
-                                                       <form action="#" target="_blank">
-                                                            <div class="form-row row justify-content-center">
-                                                                 <div class="form-group col-lg-6">
-                                                                      <input class="font-medium" name="Coupon" placeholder="Enter Your Coupon">
-                                                                 </div>
-                                                                 <div class="form-group col-lg-6">
-                                                                      <button class="btn  btn-sm"><i class="fi-rs-label mr-10"></i>Apply</button>
-                                                                 </div>
-                                                            </div>
-                                                       </form>
-                                                  </div>
-                                             </div>
-                                        </div>
-                                   </div>
-                              </div>
-                              <div class="col-lg-6 col-md-12">
-                                   <div class="border p-md-4 p-30 border-radius cart-totals">
-                                        <div class="heading_s1 mb-3">
-                                             <h4>Cart Totals</h4>
-                                        </div>
-                                        <div class="table-responsive">
-                                             <table class="table">
-                                                  <tbody>
-                                                       <tr>
-                                                            <td class="cart_total_label">Cart Subtotal</td>
-                                                            <td class="cart_total_amount"><span class="font-lg fw-900 text-brand">$240.00</span></td>
-                                                       </tr>
-                                                       <tr>
-                                                            <td class="cart_total_label">Shipping</td>
-                                                            <td class="cart_total_amount"> <i class="ti-gift mr-5"></i> Free Shipping</td>
-                                                       </tr>
-                                                       <tr>
-                                                            <td class="cart_total_label">Total</td>
-                                                            <td class="cart_total_amount"><strong><span class="font-xl fw-900 text-brand">$240.00</span></strong></td>
-                                                       </tr>
-                                                  </tbody>
-                                             </table>
-                                        </div>
-                                        <a href="#" class="btn "> <i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut</a>
-                                   </div>
-                              </div>
-                         </div>
-                    </div>
-               </div>
-          </div>
-     </section>
+                                                      </select>
+                                                 </div>
+                                            </div>
+                                       </div>
+                                       <!-- Manual delivery location inputs -->
+                                       <div class="form-row row">
+                                            <div class="form-group col-lg-6">
+                                                 <input id="state" required="required" placeholder="State / Country" name="state" type="text">
+                                            </div>
+                                            <div class="form-group col-lg-6">
+                                                 <input id="postcode" required="required" placeholder="PostCode / ZIP" name="postcode" type="text">
+                                            </div>
+                                       </div>
+                                       <!-- Button to use current location -->
+                                       <div class="form-row">
+                                            <div class="form-group col-lg-12">
+                                                 <button type="button" id="use_location" class="btn btn-info btn-sm">
+                                                      Use My Current Location
+                                                 </button>
+                                            </div>
+                                       </div>
+                                       <div class="form-row">
+                                            <div class="form-group col-lg-12">
+                                                 <button id="calc_shipping" class="btn btn-sm">
+                                                     <i class="fi-rs-shuffle mr-10"></i>Calculate Shipping
+                                                 </button>
+                                            </div>
+                                       </div>
+                                  </form>
+                                  
+                                  <div class="mb-30 mt-50">
+                                       <div class="heading_s1 mb-3">
+                                            <h4>Apply Coupon</h4>
+                                       </div>
+                                       <div class="total-amount">
+                                            <div class="left">
+                                                 <div class="coupon">
+                                                      <form action="#" target="_blank">
+                                                           <div class="form-row row justify-content-center">
+                                                                <div class="form-group col-lg-6">
+                                                                     <input class="font-medium" name="Coupon" placeholder="Enter Your Coupon">
+                                                                </div>
+                                                                <div class="form-group col-lg-6">
+                                                                     <button class="btn btn-sm">
+                                                                         <i class="fi-rs-label mr-10"></i>Apply
+                                                                     </button>
+                                                                </div>
+                                                           </div>
+                                                      </form>
+                                                 </div>
+                                            </div>
+                                       </div>
+                                  </div>
+                             </div>
+                             
+                             <!-- Cart Totals Section -->
+                             <div class="col-lg-6 col-md-12">
+                                  <div class="border p-md-4 p-30 border-radius cart-totals">
+                                       <div class="heading_s1 mb-3">
+                                            <h4>Cart Totals</h4>
+                                       </div>
+                                       <div class="table-responsive">
+                                            <table class="table">
+                                                 <tbody>
+                                                      <tr>
+                                                           <td class="cart_total_label">Cart Subtotal</td>
+                                                           <td class="cart_total_amount">
+                                                                <span id="cart_total" class="font-lg fw-900 text-brand">
+                                                                     Kes <?php echo number_format($total_price, 2); ?>
+                                                                </span>
+                                                           </td>
+                                                      </tr>
+                                                      <tr>
+                                                           <td class="cart_total_label">Shipping</td>
+                                                           <td class="cart_total_amount">
+                                                                <span id="shipping_cost">
+                                                                     <i class="ti-gift mr-5"></i> Free Shipping
+                                                                </span>
+                                                           </td>
+                                                      </tr>
+                                                      <tr>
+                                                           <td class="cart_total_label">Total</td>
+                                                           <td class="cart_total_amount">
+                                                                <strong>
+                                                                     <span id="cart_total_total" class="font-xl fw-900 text-brand">
+                                                                          Kes <?php echo number_format($total_price, 2); ?>
+                                                                     </span>
+                                                                </strong>
+                                                           </td>
+                                                      </tr>
+                                                 </tbody>
+                                            </table>
+                                       </div>
+                                       <!-- Hidden checkout form -->
+                                       <form id="checkout_form" action="checkout.php" method="post">
+                                           <input type="hidden" name="destination" id="checkout_destination" value="">
+                                           <input type="hidden" name="state" id="checkout_state" value="">
+                                           <input type="hidden" name="postcode" id="checkout_postcode" value="">
+                                           <input type="hidden" name="shipping_cost" id="checkout_shipping_cost" value="">
+                                           <input type="hidden" name="cart_subtotal" id="checkout_cart_subtotal" value="<?php echo $total_price; ?>">
+                                           <input type="hidden" name="total_amount" id="checkout_total_amount" value="">
+                                           <input type="hidden" name="user_lat" id="checkout_user_lat" value="">
+                                           <input type="hidden" name="user_lng" id="checkout_user_lng" value="">
+                                           <input type="hidden" name="destination_lat" id="checkout_destination_lat" value="">
+                                           <input type="hidden" name="destination_lng" id="checkout_destination_lng" value="">
+                                           <a href="#" id="proceed_checkout" class="btn">
+                                               <i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut
+                                           </a>
+                                       </form>
+                                  </div>
+                             </div>
+                        </div>
+                        <?php endif; // End check for empty cart ?>
+                   </div>
+              </div>
+         </div>
+    </section>
 </main>
+
+<!-- jQuery and SweetAlert2 -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+   // Global variables to store coordinates and totals
+   var userLat = null,
+       userLng = null,
+       destinationLat = null,
+       destinationLng = null,
+       cartSubtotal = parseFloat($('#cart_total').text().replace("Kes", "").replace(/,/g, "").trim());
+       
+   // Use My Current Location handler
+   $('#use_location').click(function() {
+       if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                 // Update global user location variables
+                 userLat = position.coords.latitude;
+                 userLng = position.coords.longitude;
+
+                 // Reverse geocoding to get address details
+                 const geocodeURL = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${userLat}&lon=${userLng}&addressdetails=1`;
+
+                 $.getJSON(geocodeURL, function(data) {
+                      if (data && data.address) {
+                           const address = data.address;
+                           // Prefer state if available; otherwise use county
+                           const stateVal = address.state || address.county || '';
+                           const countryVal = address.country || '';
+                           // Use town, village, or city if available
+                           const townVal = address.town || address.village || address.city || '';
+
+                           // Update postcode if available
+                           $('#postcode').val(address.postcode || '');
+
+                           // Helper function to normalize text (removing " county" for better matching)
+                           const normalize = str => str ? str.trim().toLowerCase().replace(' county', '') : '';
+
+                           const normalizedTown = normalize(townVal);
+                           const normalizedState = normalize(stateVal);
+                           const normalizedCountry = normalize(countryVal);
+
+                           let destinationFound = false;
+
+                           $('#destination option').each(function() {
+                                const optionText = normalize($(this).text());
+                                if (normalizedTown.includes(optionText) ||
+                                    normalizedState.includes(optionText) ||
+                                    normalizedCountry.includes(optionText)) {
+                                     $(this).prop('selected', true);
+                                     destinationLat = parseFloat($(this).data('lat'));
+                                     destinationLng = parseFloat($(this).data('lng'));
+                                     destinationFound = true;
+                                     return false;
+                                }
+                           });
+
+                           if (!destinationFound) {
+                                $('#state').val(stateVal);
+                                const geocodeStateURL = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(stateVal)}`;
+                                $.getJSON(geocodeStateURL, function(result) {
+                                     if (result && result.length > 0) {
+                                          destinationLat = parseFloat(result[0].lat);
+                                          destinationLng = parseFloat(result[0].lon);
+                                     }
+                                });
+                           } else {
+                                $('#state').val(stateVal);
+                           }
+                      }
+                 });
+
+                 Swal.fire({
+                      position: 'top-end',
+                      toast: true,
+                      showConfirmButton: false,
+                      timer: 2000,
+                      icon: 'success',
+                      title: 'Location captured and address fields updated!'
+                 });
+            }, showError);
+       } else {
+            Swal.fire('Error', "Geolocation is not supported by your browser.", 'error');
+       }
+   });
+
+   // Calculate Shipping handler
+   $('#calc_shipping').click(function(e) {
+       e.preventDefault();
+
+       var dest = $('#destination').find(':selected');
+       if (dest.val() !== "") {
+            destinationLat = parseFloat(dest.data('lat'));
+            destinationLng = parseFloat(dest.data('lng'));
+       } else if (!(destinationLat && destinationLng)) {
+            Swal.fire('Error', "Please select a destination place.", 'error');
+            return;
+       }
+
+       if (userLat === null || userLng === null) {
+            Swal.fire({
+                 title: 'Warning',
+                 text: "Current location not captured. Use 'Use My Current Location' option.",
+                 icon: 'warning'
+            });
+            return;
+       }
+
+       var distance = calculateDistance(userLat, userLng, destinationLat, destinationLng);
+       var baseRate = 50;
+       var shippingCost = baseRate + (distance * 0.5);
+       shippingCost = parseFloat(shippingCost).toFixed(2);
+
+       $('#shipping_cost').html('<i class="ti-gift mr-5"></i> Shipping: Kes ' + shippingCost);
+       var newTotal = cartSubtotal + parseFloat(shippingCost);
+       $('#cart_total_total').text('Kes ' + newTotal.toFixed(2));
+
+       Swal.fire({
+            position: 'top-end',
+            toast: true,
+            showConfirmButton: false,
+            timer: 2000,
+            icon: 'success',
+            title: 'Shipping calculated. Distance: ' + distance.toFixed(2) + ' km'
+       });
+   });
+
+   function calculateDistance(lat1, lon1, lat2, lon2) {
+        var R = 6371;
+        var dLat = deg2rad(lat2 - lat1);
+        var dLon = deg2rad(lon2 - lon1);
+        var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+   }
+   
+   function deg2rad(deg) {
+        return deg * (Math.PI / 180);
+   }
+   
+   function showError(error) {
+        var errMsg = '';
+        switch(error.code) {
+             case error.PERMISSION_DENIED:
+                  errMsg = "User denied the request for Geolocation.";
+                  break;
+             case error.POSITION_UNAVAILABLE:
+                  errMsg = "Location information is unavailable.";
+                  break;
+             case error.TIMEOUT:
+                  errMsg = "The request to get user location timed out.";
+                  break;
+             case error.UNKNOWN_ERROR:
+                  errMsg = "An unknown error occurred.";
+                  break;
+        }
+        Swal.fire({
+             title: 'Error',
+             text: errMsg,
+             icon: 'error'
+        });
+   }
+   
+   $(document).ready(function() {
+         $('.qty-up, .qty-down').on('click', function(e) {
+              e.preventDefault();
+              var $button = $(this);
+              var action = $button.hasClass('qty-up') ? 'increase' : 'decrease';
+              var $row = $button.closest('tr');
+              var cartItemId = $row.data('id');
+              $.ajax({
+                   url: 'ajax/code.php',
+                   method: 'POST',
+                   data: { update: 'update_added_to_cart', action: action, id: cartItemId },
+                   dataType: 'json',
+                   success: function(response) {
+                        if (response.status === "success") {
+                             $row.find('.qty-val').text(response.new_quantity);
+                             $row.find('td[data-title="Subtotal"] span').text('Kes ' + response.new_subtotal);
+                             $('#cart_total').text('Kes ' + response.new_total);
+                             $('#cart_total_total').text('Kes ' + response.new_total);
+                        } else {
+                             Swal.fire({ 
+                                  position: 'top-end', 
+                                  toast: true, 
+                                  showConfirmButton: false, 
+                                  timer: 2000, 
+                                  icon: 'error', 
+                                  title: 'Error', 
+                                  text: response.message 
+                             });
+                        }
+                   },
+                   error: function() {
+                        Swal.fire({ 
+                             position: 'top-end', 
+                             toast: true, 
+                             showConfirmButton: false, 
+                             timer: 2000, 
+                             icon: 'error', 
+                             title: 'Oops...', 
+                             text: "An error occurred while updating the cart." 
+                        });
+                   }
+              });
+         });
+   });
+   
+   $('#proceed_checkout').click(function(e) {
+    e.preventDefault();
+    
+    var destination = $('#destination').find(':selected').val();
+    if (!destination) {
+        destination = $('#state').val();
+    }
+    var state = $('#state').val();
+    var postcode = $('#postcode').val();
+    var shippingText = $('#shipping_cost').text();
+    
+    if (!state || !postcode || shippingText.indexOf("Kes") === -1) {
+        Swal.fire('Error', "Please ensure location details are set and shipping has been calculated.", 'error');
+        return;
+    }
+    
+    var shippingCost = parseFloat(shippingText.replace(/[^0-9.]/g, ''));
+    var totalAmount = cartSubtotal + shippingCost;
+    
+    $('#checkout_destination').val(destination);
+    $('#checkout_state').val(state);
+    $('#checkout_postcode').val(postcode);
+    $('#checkout_shipping_cost').val(shippingCost);
+    $('#checkout_total_amount').val(totalAmount);
+    $('#checkout_user_lat').val(userLat);
+    $('#checkout_user_lng').val(userLng);
+    $('#checkout_destination_lat').val(destinationLat);
+    $('#checkout_destination_lng').val(destinationLng);
+    
+    $('#checkout_form').submit();
+});
+
+
+//
+
+
+
+$(document).ready(function() {
+          $('.qty-up, .qty-down').on('click', function(e) {
+               e.preventDefault(); // Prevent default behavior
+
+               // Determine whether to increase or decrease the quantity
+               var $button = $(this);
+               var action = $button.hasClass('qty-up') ? 'increase' : 'decrease';
+
+               // Get the cart item ID from the closest table row’s data attribute
+               var $row = $button.closest('tr');
+               var cartItemId = $row.data('id');
+
+               $.ajax({
+                    url: 'ajax/code.php', // Common file for AJAX actions
+                    method: 'POST',
+                    data: {
+                         update: 'update_added_to_cart', // identifies a quantity update action
+                         action: action,
+                         id: cartItemId
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                         if (response.status === "success") {
+                              // Update individual cart item row quantity and subtotal
+                              $row.find('.qty-val').text(response.new_quantity);
+                              $row.find('td[data-title="Subtotal"] span').text('Kes ' + response.new_subtotal);
+
+                              // Update the global cart totals section
+                              $('#cart_total').text('Kes ' + response.new_total);
+                              $('#cart_total_total').text('Kes ' + response.new_total);
+                         } else {
+                              Swal.fire({
+                                   position: 'top-end',
+                                   toast: true,
+                                   showConfirmButton: false,
+                                   timer: 2000,
+                                   icon: 'error',
+                                   title: 'Error',
+                                   text: response.message,
+                              });
+                         }
+                    },
+                    error: function(xhr, status, error) {
+                         Swal.fire({
+                              position: 'top-end',
+                              toast: true,
+                              showConfirmButton: false,
+                              timer: 2000,
+                              icon: 'error',
+                              title: 'Oops...',
+                              text: "An error occurred while updating the cart.",
+                         });
+                    }
+               });
+          });
+     });
+
+     $(document).ready(function() {
+          $('.qty-up, .qty-down').on('click', function(e) {
+               e.preventDefault(); // Prevent default behavior
+
+               // Determine whether to increase or decrease the quantity
+               var $button = $(this);
+               var action = $button.hasClass('qty-up') ? 'increase' : 'decrease';
+
+               // Get the cart item ID from the closest table row’s data attribute
+               var $row = $button.closest('tr');
+               var cartItemId = $row.data('id');
+
+               // Send the AJAX request to your common file with a new parameter "update"
+               $.ajax({
+                    url: 'ajax/code.php', // Common file for your AJAX actions
+                    method: 'POST',
+                    data: {
+                         update: 'update_added_to_cart', // identifies this as a quantity update for cart items
+                         action: action,
+                         id: cartItemId // The cart item ID
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                         if (response.status === "success") {
+                              // Update the DOM with the new values from response
+                              $row.find('.qty-val').text(response.new_quantity);
+                              $row.find('td[data-title="Subtotal"] span').text('Kes ' + response.new_subtotal);
+
+                              // Optionally update a global cart total element, if present
+                              if ($('#cart_total').length) {
+                                   $('#cart_total').text('Kes ' + response.new_total);
+                              }
+                         } else {
+                              // Show SweetAlert2 toast notification for errors
+                              Swal.fire({
+                                   position: 'top-end',
+                                   toast: true,
+                                   showConfirmButton: false,
+                                   timer: 2000,
+                                   icon: 'error',
+                                   title: 'Error',
+                                   text: response.message,
+                              });
+                         }
+                    },
+                    error: function(xhr, status, error) {
+                         // Show SweetAlert2 toast notification for AJAX errors
+                         Swal.fire({
+                              position: 'top-end',
+                              toast: true,
+                              showConfirmButton: false,
+                              timer: 2000,
+                              icon: 'error',
+                              title: 'Oops...',
+                              text: "An error occurred while updating the cart.",
+                         });
+                    }
+               });
+          });
+     });
+     $(document).on('click', '.clear-cart', function(e) {
+          e.preventDefault();
+
+          // Check if there are any cart items
+          if ($('tbody tr[data-id]').length === 0) {
+               Swal.fire({
+                    icon: 'info',
+                    title: 'Nothing to clear',
+                    text: 'Your cart is already empty.',
+                    timer: 2000,
+                    showConfirmButton: false
+               });
+               return;
+          }
+
+          // Confirm before clearing the cart
+          Swal.fire({
+               title: 'Are you sure?',
+               text: "This will clear your entire cart.",
+               icon: 'warning',
+               showCancelButton: true,
+               confirmButtonColor: '#3085d6',
+               cancelButtonColor: '#d33',
+               confirmButtonText: 'Yes, clear it!'
+          }).then((result) => {
+               if (result.isConfirmed) {
+                    // Send AJAX request to clear the cart
+                    $.ajax({
+                         url: 'ajax/code.php',
+                         type: 'POST',
+                         data: {
+                              clear_cart: 'clear_cart'
+                         },
+                         success: function(response) {
+                              var res = JSON.parse(response);
+                              if (res.status === "success") {
+                                   Swal.fire({
+                                        title: 'Cleared!',
+                                        text: res.message,
+                                        icon: 'success',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                   }).then(() => {
+                                        location.reload();
+                                   });
+                              } else {
+                                   Swal.fire({
+                                        title: 'Error!',
+                                        text: res.message,
+                                        icon: 'error',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                   });
+                              }
+                         },
+                         error: function() {
+                              Swal.fire({
+                                   title: 'Error!',
+                                   text: 'There was an error processing your request.',
+                                   icon: 'error',
+                                   timer: 2000,
+                                   showConfirmButton: false
+                              });
+                         }
+                    });
+               }
+          });
+     });
+
+     $(document).on('click', '.delete-cart', function(e) {
+          e.preventDefault(); // Prevent the default link action
+
+          // Retrieve the cart item ID from the data attribute
+          var cartItemId = $(this).data('id');
+
+          // Display a SweetAlert2 confirmation dialog
+          Swal.fire({
+               title: 'Are you sure?',
+               text: "This will remove the item from your cart.",
+               icon: 'warning',
+               showCancelButton: true,
+               confirmButtonColor: '#3085d6',
+               cancelButtonColor: '#d33',
+               confirmButtonText: 'Yes, delete it!'
+          }).then((result) => {
+               if (result.isConfirmed) {
+                    // If the user confirms, send an AJAX request to delete the cart item
+                    $.ajax({
+                         url: 'ajax/code.php', // Update this to the correct URL if needed
+                         type: 'POST',
+                         data: {
+                              delete: 'delete_added_to_cart',
+                              id: cartItemId
+                         },
+                         success: function(response) {
+                              var res = JSON.parse(response);
+                              if (res.status === "success") {
+                                   Swal.fire({
+                                        title: 'Deleted!',
+                                        text: res.message,
+                                        icon: 'success',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                   }).then(() => {
+                                        // Optionally, reload the page or remove the deleted item from the DOM
+                                        location.reload();
+                                   });
+                              } else {
+                                   Swal.fire({
+                                        title: 'Error!',
+                                        text: res.message,
+                                        icon: 'error',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                   });
+                              }
+                         },
+                         error: function() {
+                              Swal.fire({
+                                   title: 'Error!',
+                                   text: 'There was an error processing your request.',
+                                   icon: 'error',
+                                   timer: 2000,
+                                   showConfirmButton: false
+                              });
+                         }
+                    });
+               }
+          });
+     });
+</script>
 <?php include 'includes/footer.php'; ?>

@@ -263,3 +263,67 @@ if (isset($_POST['update']) && $_POST['update'] === 'update_added_to_cart') {
 }
 
 
+//REMOVE FROM CXART 
+// Get the cart item id from GET request use sweet alert to confirm delete
+if (isset($_POST['delete']) && $_POST['delete'] === 'delete_added_to_cart') {
+    $cartItemId = isset($_POST['id']) ? (int) $_POST['id'] : 0;
+
+    // Validate the cart item id
+    if ($cartItemId <= 0) {
+        echo json_encode(["status" => "error", "message" => "Invalid cart item ID."]);
+        exit();
+    }
+
+    // Delete the cart item from the database
+    $delete_query = "DELETE FROM cart WHERE id = ?";
+    if ($stmt = mysqli_prepare($conn, $delete_query)) {
+        mysqli_stmt_bind_param($stmt, 'i', $cartItemId);
+        if (mysqli_stmt_execute($stmt)) {
+            echo json_encode(["status" => "success", "message" => "Cart item deleted successfully."]);
+        } else {
+            echo json_encode(["status" => "error", "message" => "Failed to delete the cart item."]);
+        }
+        mysqli_stmt_close($stmt);
+    } else {
+        echo json_encode(["status" => "error", "message" => "Error preparing the delete statement."]);
+    }
+    exit();
+}
+
+//CLEAR CART
+if (isset($_POST['clear_cart']) && $_POST['clear_cart'] === 'clear_cart') {
+    // Clear the cart for the current session
+    $session_id = session_id();
+    $clear_query = "DELETE FROM cart WHERE session_id = ?";
+    if ($stmt = mysqli_prepare($conn, $clear_query)) {
+        mysqli_stmt_bind_param($stmt, 's', $session_id);
+        if (mysqli_stmt_execute($stmt)) {
+            echo json_encode(["status" => "success", "message" => "Cart cleared successfully."]);
+        } else {
+            echo json_encode(["status" => "error", "message" => "Failed to clear the cart."]);
+        }
+        mysqli_stmt_close($stmt);
+    } else {
+        echo json_encode(["status" => "error", "message" => "Error preparing the clear statement."]);
+    }
+    exit();
+}
+
+//pull cart total 
+$session_id = session_id();
+$user_id = isset($_SESSION['auth_user']['id']) ? $_SESSION['auth_user']['id'] : null;
+
+$cart_query = "SELECT * FROM cart WHERE session_id = '$session_id'" . ($user_id ? " OR user_id = '$user_id'" : "");
+$cart_result = mysqli_query($conn, $cart_query);
+
+$total_price = 0;
+
+if ($cart_result && mysqli_num_rows($cart_result) > 0) {
+    while ($row = mysqli_fetch_assoc($cart_result)) {
+        $total_price += ($row['selling_price'] * $row['quantity']);
+    }
+}
+
+echo json_encode([
+    'total' => number_format($total_price, 2),
+]);
