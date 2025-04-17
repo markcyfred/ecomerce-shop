@@ -146,7 +146,11 @@
                         categories.id AS category_id, 
                         (SELECT COUNT(*) FROM cart 
                         WHERE cart.product_id = products.id 
-                        AND (cart.session_id = '" . session_id() . "' OR cart.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_cart, 
+                        AND (cart.session_id = '" . session_id() . "' OR cart.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')
+                      AND (cart.cart_status IS NULL OR cart.cart_status != 'processed')
+
+                        
+                        ) AS in_cart, 
 
                         (SELECT COUNT(*) FROM favorite 
                         WHERE favorite.product_id = products.id 
