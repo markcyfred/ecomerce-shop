@@ -80,303 +80,69 @@
                                                             <div class="czcategoryimagelist_row">
                                                                  <div id="czcategoryimagelist-carousel"
                                                                       class="cz-carousel product_list product_slider_grid">
+                                                                                                                                            <?php
+                                                                      // 1) Use LEFT JOIN on products.category_name = categories.name
+                                                                      $category_query = "
+                                                                      SELECT
+                                                                           c.id,
+                                                                           c.name,
+                                                                           c.image,
+                                                                           COUNT(p.id) AS product_count
+                                                                      FROM
+                                                                           categories AS c
+                                                                      LEFT JOIN
+                                                                           products AS p
+                                                                           ON p.category_name = c.name
+                                                                           AND p.status = 1           -- only count active products
+                                                                      WHERE
+                                                                           c.status = 1
+                                                                      GROUP BY
+                                                                           c.id
+                                                                      ORDER BY
+                                                                           RAND()
+                                                                      
+                                                                      ";
 
-                                                                      <article class="slider">
-                                                                           <div class="categoryblock item">
-                                                                                <div class="block_content">
-                                                                                     <div class="categoryimage">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/17-android-tv">
-                                                                                               <img src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/square-lazy-loader.svg"
-                                                                                                    data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/modules/cz_categoryimagelist/views/img/17-cz_categoryimagelist.jpg"
-                                                                                                    alt="Android TV"
-                                                                                                    class="img-responsive lazyload"
-                                                                                                    width="100%"
-                                                                                                    height="100%" />
+                                                                      $category_query_run = mysqli_query($conn, $category_query);
+
+                                                                      if (mysqli_num_rows($category_query_run) > 0) {
+                                                                      while ($category = mysqli_fetch_assoc($category_query_run)) {
+                                                                           $count = (int)$category['product_count'];
+                                                                           ?>
+                                                                           <article class="slider">
+                                                                                <div class="categoryblock item">
+                                                                                     <div class="block_content">
+                                                                                          <div class="categoryimage">
+                                                                                          <a href="category.php?id=<?= $category['id']; ?>">
+                                                                                               <img src="uploads/categories/<?= htmlspecialchars($category['image']); ?>"
+                                                                                                    alt="<?= htmlspecialchars($category['name']); ?>">
                                                                                           </a>
-                                                                                     </div>
-
-                                                                                     <div class="categorylist">
+                                                                                          </div>
+                                                                                          <div class="categorylist">
                                                                                           <div class="cate-heading">
-                                                                                               <a
-                                                                                                    href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/17-android-tv">Android
-                                                                                                    TV</a>
+                                                                                               <a href="category.php?id=<?= $category['id']; ?>">
+                                                                                                    <?= htmlspecialchars($category['name']); ?>
+                                                                                               </a>
                                                                                           </div>
                                                                                           <div class="cate-quantity">
-                                                                                               (14&nbsp; items)</div>
-                                                                                          <div class="more">
-                                                                                               <a
-                                                                                                    href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/17-android-tv">
-                                                                                                    Shop Now
-                                                                                               </a>
+                                                                                               <?= $count; ?> Product<?= $count === 1 ? '' : 's'; ?>
+                                                                                               <div class="more">
+                                                                                                    <a href="category.php?id=<?= $category['id']; ?>" class="btn btn-primary">
+                                                                                                         Shop Now
+                                                                                                    </a>
+                                                                                               </div>
+                                                                                          </div>
                                                                                           </div>
                                                                                      </div>
                                                                                 </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="slider">
-                                                                           <div class="categoryblock item">
-                                                                                <div class="block_content">
-                                                                                     <div class="categoryimage">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/12-wireless-printer">
-                                                                                               <img src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/square-lazy-loader.svg"
-                                                                                                    data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/modules/cz_categoryimagelist/views/img/12-cz_categoryimagelist.jpg"
-                                                                                                    alt="Wireless Printer"
-                                                                                                    class="img-responsive lazyload"
-                                                                                                    width="100%"
-                                                                                                    height="100%" />
-                                                                                          </a>
-                                                                                     </div>
+                                                                           </article>
+                                                                           <?php
+                                                                      }
+                                                                      } else {
+                                                                      echo "<p>No categories available</p>";
+                                                                      }
+                                                                      ?>
 
-                                                                                     <div class="categorylist">
-                                                                                          <div class="cate-heading">
-                                                                                               <a
-                                                                                                    href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/12-wireless-printer">Wireless
-                                                                                                    Printer</a>
-                                                                                          </div>
-                                                                                          <div class="cate-quantity">
-                                                                                               (20&nbsp; items)</div>
-                                                                                          <div class="more">
-                                                                                               <a
-                                                                                                    href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/12-wireless-printer">
-                                                                                                    Shop Now
-                                                                                               </a>
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="slider">
-                                                                           <div class="categoryblock item">
-                                                                                <div class="block_content">
-                                                                                     <div class="categoryimage">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/13-earbuds-bose">
-                                                                                               <img src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/square-lazy-loader.svg"
-                                                                                                    data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/modules/cz_categoryimagelist/views/img/13-cz_categoryimagelist.jpg"
-                                                                                                    alt="Earbuds Bose"
-                                                                                                    class="img-responsive lazyload"
-                                                                                                    width="100%"
-                                                                                                    height="100%" />
-                                                                                          </a>
-                                                                                     </div>
-
-                                                                                     <div class="categorylist">
-                                                                                          <div class="cate-heading">
-                                                                                               <a
-                                                                                                    href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/13-earbuds-bose">Earbuds
-                                                                                                    Bose</a>
-                                                                                          </div>
-                                                                                          <div class="cate-quantity">
-                                                                                               (21&nbsp; items)</div>
-                                                                                          <div class="more">
-                                                                                               <a
-                                                                                                    href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/13-earbuds-bose">
-                                                                                                    Shop Now
-                                                                                               </a>
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="slider">
-                                                                           <div class="categoryblock item">
-                                                                                <div class="block_content">
-                                                                                     <div class="categoryimage">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/4-apple-ipad">
-                                                                                               <img src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/square-lazy-loader.svg"
-                                                                                                    data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/modules/cz_categoryimagelist/views/img/4-cz_categoryimagelist.jpg"
-                                                                                                    alt="Apple Ipad"
-                                                                                                    class="img-responsive lazyload"
-                                                                                                    width="100%"
-                                                                                                    height="100%" />
-                                                                                          </a>
-                                                                                     </div>
-
-                                                                                     <div class="categorylist">
-                                                                                          <div class="cate-heading">
-                                                                                               <a
-                                                                                                    href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/4-apple-ipad">Apple
-                                                                                                    Ipad</a>
-                                                                                          </div>
-                                                                                          <div class="cate-quantity">
-                                                                                               (18&nbsp; items)</div>
-                                                                                          <div class="more">
-                                                                                               <a
-                                                                                                    href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/4-apple-ipad">
-                                                                                                    Shop Now
-                                                                                               </a>
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="slider">
-                                                                           <div class="categoryblock item">
-                                                                                <div class="block_content">
-                                                                                     <div class="categoryimage">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/20-smart-phones">
-                                                                                               <img src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/square-lazy-loader.svg"
-                                                                                                    data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/modules/cz_categoryimagelist/views/img/20-cz_categoryimagelist.jpg"
-                                                                                                    alt="Smart Phones"
-                                                                                                    class="img-responsive lazyload"
-                                                                                                    width="100%"
-                                                                                                    height="100%" />
-                                                                                          </a>
-                                                                                     </div>
-
-                                                                                     <div class="categorylist">
-                                                                                          <div class="cate-heading">
-                                                                                               <a
-                                                                                                    href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/20-smart-phones">Smart
-                                                                                                    Phones</a>
-                                                                                          </div>
-                                                                                          <div class="cate-quantity">
-                                                                                               (18&nbsp; items)</div>
-                                                                                          <div class="more">
-                                                                                               <a
-                                                                                                    href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/20-smart-phones">
-                                                                                                    Shop Now
-                                                                                               </a>
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="slider">
-                                                                           <div class="categoryblock item">
-                                                                                <div class="block_content">
-                                                                                     <div class="categoryimage">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/21-game-controller">
-                                                                                               <img src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/square-lazy-loader.svg"
-                                                                                                    data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/modules/cz_categoryimagelist/views/img/21-cz_categoryimagelist.jpg"
-                                                                                                    alt="Game Controller"
-                                                                                                    class="img-responsive lazyload"
-                                                                                                    width="100%"
-                                                                                                    height="100%" />
-                                                                                          </a>
-                                                                                     </div>
-
-                                                                                     <div class="categorylist">
-                                                                                          <div class="cate-heading">
-                                                                                               <a
-                                                                                                    href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/21-game-controller">Game
-                                                                                                    Controller</a>
-                                                                                          </div>
-                                                                                          <div class="cate-quantity">
-                                                                                               (13&nbsp; items)</div>
-                                                                                          <div class="more">
-                                                                                               <a
-                                                                                                    href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/21-game-controller">
-                                                                                                    Shop Now
-                                                                                               </a>
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="slider">
-                                                                           <div class="categoryblock item">
-                                                                                <div class="block_content">
-                                                                                     <div class="categoryimage">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/22-headphone">
-                                                                                               <img src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/square-lazy-loader.svg"
-                                                                                                    data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/modules/cz_categoryimagelist/views/img/22-cz_categoryimagelist.jpg"
-                                                                                                    alt="Headphone"
-                                                                                                    class="img-responsive lazyload"
-                                                                                                    width="100%"
-                                                                                                    height="100%" />
-                                                                                          </a>
-                                                                                     </div>
-
-                                                                                     <div class="categorylist">
-                                                                                          <div class="cate-heading">
-                                                                                               <a
-                                                                                                    href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/22-headphone">Headphone</a>
-                                                                                          </div>
-                                                                                          <div class="cate-quantity">
-                                                                                               (11&nbsp; items)</div>
-                                                                                          <div class="more">
-                                                                                               <a
-                                                                                                    href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/22-headphone">
-                                                                                                    Shop Now
-                                                                                               </a>
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="slider">
-                                                                           <div class="categoryblock item">
-                                                                                <div class="block_content">
-                                                                                     <div class="categoryimage">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/23-smart-watch">
-                                                                                               <img src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/square-lazy-loader.svg"
-                                                                                                    data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/modules/cz_categoryimagelist/views/img/23-cz_categoryimagelist.jpg"
-                                                                                                    alt="Smart Watch"
-                                                                                                    class="img-responsive lazyload"
-                                                                                                    width="100%"
-                                                                                                    height="100%" />
-                                                                                          </a>
-                                                                                     </div>
-
-                                                                                     <div class="categorylist">
-                                                                                          <div class="cate-heading">
-                                                                                               <a
-                                                                                                    href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/23-smart-watch">Smart
-                                                                                                    Watch</a>
-                                                                                          </div>
-                                                                                          <div class="cate-quantity">
-                                                                                               (12&nbsp; items)</div>
-                                                                                          <div class="more">
-                                                                                               <a
-                                                                                                    href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/23-smart-watch">
-                                                                                                    Shop Now
-                                                                                               </a>
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="slider">
-                                                                           <div class="categoryblock item">
-                                                                                <div class="block_content">
-                                                                                     <div class="categoryimage">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/24-smart-speakers">
-                                                                                               <img src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/square-lazy-loader.svg"
-                                                                                                    data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/modules/cz_categoryimagelist/views/img/24-cz_categoryimagelist.jpg"
-                                                                                                    alt="Smart Speakers"
-                                                                                                    class="img-responsive lazyload"
-                                                                                                    width="100%"
-                                                                                                    height="100%" />
-                                                                                          </a>
-                                                                                     </div>
-
-                                                                                     <div class="categorylist">
-                                                                                          <div class="cate-heading">
-                                                                                               <a
-                                                                                                    href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/24-smart-speakers">Smart
-                                                                                                    Speakers</a>
-                                                                                          </div>
-                                                                                          <div class="cate-quantity">
-                                                                                               (15&nbsp; items)</div>
-                                                                                          <div class="more">
-                                                                                               <a
-                                                                                                    href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/24-smart-speakers">
-                                                                                                    Shop Now
-                                                                                               </a>
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
                                                                  </div>
 
                                                             </div>
@@ -392,16 +158,16 @@
                                                                  <div class="subbanner subbanner1"><a class="banner-anchor"
                                                                            href="#"><img class="banner-image1"
                                                                                 alt="sub-banner1"
-                                                                                src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/img/cms/sub-banner-1.jpg"
+                                                                                src="assets/img/cta-1.svg"
                                                                                 width="516" height="250" /></a>
                                                                       <div class="subbanner-text">
-                                                                           <div class="main-title">Latest Wireless
-                                                                                <span>Headphones</span>
+                                                                           <div class="main-title">Latest men 
+                                                                                <span>clothes</span>
                                                                            </div>
-                                                                           <div class="offer-title">From <span>$49.00</span>
+                                                                           <div class="offer-title">From <span>Kes 1500.00</span>
                                                                            </div>
                                                                            <div class="shopnow"><a class="btn btn-primary"
-                                                                                     href="#">Shop Now</a></div>
+                                                                                     href="category.php?id=3">Shop Now</a></div>
                                                                       </div>
                                                                  </div>
                                                             </div>
@@ -412,18 +178,18 @@
                                                                       <div class="subbanner subbanner1"><a
                                                                                 class="banner-anchor" href="#"><img
                                                                                      class="banner-image1" alt="sub-banner1"
-                                                                                     src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/img/cms/sub-banner-2.jpg"
+                                                                                     src="assets/img/cta-2.svg"
                                                                                      width="516" height="250" /></a>
                                                                            <div class="subbanner-text">
-                                                                                <div class="main-title">Boat Wave Call
-                                                                                     <span>Smart Watch</span>
+                                                                                <div class="main-title">Best
+                                                                                     <span>Shoes</span>
                                                                                 </div>
                                                                                 <div class="offer-title">From
-                                                                                     <span>$14.27</span>
+                                                                                     <span>Kes 1200.00</span>
                                                                                 </div>
                                                                                 <div class="shopnow"><a
                                                                                           class="btn btn-primary"
-                                                                                          href="#">Shop Now</a></div>
+                                                                                          href="category.php?id=1">Shop Now</a></div>
                                                                            </div>
                                                                       </div>
                                                                  </div>
@@ -435,18 +201,18 @@
                                                                                      class="banner-anchor" href="#"><img
                                                                                           class="banner-image1"
                                                                                           alt="sub-banner1"
-                                                                                          src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/img/cms/sub-banner-3.jpg"
+                                                                                          src="assets/img/cta-3.svg"
                                                                                           width="516" height="250" /></a>
                                                                                 <div class="subbanner-text">
-                                                                                     <div class="main-title">Motorola G64
-                                                                                          <span>5G 12GB</span>
+                                                                                     <div class="main-title">Women's
+                                                                                          <span>Clothes</span>
                                                                                      </div>
                                                                                      <div class="offer-title">From
-                                                                                          <span>$178.00</span>
+                                                                                          <span>kes 500.00</span>
                                                                                      </div>
                                                                                      <div class="shopnow"><a
                                                                                                class="btn btn-primary"
-                                                                                               href="#">Shop Now</a></div>
+                                                                                               href="category.php?id=7">Shop Now</a></div>
                                                                                 </div>
                                                                            </div>
                                                                       </div>
@@ -461,23 +227,35 @@
 
                                    <section id="czcategorytabs" class="tabs products-section products_block clearfix">
                                         <div class="container">
-                                             <h2 class="h1 products-section-title text-uppercase">Popular Products</h2>
+                                             <h2 style="color: #333;" class="h1 products-section-title text-uppercase">
+                                                  Best Products Tags
+                                             </h2>
                                              <div class="czcategory-tab">
                                                   <ul id="czcategory-tabs" class="nav nav-tabs clearfix">
                                                        <li class="nav-item">
                                                             <a href="#tab_6" data-toggle="tab" class="nav-link active">
-                                                                 <span class="categorytab-title">Accessories</span>
+                                                                 <span class="categorytab-title">Featured</span>
                                                             </a>
                                                        </li>
                                                        <li class="nav-item">
                                                             <a href="#tab_9" data-toggle="tab" class="nav-link ">
-                                                                 <span class="categorytab-title">Smart Devices</span>
+                                                                 <span class="categorytab-title">Populer</span>
                                                             </a>
                                                        </li>
                                                        <li class="nav-item">
                                                             <a href="#tab_10" data-toggle="tab" class="nav-link ">
-                                                                 <span class="categorytab-title">Laptop &amp;
-                                                                      Computers</span>
+                                                                      New </span>
+                                                            </a>
+                                                       </li>
+                                                       <li class="nav-item">
+                                                            <a href="#tab_11" data-toggle="tab" class="nav-link ">
+                                                                 <span class="categorytab-title">Best
+                                                                      Sellers</span>
+                                                            </a>
+                                                       </li>
+                                                       <li class="nav-item">
+                                                            <a href="#tab_12" data-toggle="tab" class="nav-link ">
+                                                                 <span class="categorytab-title">trending</span>
                                                             </a>
                                                        </li>
                                                   </ul>
@@ -492,6 +270,36 @@
                                                                       class="cz-carousel product_list product_slider_grid"
                                                                       data-catid="6">
 
+                                                                       <?php
+
+                                                                           $product_query = "SELECT products.*, 
+                                                                           categories.name AS category_name, 
+                                                                           categories.id AS category_id, 
+                                                                           (SELECT COUNT(*) FROM cart 
+                                                                           WHERE cart.product_id = products.id 
+                                                                           AND (cart.session_id = '" . session_id() . "' OR cart.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')
+                                                                           AND (cart.cart_status IS NULL OR cart.cart_status != 'processed')
+
+                                                                           
+                                                                           ) AS in_cart, 
+
+                                                                           (SELECT COUNT(*) FROM favorite 
+                                                                           WHERE favorite.product_id = products.id 
+                                                                           AND (favorite.session_id = '" . session_id() . "' OR favorite.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_favorite 
+                                                                           
+                                                                           FROM products 
+                                                                           LEFT JOIN categories ON products.category_name = categories.name 
+                                                                           WHERE products.status = 1 AND products.featured = 'featured' 
+                                                                           ORDER BY RAND() ";
+
+
+
+                                                                           $product_query_run = mysqli_query($conn, $product_query);
+
+                                                                           if (mysqli_num_rows($product_query_run) > 0) {
+                                                                                while ($product = mysqli_fetch_assoc($product_query_run)) {
+                                                                      ?> 
+
                                                                       <article class="product_item  slider_item">
 
                                                                            <div class="product-miniature js-product-miniature"
@@ -499,57 +307,33 @@
                                                                                 data-id-product-attribute="141">
                                                                                 <div class="thumbnail-container">
 
-                                                                                     <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/convertible-laptops/7-141-oneplus-nord-2r-wireless-earbuds-with-dual-mic.html#/8-color-white"
-                                                                                          class="thumbnail product-thumbnail">
-                                                                                          <img class="lazyload"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/187-home_default/oneplus-nord-2r-wireless-earbuds-with-dual-mic.jpg"
-                                                                                               alt="OnePlus Nord 2r Wireless Earbuds with Dual Mic"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/187-large_default/oneplus-nord-2r-wireless-earbuds-with-dual-mic.jpg"
-                                                                                               width="250" height="250">
-                                                                                          <img class="lazyload fliper_image img-responsive"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/192-home_default/oneplus-nord-2r-wireless-earbuds-with-dual-mic.jpg"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/192-large_default/oneplus-nord-2r-wireless-earbuds-with-dual-mic.jpg"
-                                                                                               alt="" />
+                                                                                    <a href="shop-product.php?id=<?= $product['id'] ?? ''; ?>" class="thumbnail product-thumbnail">
+                                                                                     <img class="lazyload"
+                                                                                          src="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          data-full-size-image-url="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          alt="<?= htmlspecialchars($product['name'] ?? 'No Name'); ?>"
+                                                                                          width="250" height="250">
 
+                                                                                     <img class="lazyload fliper_image img-responsive"
+                                                                                          src="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          data-src="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          data-full-size-image-url="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          alt="Flip image of <?= htmlspecialchars($product['name'] ?? 'No Name'); ?>">
                                                                                      </a>
-
-
-                                                                                     <div class="highlighted-informations">
-
-                                                                                          <div class="variant-links">
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/convertible-laptops/7-141-oneplus-nord-2r-wireless-earbuds-with-dual-mic.html#/8-color-white"
-                                                                                                    class="color "
-                                                                                                    title="White"
-                                                                                                    style="background-color: #ffffff"><span
-                                                                                                         class="sr-only">White</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/convertible-laptops/7-143-oneplus-nord-2r-wireless-earbuds-with-dual-mic.html#/11-color-black"
-                                                                                                    class="color "
-                                                                                                    title="Black"
-                                                                                                    style="background-color: #434A54"><span
-                                                                                                         class="sr-only">Black</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/convertible-laptops/7-142-oneplus-nord-2r-wireless-earbuds-with-dual-mic.html#/14-color-blue"
-                                                                                                    class="color "
-                                                                                                    title="Blue"
-                                                                                                    style="background-color: #5D9CEC"><span
-                                                                                                         class="sr-only">Blue</span></a>
-                                                                                               <span
-                                                                                                    class="js-count count"></span>
-                                                                                          </div>
-
-                                                                                     </div>
 
 
                                                                                      <ul
                                                                                           class="product-flags js-product-flags">
                                                                                           <li class="product-flag on-sale">On
                                                                                                sale!</li>
-                                                                                          <li class="product-flag discount">
+                                                                                          <li class="">
                                                                                                <i
-                                                                                                    class="material-icons left">&#xe3e7;</i>-$5.00
+                                                                                                    class="material-icons left">&#xe3e7;</i>
+                                                                                                    <?= $product['discount'] ?? ''; ?>
                                                                                           </li>
-                                                                                          <li class="product-flag new">New
+                                                                                          <li class="product-flag new">                                                    
+                                                                                               <?= $product['featured']; ?>
+
                                                                                           </li>
                                                                                      </ul>
 
@@ -557,50 +341,26 @@
                                                                                      <div class="outer-functional">
                                                                                           <div class="functional-buttons">
                                                                                                <div class="wishlist">
-                                                                                                    <a class="st-wishlist-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-wishlist=""
-                                                                                                         data-id-product="7"
-                                                                                                         data-id-product-attribute="141"
-                                                                                                         title="Add to Wishlist">
-                                                                                                         <span
-                                                                                                              class="st-wishlist-bt-content">
-                                                                                                              <i class="fa fa-heart"
-                                                                                                                   aria-hidden="true"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_wishlist_text">Add
-                                                                                                                   to
-                                                                                                                   Wishlist</span>
+                                                                                                    <a aria-label="Add To Favorite" class="st-wishlist-button btn-product btn" href="javascript:void(0);"
+                                                                                                         data-product-id="<?= $product['id']; ?>"
+                                                                                                         data-product-name="<?= $product['product_name']; ?>"
+                                                                                                         data-selling-price="<?= $product['selling_price']; ?>"
+                                                                                                         data-image="<?= $product['image']; ?>">  
+                                                                                                         <span class="st-wishlist-bt-content">
+                                                                                                              <?php if ($product['in_favorite'] > 0): ?>
+                                                                                                                   <i class="fa fa-heart" aria-hidden="true"></i>
+                                                                                                              <?php else: ?>
+                                                                                                                   <i class="fi-rs-heart"></i>
+                                                                                                              <?php endif; ?>
                                                                                                          </span>
-                                                                                                    </a>
+                                                                                                         </a>
 
                                                                                                </div>
-                                                                                               <div class="compare">
-                                                                                                    <a class="st-compare-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-product="7"
-                                                                                                         title="Add to Compare">
-                                                                                                         <span
-                                                                                                              class="st-compare-bt-content">
-                                                                                                              <i
-                                                                                                                   class="fa fa-area-chart"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_compare_text">Add
-                                                                                                                   to Compare
-                                                                                                              </span>
-                                                                                                    </a>
-                                                                                               </div>
-
-
+                                                                                             <!-- Quick View Trigger -->
                                                                                                <div class="quickview">
-                                                                                                    <a href="#"
-                                                                                                         class="quick-view js-quick-view"
-                                                                                                         data-link-action="quickview">
-                                                                                                         <i
-                                                                                                              class="material-icons search">&#xE417;</i>
-                                                                                                         Quick view
-                                                                                                    </a>
+                                                                                               <a href="#" class="quick-view-btn text-blue-600 hover:underline" data-product-id="<?= $product['id']; ?>">Quick View</a>
                                                                                                </div>
+
 
                                                                                           </div>
                                                                                      </div>
@@ -612,1370 +372,97 @@
                                                                                      <div class="brand-title"
                                                                                           itemprop="name">
                                                                                           <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/brand/3-ecoshop">EcoShop</a>
+                                                                                               href="category.php?id=<?= $product['category_id'] ?? ''; ?>">
+                                                                                               <?= htmlspecialchars($product['category_name'] ?? 'No Category'); ?>
+                                                                                          </a>
                                                                                      </div>
 
 
 
                                                                                      <h3 class="h3 product-title"><a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/convertible-laptops/7-141-oneplus-nord-2r-wireless-earbuds-with-dual-mic.html#/8-color-white"
-                                                                                               content="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/convertible-laptops/7-141-oneplus-nord-2r-wireless-earbuds-with-dual-mic.html#/8-color-white">OnePlus
-                                                                                               Nord 2r Wireless Earbuds with
-                                                                                               Dual Mic</a></h3>
+                                                                                               href="shop-product.php?id=<?= $product['id'] ?? ''; ?>"
+                                                                                               content="shop-product.php?id=<?= $product['id'] ?? ''; ?>"><?= htmlspecialchars($product['product_name'] ?? 'No Name'); ?></a></h3>
 
 
 
                                                                                      <div class="comments_note">
                                                                                           <div class="star_content clearfix">
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
+                                                                                               <?php
+                                                                                               $rating = $product['rating'] ?? 0;
+                                                                                               for ($i = 0; $i < 5; $i++) {
+                                                                                                   if ($i < $rating) {
+                                                                                                       echo '<div class="star star_on"></div>';
+                                                                                                   } else {
+                                                                                                       echo '<div class="star"></div>';
+                                                                                                   }
+                                                                                               }
+                                                                                               ?>
                                                                                           </div>
-                                                                                          <span class="total-rating">3
-                                                                                               Review(s)</span>
+                                                                                         
                                                                                      </div>
-
-
 
                                                                                      <div class="product-price-and-shipping">
 
 
                                                                                           <span class="regular-price"
-                                                                                               aria-label="Regular price">$37.00</span>
-                                                                                          <span
-                                                                                               class="discount-amount discount-product">-$5.00<span>
-                                                                                                    Off</span></span>
-
-
+                                                                                               aria-label="Regular price">
+                                                                                              Kes  <?= $product['original_price'] ?? ''; ?>
+                                                                                          </span>
+                                                                                         
 
                                                                                           <span class="price"
                                                                                                aria-label="Price">
-                                                                                               $32.00
+                                                                                               Kes <?= $product['selling_price'] ?? ''; ?>
                                                                                           </span>
-
-
-
-
                                                                                      </div>
 
+                                                                                   <div class="proaction-button">
 
+                                                                                     <!-- Add to Cart Form -->
+                                                                                     <form id="cartForm_<?= $product['id']; ?>" method="POST" action="">
+                                                                                          <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
+                                                                                          <input type="hidden" name="add_to_cart_btn" value="true">
+                                                                                          <input type="hidden" name="product_name" value="<?= htmlspecialchars($product['product_name']); ?>">
+                                                                                          <input type="hidden" name="selling_price" value="<?= $product['selling_price']; ?>">
+                                                                                          <input type="hidden" name="image" value="<?= $product['image']; ?>">
+                                                                                          <input type="hidden" name="quantity" value="1">
 
-                                                                                     <div class="proaction-button">
-                                                                                          <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/convertible-laptops/7-141-oneplus-nord-2r-wireless-earbuds-with-dual-mic.html#/8-color-white"
-                                                                                               class="btn btn-primary add-to-cart">
-                                                                                               Options
-                                                                                          </a>
+                                                                                        <?php if (!isset($product['in_cart']) || $product['in_cart'] == 0): ?>
+                                                                                               <a aria-label="Add To Cart"
+                                                                                                    class="action-btn hover-up btn-primary add-to-cart"
+                                                                                                    href="javascript:void(0);"
+                                                                                                    onclick="addToCart('cartForm_<?= $product['id']; ?>');">
+                                                                                                    <i class="add-to-cart"></i> Add to Cart
+                                                                                               </a>
+                                                                                               <?php else: ?>
+                                                                                               <span class="action-btn hover-up btn-primary add-to-cart" style="pointer-events: none;">In Cart</span>
+                                                                                          <?php endif; ?>
+                                                                                               <style>
+                                                                                                    .action-btn[style="pointer-events: none;"] {
+                                                                                               opacity: 0.5;  /* Make the button appear disabled */
+                                                                                               }
+
+                                                                                               </style>
+
+                                                                                     </form>
+
                                                                                      </div>
-
-
 
                                                                                 </div>
                                                                            </div>
                                                                       </article>
-                                                                      <article class="product_item  slider_item">
-
-                                                                           <div class="product-miniature js-product-miniature"
-                                                                                data-id-product="6"
-                                                                                data-id-product-attribute="144">
-                                                                                <div class="thumbnail-container">
-
-                                                                                     <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/adapter-plug/6-144-apple-new-airpods-max-bluetooth-headset.html#/14-color-blue"
-                                                                                          class="thumbnail product-thumbnail">
-                                                                                          <img class="lazyload"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/195-home_default/apple-new-airpods-max-bluetooth-headset.jpg"
-                                                                                               alt="APPLE New AirPods Max Bluetooth Headset"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/195-large_default/apple-new-airpods-max-bluetooth-headset.jpg"
-                                                                                               width="250" height="250">
-                                                                                          <img class="lazyload fliper_image img-responsive"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/204-home_default/apple-new-airpods-max-bluetooth-headset.jpg"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/204-large_default/apple-new-airpods-max-bluetooth-headset.jpg"
-                                                                                               alt="" />
-
-                                                                                     </a>
-
-
-                                                                                     <div class="highlighted-informations">
-
-                                                                                          <div class="variant-links">
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/adapter-plug/6-148-apple-new-airpods-max-bluetooth-headset.html#/9-color-off_white"
-                                                                                                    class="color "
-                                                                                                    title="Off White"
-                                                                                                    style="background-color: #faebd7"><span
-                                                                                                         class="sr-only">Off
-                                                                                                         White</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/adapter-plug/6-144-apple-new-airpods-max-bluetooth-headset.html#/14-color-blue"
-                                                                                                    class="color "
-                                                                                                    title="Blue"
-                                                                                                    style="background-color: #5D9CEC"><span
-                                                                                                         class="sr-only">Blue</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/adapter-plug/6-145-apple-new-airpods-max-bluetooth-headset.html#/15-color-green"
-                                                                                                    class="color "
-                                                                                                    title="Green"
-                                                                                                    style="background-color: #A0D468"><span
-                                                                                                         class="sr-only">Green</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/adapter-plug/6-147-apple-new-airpods-max-bluetooth-headset.html#/16-color-yellow"
-                                                                                                    class="color "
-                                                                                                    title="Yellow"
-                                                                                                    style="background-color: #F1C40F"><span
-                                                                                                         class="sr-only">Yellow</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/adapter-plug/6-146-apple-new-airpods-max-bluetooth-headset.html#/18-color-pink"
-                                                                                                    class="color "
-                                                                                                    title="Pink"
-                                                                                                    style="background-color: #FCCACD"><span
-                                                                                                         class="sr-only">Pink</span></a>
-                                                                                               <span
-                                                                                                    class="js-count count"></span>
-                                                                                          </div>
-
-                                                                                     </div>
-
-
-                                                                                     <ul
-                                                                                          class="product-flags js-product-flags">
-                                                                                          <li class="product-flag on-sale">On
-                                                                                               sale!</li>
-                                                                                          <li class="product-flag discount">
-                                                                                               <i
-                                                                                                    class="material-icons left">&#xe3e7;</i>-8%
-                                                                                          </li>
-                                                                                          <li class="product-flag new">New
-                                                                                          </li>
-                                                                                     </ul>
-
-
-                                                                                     <div class="outer-functional">
-                                                                                          <div class="functional-buttons">
-                                                                                               <div class="wishlist">
-                                                                                                    <a class="st-wishlist-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-wishlist=""
-                                                                                                         data-id-product="6"
-                                                                                                         data-id-product-attribute="144"
-                                                                                                         title="Add to Wishlist">
-                                                                                                         <span
-                                                                                                              class="st-wishlist-bt-content">
-                                                                                                              <i class="fa fa-heart"
-                                                                                                                   aria-hidden="true"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_wishlist_text">Add
-                                                                                                                   to
-                                                                                                                   Wishlist</span>
-                                                                                                         </span>
-                                                                                                    </a>
-
-                                                                                               </div>
-                                                                                               <div class="compare">
-                                                                                                    <a class="st-compare-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-product="6"
-                                                                                                         title="Add to Compare">
-                                                                                                         <span
-                                                                                                              class="st-compare-bt-content">
-                                                                                                              <i
-                                                                                                                   class="fa fa-area-chart"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_compare_text">Add
-                                                                                                                   to Compare
-                                                                                                              </span>
-                                                                                                    </a>
-                                                                                               </div>
-
-
-                                                                                               <div class="quickview">
-                                                                                                    <a href="#"
-                                                                                                         class="quick-view js-quick-view"
-                                                                                                         data-link-action="quickview">
-                                                                                                         <i
-                                                                                                              class="material-icons search">&#xE417;</i>
-                                                                                                         Quick view
-                                                                                                    </a>
-                                                                                               </div>
-
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-
-                                                                                <div class="product-description">
-
-
-                                                                                     <div class="brand-title"
-                                                                                          itemprop="name">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/brand/4-megamart">MegaMart</a>
-                                                                                     </div>
-
-
-
-                                                                                     <h3 class="h3 product-title"><a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/adapter-plug/6-144-apple-new-airpods-max-bluetooth-headset.html#/14-color-blue"
-                                                                                               content="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/adapter-plug/6-144-apple-new-airpods-max-bluetooth-headset.html#/14-color-blue">APPLE
-                                                                                               New AirPods Max Bluetooth
-                                                                                               Headset</a></h3>
-
-
-
-                                                                                     <div class="comments_note">
-                                                                                          <div class="star_content clearfix">
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                          </div>
-                                                                                          <span class="total-rating">2
-                                                                                               Review(s)</span>
-                                                                                     </div>
-
-
-
-                                                                                     <div class="product-price-and-shipping">
-
-
-                                                                                          <span class="regular-price"
-                                                                                               aria-label="Regular price">$24.00</span>
-                                                                                          <span
-                                                                                               class="discount-percentage discount-product">-8%
-                                                                                               <span>Off</span></span>
-
-
-
-                                                                                          <span class="price"
-                                                                                               aria-label="Price">
-                                                                                               $22.08
-                                                                                          </span>
-
-
-
-
-                                                                                     </div>
-
-
-
-                                                                                     <div class="proaction-button">
-                                                                                          <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/adapter-plug/6-144-apple-new-airpods-max-bluetooth-headset.html#/14-color-blue"
-                                                                                               class="btn btn-primary add-to-cart">
-                                                                                               Options
-                                                                                          </a>
-                                                                                     </div>
-
-
-
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="product_item  slider_item">
-
-                                                                           <div class="product-miniature js-product-miniature"
-                                                                                data-id-product="8"
-                                                                                data-id-product-attribute="137">
-                                                                                <div class="thumbnail-container">
-
-                                                                                     <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/bettery-chargers/8-137-hp-smart-tank-all-in-one-wifi-colour-printer.html#/10-color-red"
-                                                                                          class="thumbnail product-thumbnail">
-                                                                                          <img class="lazyload"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/180-home_default/hp-smart-tank-all-in-one-wifi-colour-printer.jpg"
-                                                                                               alt="HP Smart Tank All-in-one WiFi Colour Printer"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/180-large_default/hp-smart-tank-all-in-one-wifi-colour-printer.jpg"
-                                                                                               width="250" height="250">
-                                                                                          <img class="lazyload fliper_image img-responsive"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/181-home_default/hp-smart-tank-all-in-one-wifi-colour-printer.jpg"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/181-large_default/hp-smart-tank-all-in-one-wifi-colour-printer.jpg"
-                                                                                               alt="" />
-
-                                                                                     </a>
-
-
-                                                                                     <div class="highlighted-informations">
-
-                                                                                          <div class="variant-links">
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/bettery-chargers/8-140-hp-smart-tank-all-in-one-wifi-colour-printer.html#/5-color-gray"
-                                                                                                    class="color "
-                                                                                                    title="Gray"
-                                                                                                    style="background-color: #AAB2BD"><span
-                                                                                                         class="sr-only">Gray</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/bettery-chargers/8-137-hp-smart-tank-all-in-one-wifi-colour-printer.html#/10-color-red"
-                                                                                                    class="color "
-                                                                                                    title="Red"
-                                                                                                    style="background-color: #E84C3D"><span
-                                                                                                         class="sr-only">Red</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/bettery-chargers/8-139-hp-smart-tank-all-in-one-wifi-colour-printer.html#/14-color-blue"
-                                                                                                    class="color "
-                                                                                                    title="Blue"
-                                                                                                    style="background-color: #5D9CEC"><span
-                                                                                                         class="sr-only">Blue</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/bettery-chargers/8-138-hp-smart-tank-all-in-one-wifi-colour-printer.html#/16-color-yellow"
-                                                                                                    class="color "
-                                                                                                    title="Yellow"
-                                                                                                    style="background-color: #F1C40F"><span
-                                                                                                         class="sr-only">Yellow</span></a>
-                                                                                               <span
-                                                                                                    class="js-count count"></span>
-                                                                                          </div>
-
-                                                                                     </div>
-
-
-                                                                                     <ul
-                                                                                          class="product-flags js-product-flags">
-                                                                                          <li class="product-flag new">New
-                                                                                          </li>
-                                                                                     </ul>
-
-
-                                                                                     <div class="outer-functional">
-                                                                                          <div class="functional-buttons">
-                                                                                               <div class="wishlist">
-                                                                                                    <a class="st-wishlist-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-wishlist=""
-                                                                                                         data-id-product="8"
-                                                                                                         data-id-product-attribute="137"
-                                                                                                         title="Add to Wishlist">
-                                                                                                         <span
-                                                                                                              class="st-wishlist-bt-content">
-                                                                                                              <i class="fa fa-heart"
-                                                                                                                   aria-hidden="true"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_wishlist_text">Add
-                                                                                                                   to
-                                                                                                                   Wishlist</span>
-                                                                                                         </span>
-                                                                                                    </a>
-
-                                                                                               </div>
-                                                                                               <div class="compare">
-                                                                                                    <a class="st-compare-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-product="8"
-                                                                                                         title="Add to Compare">
-                                                                                                         <span
-                                                                                                              class="st-compare-bt-content">
-                                                                                                              <i
-                                                                                                                   class="fa fa-area-chart"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_compare_text">Add
-                                                                                                                   to Compare
-                                                                                                              </span>
-                                                                                                    </a>
-                                                                                               </div>
-
-
-                                                                                               <div class="quickview">
-                                                                                                    <a href="#"
-                                                                                                         class="quick-view js-quick-view"
-                                                                                                         data-link-action="quickview">
-                                                                                                         <i
-                                                                                                              class="material-icons search">&#xE417;</i>
-                                                                                                         Quick view
-                                                                                                    </a>
-                                                                                               </div>
-
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-
-                                                                                <div class="product-description">
-
-
-                                                                                     <div class="brand-title"
-                                                                                          itemprop="name">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/brand/6-smartshop">SmartShop</a>
-                                                                                     </div>
-
-
-
-                                                                                     <h3 class="h3 product-title"><a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/bettery-chargers/8-137-hp-smart-tank-all-in-one-wifi-colour-printer.html#/10-color-red"
-                                                                                               content="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/bettery-chargers/8-137-hp-smart-tank-all-in-one-wifi-colour-printer.html#/10-color-red">HP
-                                                                                               Smart Tank All-in-one WiFi
-                                                                                               Colour Printer</a></h3>
-
-
-
-                                                                                     <div class="comments_note">
-                                                                                          <div class="star_content clearfix">
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star"></div>
-                                                                                          </div>
-                                                                                          <span class="total-rating">1
-                                                                                               Review(s)</span>
-                                                                                     </div>
-
-
-
-                                                                                     <div class="product-price-and-shipping">
-
-
-
-                                                                                          <span class="price"
-                                                                                               aria-label="Price">
-                                                                                               $225.00
-                                                                                          </span>
-
-
-
-
-                                                                                     </div>
-
-
-
-                                                                                     <div class="proaction-button">
-                                                                                          <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/bettery-chargers/8-137-hp-smart-tank-all-in-one-wifi-colour-printer.html#/10-color-red"
-                                                                                               class="btn btn-primary add-to-cart">
-                                                                                               Options
-                                                                                          </a>
-                                                                                     </div>
-
-
-
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="product_item  slider_item">
-
-                                                                           <div class="product-miniature js-product-miniature"
-                                                                                data-id-product="10"
-                                                                                data-id-product-attribute="0">
-                                                                                <div class="thumbnail-container">
-
-                                                                                     <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/chargers-cables/10-noise-colorfit-ultra-3-bluetooth-calling-smart-watch.html"
-                                                                                          class="thumbnail product-thumbnail">
-                                                                                          <img class="lazyload"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/170-home_default/noise-colorfit-ultra-3-bluetooth-calling-smart-watch.jpg"
-                                                                                               alt="Noise ColorFit Ultra 3 Bluetooth Calling Smart Watch"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/170-large_default/noise-colorfit-ultra-3-bluetooth-calling-smart-watch.jpg"
-                                                                                               width="250" height="250">
-                                                                                          <img class="lazyload fliper_image img-responsive"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/171-home_default/noise-colorfit-ultra-3-bluetooth-calling-smart-watch.jpg"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/171-large_default/noise-colorfit-ultra-3-bluetooth-calling-smart-watch.jpg"
-                                                                                               alt="" />
-
-                                                                                     </a>
-
-
-                                                                                     <div
-                                                                                          class="highlighted-informations no-variants">
-
-
-                                                                                     </div>
-
-
-                                                                                     <ul
-                                                                                          class="product-flags js-product-flags">
-                                                                                          <li class="product-flag new">New
-                                                                                          </li>
-                                                                                     </ul>
-
-
-                                                                                     <div class="outer-functional">
-                                                                                          <div class="functional-buttons">
-                                                                                               <div class="wishlist">
-                                                                                                    <a class="st-wishlist-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-wishlist=""
-                                                                                                         data-id-product="10"
-                                                                                                         data-id-product-attribute="0"
-                                                                                                         title="Add to Wishlist">
-                                                                                                         <span
-                                                                                                              class="st-wishlist-bt-content">
-                                                                                                              <i class="fa fa-heart"
-                                                                                                                   aria-hidden="true"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_wishlist_text">Add
-                                                                                                                   to
-                                                                                                                   Wishlist</span>
-                                                                                                         </span>
-                                                                                                    </a>
-
-                                                                                               </div>
-                                                                                               <div class="compare">
-                                                                                                    <a class="st-compare-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-product="10"
-                                                                                                         title="Add to Compare">
-                                                                                                         <span
-                                                                                                              class="st-compare-bt-content">
-                                                                                                              <i
-                                                                                                                   class="fa fa-area-chart"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_compare_text">Add
-                                                                                                                   to Compare
-                                                                                                              </span>
-                                                                                                    </a>
-                                                                                               </div>
-
-
-                                                                                               <div class="quickview">
-                                                                                                    <a href="#"
-                                                                                                         class="quick-view js-quick-view"
-                                                                                                         data-link-action="quickview">
-                                                                                                         <i
-                                                                                                              class="material-icons search">&#xE417;</i>
-                                                                                                         Quick view
-                                                                                                    </a>
-                                                                                               </div>
-
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-
-                                                                                <div class="product-description">
-
-
-                                                                                     <div class="brand-title"
-                                                                                          itemprop="name">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/brand/6-smartshop">SmartShop</a>
-                                                                                     </div>
-
-
-
-                                                                                     <h3 class="h3 product-title"><a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/chargers-cables/10-noise-colorfit-ultra-3-bluetooth-calling-smart-watch.html"
-                                                                                               content="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/chargers-cables/10-noise-colorfit-ultra-3-bluetooth-calling-smart-watch.html">Noise
-                                                                                               ColorFit Ultra 3 Bluetooth
-                                                                                               Calling Smart Watch</a></h3>
-
-
-
-                                                                                     <div class="comments_note">
-                                                                                          <div class="star_content clearfix">
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                          </div>
-                                                                                          <span class="total-rating">2
-                                                                                               Review(s)</span>
-                                                                                     </div>
-
-
-
-                                                                                     <div class="product-price-and-shipping">
-
-
-
-                                                                                          <span class="price"
-                                                                                               aria-label="Price">
-                                                                                               $78.00
-                                                                                          </span>
-
-
-
-
-                                                                                     </div>
-
-
-
-                                                                                     <div class="proaction-button">
-                                                                                          <form action="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/cart"
-                                                                                               method="post"
-                                                                                               class="add-to-cart-or-refresh">
-                                                                                               <input type="hidden"
-                                                                                                    name="token"
-                                                                                                    value="be2e4f21e069f2f9e1a4d6f6ab1dfbfa">
-                                                                                               <input type="hidden"
-                                                                                                    name="id_product"
-                                                                                                    value="10"
-                                                                                                    class="product_page_product_id">
-                                                                                               <input type="hidden"
-                                                                                                    name="id_customization"
-                                                                                                    value="0"
-                                                                                                    id="product_customization_id"
-                                                                                                    class="js-product-customization-id">
-                                                                                               <button
-                                                                                                    class="btn btn-primary add-to-cart"
-                                                                                                    data-button-action="add-to-cart"
-                                                                                                    type="submit">
-                                                                                                    Add to cart
-                                                                                               </button>
-                                                                                          </form>
-                                                                                     </div>
-
-
-
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="product_item  slider_item">
-
-                                                                           <div class="product-miniature js-product-miniature"
-                                                                                data-id-product="9"
-                                                                                data-id-product-attribute="0">
-                                                                                <div class="thumbnail-container">
-
-                                                                                     <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/usb-c-charger/9-lg-8-kg-fully-automatic-top-load-washing-machine.html"
-                                                                                          class="thumbnail product-thumbnail">
-                                                                                          <img class="lazyload"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/175-home_default/lg-8-kg-fully-automatic-top-load-washing-machine.jpg"
-                                                                                               alt="LG 8 kg Fully Automatic Top Load Washing Machine"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/175-large_default/lg-8-kg-fully-automatic-top-load-washing-machine.jpg"
-                                                                                               width="250" height="250">
-                                                                                          <img class="lazyload fliper_image img-responsive"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/176-home_default/lg-8-kg-fully-automatic-top-load-washing-machine.jpg"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/176-large_default/lg-8-kg-fully-automatic-top-load-washing-machine.jpg"
-                                                                                               alt="" />
-
-                                                                                     </a>
-
-
-                                                                                     <div
-                                                                                          class="highlighted-informations no-variants">
-
-
-                                                                                     </div>
-
-
-                                                                                     <ul
-                                                                                          class="product-flags js-product-flags">
-                                                                                          <li class="product-flag new">New
-                                                                                          </li>
-                                                                                     </ul>
-
-
-                                                                                     <div class="outer-functional">
-                                                                                          <div class="functional-buttons">
-                                                                                               <div class="wishlist">
-                                                                                                    <a class="st-wishlist-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-wishlist=""
-                                                                                                         data-id-product="9"
-                                                                                                         data-id-product-attribute="0"
-                                                                                                         title="Add to Wishlist">
-                                                                                                         <span
-                                                                                                              class="st-wishlist-bt-content">
-                                                                                                              <i class="fa fa-heart"
-                                                                                                                   aria-hidden="true"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_wishlist_text">Add
-                                                                                                                   to
-                                                                                                                   Wishlist</span>
-                                                                                                         </span>
-                                                                                                    </a>
-
-                                                                                               </div>
-                                                                                               <div class="compare">
-                                                                                                    <a class="st-compare-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-product="9"
-                                                                                                         title="Add to Compare">
-                                                                                                         <span
-                                                                                                              class="st-compare-bt-content">
-                                                                                                              <i
-                                                                                                                   class="fa fa-area-chart"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_compare_text">Add
-                                                                                                                   to Compare
-                                                                                                              </span>
-                                                                                                    </a>
-                                                                                               </div>
-
-
-                                                                                               <div class="quickview">
-                                                                                                    <a href="#"
-                                                                                                         class="quick-view js-quick-view"
-                                                                                                         data-link-action="quickview">
-                                                                                                         <i
-                                                                                                              class="material-icons search">&#xE417;</i>
-                                                                                                         Quick view
-                                                                                                    </a>
-                                                                                               </div>
-
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-
-                                                                                <div class="product-description">
-
-
-                                                                                     <div class="brand-title"
-                                                                                          itemprop="name">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/brand/8-trendmart">TrendMart</a>
-                                                                                     </div>
-
-
-
-                                                                                     <h3 class="h3 product-title"><a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/usb-c-charger/9-lg-8-kg-fully-automatic-top-load-washing-machine.html"
-                                                                                               content="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/usb-c-charger/9-lg-8-kg-fully-automatic-top-load-washing-machine.html">LG
-                                                                                               8 kg Fully Automatic Top Load
-                                                                                               Washing Machine</a></h3>
-
-
-
-                                                                                     <div class="comments_note">
-                                                                                          <div class="star_content clearfix">
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                          </div>
-                                                                                          <span class="total-rating">3
-                                                                                               Review(s)</span>
-                                                                                     </div>
-
-
-
-                                                                                     <div class="product-price-and-shipping">
-
-
-
-                                                                                          <span class="price"
-                                                                                               aria-label="Price">
-                                                                                               $230.00
-                                                                                          </span>
-
-
-
-
-                                                                                     </div>
-
-
-
-                                                                                     <div class="proaction-button">
-                                                                                          <form action="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/cart"
-                                                                                               method="post"
-                                                                                               class="add-to-cart-or-refresh">
-                                                                                               <input type="hidden"
-                                                                                                    name="token"
-                                                                                                    value="be2e4f21e069f2f9e1a4d6f6ab1dfbfa">
-                                                                                               <input type="hidden"
-                                                                                                    name="id_product"
-                                                                                                    value="9"
-                                                                                                    class="product_page_product_id">
-                                                                                               <input type="hidden"
-                                                                                                    name="id_customization"
-                                                                                                    value="0"
-                                                                                                    id="product_customization_id"
-                                                                                                    class="js-product-customization-id">
-                                                                                               <button
-                                                                                                    class="btn btn-primary add-to-cart"
-                                                                                                    data-button-action="add-to-cart"
-                                                                                                    type="submit" disabled>
-                                                                                                    Add to cart
-                                                                                               </button>
-                                                                                          </form>
-                                                                                     </div>
-
-
-
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="product_item  slider_item">
-
-                                                                           <div class="product-miniature js-product-miniature"
-                                                                                data-id-product="11"
-                                                                                data-id-product-attribute="121">
-                                                                                <div class="thumbnail-container">
-
-                                                                                     <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/gadgets/11-121-iphone-13-128gb-pink-unlocked-premium.html#/14-color-blue/37-internal_storage-64gb"
-                                                                                          class="thumbnail product-thumbnail">
-                                                                                          <img class="lazyload"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/160-home_default/iphone-13-128gb-pink-unlocked-premium.jpg"
-                                                                                               alt="iPhone 13, 128GB, Pink - Unlocked Premium"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/160-large_default/iphone-13-128gb-pink-unlocked-premium.jpg"
-                                                                                               width="250" height="250">
-                                                                                          <img class="lazyload fliper_image img-responsive"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/161-home_default/iphone-13-128gb-pink-unlocked-premium.jpg"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/161-large_default/iphone-13-128gb-pink-unlocked-premium.jpg"
-                                                                                               alt="" />
-
-                                                                                     </a>
-
-
-                                                                                     <div class="highlighted-informations">
-
-                                                                                          <div class="variant-links">
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/gadgets/11-129-iphone-13-128gb-pink-unlocked-premium.html#/9-color-off_white/37-internal_storage-64gb"
-                                                                                                    class="color "
-                                                                                                    title="Off White"
-                                                                                                    style="background-color: #faebd7"><span
-                                                                                                         class="sr-only">Off
-                                                                                                         White</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/gadgets/11-125-iphone-13-128gb-pink-unlocked-premium.html#/11-color-black/37-internal_storage-64gb"
-                                                                                                    class="color "
-                                                                                                    title="Black"
-                                                                                                    style="background-color: #434A54"><span
-                                                                                                         class="sr-only">Black</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/gadgets/11-122-iphone-13-128gb-pink-unlocked-premium.html#/14-color-blue/38-internal_storage-128gb"
-                                                                                                    class="color "
-                                                                                                    title="Blue"
-                                                                                                    style="background-color: #5D9CEC"><span
-                                                                                                         class="sr-only">Blue</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/gadgets/11-133-iphone-13-128gb-pink-unlocked-premium.html#/18-color-pink/37-internal_storage-64gb"
-                                                                                                    class="color "
-                                                                                                    title="Pink"
-                                                                                                    style="background-color: #FCCACD"><span
-                                                                                                         class="sr-only">Pink</span></a>
-                                                                                               <span
-                                                                                                    class="js-count count"></span>
-                                                                                          </div>
-
-                                                                                     </div>
-
-
-                                                                                     <ul
-                                                                                          class="product-flags js-product-flags">
-                                                                                          <li class="product-flag on-sale">On
-                                                                                               sale!</li>
-                                                                                          <li class="product-flag discount">
-                                                                                               <i
-                                                                                                    class="material-icons left">&#xe3e7;</i>-$6.00
-                                                                                          </li>
-                                                                                          <li class="product-flag new">New
-                                                                                          </li>
-                                                                                     </ul>
-
-
-                                                                                     <div class="outer-functional">
-                                                                                          <div class="functional-buttons">
-                                                                                               <div class="wishlist">
-                                                                                                    <a class="st-wishlist-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-wishlist=""
-                                                                                                         data-id-product="11"
-                                                                                                         data-id-product-attribute="121"
-                                                                                                         title="Add to Wishlist">
-                                                                                                         <span
-                                                                                                              class="st-wishlist-bt-content">
-                                                                                                              <i class="fa fa-heart"
-                                                                                                                   aria-hidden="true"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_wishlist_text">Add
-                                                                                                                   to
-                                                                                                                   Wishlist</span>
-                                                                                                         </span>
-                                                                                                    </a>
-
-                                                                                               </div>
-                                                                                               <div class="compare">
-                                                                                                    <a class="st-compare-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-product="11"
-                                                                                                         title="Add to Compare">
-                                                                                                         <span
-                                                                                                              class="st-compare-bt-content">
-                                                                                                              <i
-                                                                                                                   class="fa fa-area-chart"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_compare_text">Add
-                                                                                                                   to Compare
-                                                                                                              </span>
-                                                                                                    </a>
-                                                                                               </div>
-
-
-                                                                                               <div class="quickview">
-                                                                                                    <a href="#"
-                                                                                                         class="quick-view js-quick-view"
-                                                                                                         data-link-action="quickview">
-                                                                                                         <i
-                                                                                                              class="material-icons search">&#xE417;</i>
-                                                                                                         Quick view
-                                                                                                    </a>
-                                                                                               </div>
-
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-
-                                                                                <div class="product-description">
-
-
-                                                                                     <div class="brand-title"
-                                                                                          itemprop="name">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/brand/2-cartify">Cartify</a>
-                                                                                     </div>
-
-
-
-                                                                                     <h3 class="h3 product-title"><a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/gadgets/11-121-iphone-13-128gb-pink-unlocked-premium.html#/14-color-blue/37-internal_storage-64gb"
-                                                                                               content="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/gadgets/11-121-iphone-13-128gb-pink-unlocked-premium.html#/14-color-blue/37-internal_storage-64gb">iPhone
-                                                                                               13, 128GB, Pink - Unlocked
-                                                                                               Premium</a></h3>
-
-
-
-                                                                                     <div class="comments_note">
-                                                                                          <div class="star_content clearfix">
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                          </div>
-                                                                                          <span class="total-rating">1
-                                                                                               Review(s)</span>
-                                                                                     </div>
-
-
-
-                                                                                     <div class="product-price-and-shipping">
-
-
-                                                                                          <span class="regular-price"
-                                                                                               aria-label="Regular price">$200.00</span>
-                                                                                          <span
-                                                                                               class="discount-amount discount-product">-$6.00<span>
-                                                                                                    Off</span></span>
-
-
-
-                                                                                          <span class="price"
-                                                                                               aria-label="Price">
-                                                                                               $194.00
-                                                                                          </span>
-
-
-
-
-                                                                                     </div>
-
-
-
-                                                                                     <div class="proaction-button">
-                                                                                          <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/gadgets/11-121-iphone-13-128gb-pink-unlocked-premium.html#/14-color-blue/37-internal_storage-64gb"
-                                                                                               class="btn btn-primary add-to-cart">
-                                                                                               Options
-                                                                                          </a>
-                                                                                     </div>
-
-
-
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="product_item  slider_item">
-
-                                                                           <div class="product-miniature js-product-miniature"
-                                                                                data-id-product="15"
-                                                                                data-id-product-attribute="0">
-                                                                                <div class="thumbnail-container">
-
-                                                                                     <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/tv-audio-accessories/15-latest-4k-full-hdr-smart-mi-tv-1388-cm.html"
-                                                                                          class="thumbnail product-thumbnail">
-                                                                                          <img class="lazyload"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/131-home_default/latest-4k-full-hdr-smart-mi-tv-1388-cm.jpg"
-                                                                                               alt="Latest 4K Full HDR Smart Mi TV 138.8 Cm"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/131-large_default/latest-4k-full-hdr-smart-mi-tv-1388-cm.jpg"
-                                                                                               width="250" height="250">
-                                                                                          <img class="lazyload fliper_image img-responsive"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/132-home_default/latest-4k-full-hdr-smart-mi-tv-1388-cm.jpg"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/132-large_default/latest-4k-full-hdr-smart-mi-tv-1388-cm.jpg"
-                                                                                               alt="" />
-
-                                                                                     </a>
-
-
-                                                                                     <div
-                                                                                          class="highlighted-informations no-variants">
-
-
-                                                                                     </div>
-
-
-                                                                                     <ul
-                                                                                          class="product-flags js-product-flags">
-                                                                                          <li class="product-flag new">New
-                                                                                          </li>
-                                                                                          <li class="product-flag pack">Pack
-                                                                                          </li>
-                                                                                     </ul>
-
-
-                                                                                     <div class="outer-functional">
-                                                                                          <div class="functional-buttons">
-                                                                                               <div class="wishlist">
-                                                                                                    <a class="st-wishlist-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-wishlist=""
-                                                                                                         data-id-product="15"
-                                                                                                         data-id-product-attribute="0"
-                                                                                                         title="Add to Wishlist">
-                                                                                                         <span
-                                                                                                              class="st-wishlist-bt-content">
-                                                                                                              <i class="fa fa-heart"
-                                                                                                                   aria-hidden="true"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_wishlist_text">Add
-                                                                                                                   to
-                                                                                                                   Wishlist</span>
-                                                                                                         </span>
-                                                                                                    </a>
-
-                                                                                               </div>
-                                                                                               <div class="compare">
-                                                                                                    <a class="st-compare-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-product="15"
-                                                                                                         title="Add to Compare">
-                                                                                                         <span
-                                                                                                              class="st-compare-bt-content">
-                                                                                                              <i
-                                                                                                                   class="fa fa-area-chart"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_compare_text">Add
-                                                                                                                   to Compare
-                                                                                                              </span>
-                                                                                                    </a>
-                                                                                               </div>
-
-
-                                                                                               <div class="quickview">
-                                                                                                    <a href="#"
-                                                                                                         class="quick-view js-quick-view"
-                                                                                                         data-link-action="quickview">
-                                                                                                         <i
-                                                                                                              class="material-icons search">&#xE417;</i>
-                                                                                                         Quick view
-                                                                                                    </a>
-                                                                                               </div>
-
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-
-                                                                                <div class="product-description">
-
-
-                                                                                     <div class="brand-title"
-                                                                                          itemprop="name">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/brand/7-stylehub">StyleHub</a>
-                                                                                     </div>
-
-
-
-                                                                                     <h3 class="h3 product-title"><a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/tv-audio-accessories/15-latest-4k-full-hdr-smart-mi-tv-1388-cm.html"
-                                                                                               content="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/tv-audio-accessories/15-latest-4k-full-hdr-smart-mi-tv-1388-cm.html">Latest
-                                                                                               4K Full HDR Smart Mi TV 138.8
-                                                                                               Cm</a></h3>
-
-
-
-                                                                                     <div class="comments_note">
-                                                                                          <div class="star_content clearfix">
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star"></div>
-                                                                                          </div>
-                                                                                          <span class="total-rating">2
-                                                                                               Review(s)</span>
-                                                                                     </div>
-
-
-
-                                                                                     <div class="product-price-and-shipping">
-
-
-
-                                                                                          <span class="price"
-                                                                                               aria-label="Price">
-                                                                                               $190.00
-                                                                                          </span>
-
-
-
-
-                                                                                     </div>
-
-
-
-                                                                                     <div class="proaction-button">
-                                                                                          <form action="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/cart"
-                                                                                               method="post"
-                                                                                               class="add-to-cart-or-refresh">
-                                                                                               <input type="hidden"
-                                                                                                    name="token"
-                                                                                                    value="be2e4f21e069f2f9e1a4d6f6ab1dfbfa">
-                                                                                               <input type="hidden"
-                                                                                                    name="id_product"
-                                                                                                    value="15"
-                                                                                                    class="product_page_product_id">
-                                                                                               <input type="hidden"
-                                                                                                    name="id_customization"
-                                                                                                    value="0"
-                                                                                                    id="product_customization_id"
-                                                                                                    class="js-product-customization-id">
-                                                                                               <button
-                                                                                                    class="btn btn-primary add-to-cart"
-                                                                                                    data-button-action="add-to-cart"
-                                                                                                    type="submit">
-                                                                                                    Add to cart
-                                                                                               </button>
-                                                                                          </form>
-                                                                                     </div>
-
-
-
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="product_item  slider_item">
-
-                                                                           <div class="product-miniature js-product-miniature"
-                                                                                data-id-product="16"
-                                                                                data-id-product-attribute="100">
-                                                                                <div class="thumbnail-container">
-
-                                                                                     <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/home-theatre-systems/16-100-apple-macbook-air-133-with-retina-display.html#/5-color-gray/37-internal_storage-64gb"
-                                                                                          class="thumbnail product-thumbnail">
-                                                                                          <img class="lazyload"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/119-home_default/apple-macbook-air-133-with-retina-display.jpg"
-                                                                                               alt="Apple MacBook Air 13.3&quot; With Retina Display"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/119-large_default/apple-macbook-air-133-with-retina-display.jpg"
-                                                                                               width="250" height="250">
-                                                                                          <img class="lazyload fliper_image img-responsive"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/120-home_default/apple-macbook-air-133-with-retina-display.jpg"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/120-large_default/apple-macbook-air-133-with-retina-display.jpg"
-                                                                                               alt="" />
-
-                                                                                     </a>
-
-
-                                                                                     <div class="highlighted-informations">
-
-                                                                                          <div class="variant-links">
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/home-theatre-systems/16-101-apple-macbook-air-133-with-retina-display.html#/5-color-gray/38-internal_storage-128gb"
-                                                                                                    class="color "
-                                                                                                    title="Gray"
-                                                                                                    style="background-color: #AAB2BD"><span
-                                                                                                         class="sr-only">Gray</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/home-theatre-systems/16-103-apple-macbook-air-133-with-retina-display.html#/9-color-off_white/37-internal_storage-64gb"
-                                                                                                    class="color "
-                                                                                                    title="Off White"
-                                                                                                    style="background-color: #faebd7"><span
-                                                                                                         class="sr-only">Off
-                                                                                                         White</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/home-theatre-systems/16-97-apple-macbook-air-133-with-retina-display.html#/13-color-orange/37-internal_storage-64gb"
-                                                                                                    class="color "
-                                                                                                    title="Orange"
-                                                                                                    style="background-color: #F39C11"><span
-                                                                                                         class="sr-only">Orange</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/home-theatre-systems/16-106-apple-macbook-air-133-with-retina-display.html#/18-color-pink/37-internal_storage-64gb"
-                                                                                                    class="color "
-                                                                                                    title="Pink"
-                                                                                                    style="background-color: #FCCACD"><span
-                                                                                                         class="sr-only">Pink</span></a>
-                                                                                               <span
-                                                                                                    class="js-count count"></span>
-                                                                                          </div>
-
-                                                                                     </div>
-
-
-                                                                                     <ul
-                                                                                          class="product-flags js-product-flags">
-                                                                                          <li class="product-flag on-sale">On
-                                                                                               sale!</li>
-                                                                                          <li class="product-flag discount">
-                                                                                               <i
-                                                                                                    class="material-icons left">&#xe3e7;</i>-12%
-                                                                                          </li>
-                                                                                          <li class="product-flag new">New
-                                                                                          </li>
-                                                                                     </ul>
-
-
-                                                                                     <div class="outer-functional">
-                                                                                          <div class="functional-buttons">
-                                                                                               <div class="wishlist">
-                                                                                                    <a class="st-wishlist-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-wishlist=""
-                                                                                                         data-id-product="16"
-                                                                                                         data-id-product-attribute="100"
-                                                                                                         title="Add to Wishlist">
-                                                                                                         <span
-                                                                                                              class="st-wishlist-bt-content">
-                                                                                                              <i class="fa fa-heart"
-                                                                                                                   aria-hidden="true"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_wishlist_text">Add
-                                                                                                                   to
-                                                                                                                   Wishlist</span>
-                                                                                                         </span>
-                                                                                                    </a>
-
-                                                                                               </div>
-                                                                                               <div class="compare">
-                                                                                                    <a class="st-compare-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-product="16"
-                                                                                                         title="Add to Compare">
-                                                                                                         <span
-                                                                                                              class="st-compare-bt-content">
-                                                                                                              <i
-                                                                                                                   class="fa fa-area-chart"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_compare_text">Add
-                                                                                                                   to Compare
-                                                                                                              </span>
-                                                                                                    </a>
-                                                                                               </div>
-
-
-                                                                                               <div class="quickview">
-                                                                                                    <a href="#"
-                                                                                                         class="quick-view js-quick-view"
-                                                                                                         data-link-action="quickview">
-                                                                                                         <i
-                                                                                                              class="material-icons search">&#xE417;</i>
-                                                                                                         Quick view
-                                                                                                    </a>
-                                                                                               </div>
-
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-
-                                                                                <div class="product-description">
-
-
-                                                                                     <div class="brand-title"
-                                                                                          itemprop="name">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/brand/5-quickcart">QuickCart</a>
-                                                                                     </div>
-
-
-
-                                                                                     <h3 class="h3 product-title"><a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/home-theatre-systems/16-100-apple-macbook-air-133-with-retina-display.html#/5-color-gray/37-internal_storage-64gb"
-                                                                                               content="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/home-theatre-systems/16-100-apple-macbook-air-133-with-retina-display.html#/5-color-gray/37-internal_storage-64gb">Apple
-                                                                                               MacBook Air 13.3&quot; With
-                                                                                               Retina Display</a></h3>
-
-
-
-                                                                                     <div class="comments_note">
-                                                                                          <div class="star_content clearfix">
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                          </div>
-                                                                                          <span class="total-rating">1
-                                                                                               Review(s)</span>
-                                                                                     </div>
-
-
-
-                                                                                     <div class="product-price-and-shipping">
-
-
-                                                                                          <span class="regular-price"
-                                                                                               aria-label="Regular price">$878.00</span>
-                                                                                          <span
-                                                                                               class="discount-percentage discount-product">-12%
-                                                                                               <span>Off</span></span>
-
-
-
-                                                                                          <span class="price"
-                                                                                               aria-label="Price">
-                                                                                               $772.64
-                                                                                          </span>
-
-
-
-
-                                                                                     </div>
-
-
-
-                                                                                     <div class="proaction-button">
-                                                                                          <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/home-theatre-systems/16-100-apple-macbook-air-133-with-retina-display.html#/5-color-gray/37-internal_storage-64gb"
-                                                                                               class="btn btn-primary add-to-cart">
-                                                                                               Options
-                                                                                          </a>
-                                                                                     </div>
-
-
-
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
+                                                                      <?php
+                                                                                }
+                                                                           } else {
+                                                                                echo "<p>No featured products available</p>";
+                                                                           }
+                                                                      ?>
+                                                                    
                                                                  </div>
 
                                                                  <div class="customNavigation">
                                                                       <a class="btn prev czcategory_prev">&nbsp;</a>
                                                                       <a class="btn next czcategory_next">&nbsp;</a>
-                                                                 </div>
-
-                                                                 <div class="view_more">
-                                                                      <a class="all-product-link btn btn-primary"
-                                                                           href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/6-accessories">
-                                                                           View All Products
-                                                                      </a>
                                                                  </div>
                                                             </div>
                                                        </div>
@@ -1985,792 +472,74 @@
 
                                                        <div class="products-wrapper">
                                                             <div class="products">
-                                                                 <div id="czcategory9-carousel"
+                                                                  <div id="czcategory9-carousel"
                                                                       class="cz-carousel product_list product_slider_grid"
                                                                       data-catid="9">
 
+                                                                       <?php
+
+                                                                           $product_query = "SELECT products.*, 
+                                                                           categories.name AS category_name, 
+                                                                           categories.id AS category_id, 
+                                                                           (SELECT COUNT(*) FROM cart 
+                                                                           WHERE cart.product_id = products.id 
+                                                                           AND (cart.session_id = '" . session_id() . "' OR cart.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')
+                                                                           AND (cart.cart_status IS NULL OR cart.cart_status != 'processed')
+
+                                                                           
+                                                                           ) AS in_cart, 
+
+                                                                           (SELECT COUNT(*) FROM favorite 
+                                                                           WHERE favorite.product_id = products.id 
+                                                                           AND (favorite.session_id = '" . session_id() . "' OR favorite.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_favorite 
+                                                                           
+                                                                           FROM products 
+                                                                           LEFT JOIN categories ON products.category_name = categories.name 
+                                                                           WHERE products.status = 1 AND products.featured = 'popular' 
+                                                                           ORDER BY RAND() ";
+
+
+
+                                                                           $product_query_run = mysqli_query($conn, $product_query);
+
+                                                                           if (mysqli_num_rows($product_query_run) > 0) {
+                                                                                while ($product = mysqli_fetch_assoc($product_query_run)) {
+                                                                      ?> 
+
                                                                       <article class="product_item  slider_item">
 
                                                                            <div class="product-miniature js-product-miniature"
-                                                                                data-id-product="3"
-                                                                                data-id-product-attribute="158">
+                                                                                data-id-product="7"
+                                                                                data-id-product-attribute="141">
                                                                                 <div class="thumbnail-container">
 
-                                                                                     <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/3-158-the-best-is-yet-to-come-framed-poster.html#/29-texture-off_white"
-                                                                                          class="thumbnail product-thumbnail">
-                                                                                          <img class="lazyload"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/222-home_default/the-best-is-yet-to-come-framed-poster.jpg"
-                                                                                               alt="The best is yet to come&#039; Framed poster"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/222-large_default/the-best-is-yet-to-come-framed-poster.jpg"
-                                                                                               width="250" height="250">
-                                                                                          <img class="lazyload fliper_image img-responsive"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/229-home_default/the-best-is-yet-to-come-framed-poster.jpg"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/229-large_default/the-best-is-yet-to-come-framed-poster.jpg"
-                                                                                               alt="" />
+                                                                                    <a href="shop-product.php?id=<?= $product['id'] ?? ''; ?>" class="thumbnail product-thumbnail">
+                                                                                     <img class="lazyload"
+                                                                                          src="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          data-full-size-image-url="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          alt="<?= htmlspecialchars($product['name'] ?? 'No Name'); ?>"
+                                                                                          width="250" height="250">
 
+                                                                                     <img class="lazyload fliper_image img-responsive"
+                                                                                          src="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          data-src="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          data-full-size-image-url="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          alt="Flip image of <?= htmlspecialchars($product['name'] ?? 'No Name'); ?>">
                                                                                      </a>
-
-
-                                                                                     <div class="highlighted-informations">
-
-                                                                                          <div class="variant-links">
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/3-158-the-best-is-yet-to-come-framed-poster.html#/29-texture-off_white"
-                                                                                                    class="color texture"
-                                                                                                    title="Off White"
-                                                                                                    style="background-image: url(/prestashop/PRS21/PRS210518/default/img/co/29.jpg)"><span
-                                                                                                         class="sr-only">Off
-                                                                                                         White</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/3-159-the-best-is-yet-to-come-framed-poster.html#/30-texture-red"
-                                                                                                    class="color texture"
-                                                                                                    title="Red"
-                                                                                                    style="background-image: url(/prestashop/PRS21/PRS210518/default/img/co/30.jpg)"><span
-                                                                                                         class="sr-only">Red</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/3-160-the-best-is-yet-to-come-framed-poster.html#/31-texture-blue"
-                                                                                                    class="color texture"
-                                                                                                    title="Blue"
-                                                                                                    style="background-image: url(/prestashop/PRS21/PRS210518/default/img/co/31.jpg)"><span
-                                                                                                         class="sr-only">Blue</span></a>
-                                                                                               <span
-                                                                                                    class="js-count count"></span>
-                                                                                          </div>
-
-                                                                                     </div>
-
-
-                                                                                     <ul
-                                                                                          class="product-flags js-product-flags">
-                                                                                          <li class="product-flag new">New
-                                                                                          </li>
-                                                                                     </ul>
-
-
-                                                                                     <div class="outer-functional">
-                                                                                          <div class="functional-buttons">
-                                                                                               <div class="wishlist">
-                                                                                                    <a class="st-wishlist-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-wishlist=""
-                                                                                                         data-id-product="3"
-                                                                                                         data-id-product-attribute="158"
-                                                                                                         title="Add to Wishlist">
-                                                                                                         <span
-                                                                                                              class="st-wishlist-bt-content">
-                                                                                                              <i class="fa fa-heart"
-                                                                                                                   aria-hidden="true"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_wishlist_text">Add
-                                                                                                                   to
-                                                                                                                   Wishlist</span>
-                                                                                                         </span>
-                                                                                                    </a>
-
-                                                                                               </div>
-                                                                                               <div class="compare">
-                                                                                                    <a class="st-compare-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-product="3"
-                                                                                                         title="Add to Compare">
-                                                                                                         <span
-                                                                                                              class="st-compare-bt-content">
-                                                                                                              <i
-                                                                                                                   class="fa fa-area-chart"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_compare_text">Add
-                                                                                                                   to Compare
-                                                                                                              </span>
-                                                                                                    </a>
-                                                                                               </div>
-
-
-                                                                                               <div class="quickview">
-                                                                                                    <a href="#"
-                                                                                                         class="quick-view js-quick-view"
-                                                                                                         data-link-action="quickview">
-                                                                                                         <i
-                                                                                                              class="material-icons search">&#xE417;</i>
-                                                                                                         Quick view
-                                                                                                    </a>
-                                                                                               </div>
-
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-
-                                                                                <div class="product-description">
-
-
-                                                                                     <div class="brand-title"
-                                                                                          itemprop="name">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/brand/6-smartshop">SmartShop</a>
-                                                                                     </div>
-
-
-
-                                                                                     <h3 class="h3 product-title"><a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/3-158-the-best-is-yet-to-come-framed-poster.html#/29-texture-off_white"
-                                                                                               content="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/3-158-the-best-is-yet-to-come-framed-poster.html#/29-texture-off_white">The
-                                                                                               best is yet to come&#039;
-                                                                                               Framed poster</a></h3>
-
-
-
-                                                                                     <div class="comments_note">
-                                                                                          <div class="star_content clearfix">
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                          </div>
-                                                                                          <span class="total-rating">3
-                                                                                               Review(s)</span>
-                                                                                     </div>
-
-
-
-                                                                                     <div class="product-price-and-shipping">
-
-
-
-                                                                                          <span class="price"
-                                                                                               aria-label="Price">
-                                                                                               $99.00
-                                                                                          </span>
-
-
-
-
-                                                                                     </div>
-
-
-
-                                                                                     <div class="proaction-button">
-                                                                                          <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/3-158-the-best-is-yet-to-come-framed-poster.html#/29-texture-off_white"
-                                                                                               class="btn btn-primary add-to-cart">
-                                                                                               Options
-                                                                                          </a>
-                                                                                     </div>
-
-
-
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="product_item  slider_item">
-
-                                                                           <div class="product-miniature js-product-miniature"
-                                                                                data-id-product="4"
-                                                                                data-id-product-attribute="154">
-                                                                                <div class="thumbnail-container">
-
-                                                                                     <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/4-154-samsung-qn85aa-series-neo-qled-4k-uhd-smart-tv.html#/9-color-off_white"
-                                                                                          class="thumbnail product-thumbnail">
-                                                                                          <img class="lazyload"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/216-home_default/samsung-qn85aa-series-neo-qled-4k-uhd-smart-tv.jpg"
-                                                                                               alt="Samsung QN85AA Series Neo QLED 4K UHD Smart TV"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/216-large_default/samsung-qn85aa-series-neo-qled-4k-uhd-smart-tv.jpg"
-                                                                                               width="250" height="250">
-                                                                                          <img class="lazyload fliper_image img-responsive"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/217-home_default/samsung-qn85aa-series-neo-qled-4k-uhd-smart-tv.jpg"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/217-large_default/samsung-qn85aa-series-neo-qled-4k-uhd-smart-tv.jpg"
-                                                                                               alt="" />
-
-                                                                                     </a>
-
-
-                                                                                     <div class="highlighted-informations">
-
-                                                                                          <div class="variant-links">
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/4-154-samsung-qn85aa-series-neo-qled-4k-uhd-smart-tv.html#/9-color-off_white"
-                                                                                                    class="color "
-                                                                                                    title="Off White"
-                                                                                                    style="background-color: #faebd7"><span
-                                                                                                         class="sr-only">Off
-                                                                                                         White</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/4-155-samsung-qn85aa-series-neo-qled-4k-uhd-smart-tv.html#/12-color-camel"
-                                                                                                    class="color "
-                                                                                                    title="Camel"
-                                                                                                    style="background-color: #C19A6B"><span
-                                                                                                         class="sr-only">Camel</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/4-156-samsung-qn85aa-series-neo-qled-4k-uhd-smart-tv.html#/14-color-blue"
-                                                                                                    class="color "
-                                                                                                    title="Blue"
-                                                                                                    style="background-color: #5D9CEC"><span
-                                                                                                         class="sr-only">Blue</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/4-157-samsung-qn85aa-series-neo-qled-4k-uhd-smart-tv.html#/15-color-green"
-                                                                                                    class="color "
-                                                                                                    title="Green"
-                                                                                                    style="background-color: #A0D468"><span
-                                                                                                         class="sr-only">Green</span></a>
-                                                                                               <span
-                                                                                                    class="js-count count"></span>
-                                                                                          </div>
-
-                                                                                     </div>
-
-
-                                                                                     <ul
-                                                                                          class="product-flags js-product-flags">
-                                                                                          <li class="product-flag new">New
-                                                                                          </li>
-                                                                                     </ul>
-
-
-                                                                                     <div class="outer-functional">
-                                                                                          <div class="functional-buttons">
-                                                                                               <div class="wishlist">
-                                                                                                    <a class="st-wishlist-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-wishlist=""
-                                                                                                         data-id-product="4"
-                                                                                                         data-id-product-attribute="154"
-                                                                                                         title="Add to Wishlist">
-                                                                                                         <span
-                                                                                                              class="st-wishlist-bt-content">
-                                                                                                              <i class="fa fa-heart"
-                                                                                                                   aria-hidden="true"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_wishlist_text">Add
-                                                                                                                   to
-                                                                                                                   Wishlist</span>
-                                                                                                         </span>
-                                                                                                    </a>
-
-                                                                                               </div>
-                                                                                               <div class="compare">
-                                                                                                    <a class="st-compare-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-product="4"
-                                                                                                         title="Add to Compare">
-                                                                                                         <span
-                                                                                                              class="st-compare-bt-content">
-                                                                                                              <i
-                                                                                                                   class="fa fa-area-chart"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_compare_text">Add
-                                                                                                                   to Compare
-                                                                                                              </span>
-                                                                                                    </a>
-                                                                                               </div>
-
-
-                                                                                               <div class="quickview">
-                                                                                                    <a href="#"
-                                                                                                         class="quick-view js-quick-view"
-                                                                                                         data-link-action="quickview">
-                                                                                                         <i
-                                                                                                              class="material-icons search">&#xE417;</i>
-                                                                                                         Quick view
-                                                                                                    </a>
-                                                                                               </div>
-
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-
-                                                                                <div class="product-description">
-
-
-                                                                                     <div class="brand-title"
-                                                                                          itemprop="name">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/brand/6-smartshop">SmartShop</a>
-                                                                                     </div>
-
-
-
-                                                                                     <h3 class="h3 product-title"><a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/4-154-samsung-qn85aa-series-neo-qled-4k-uhd-smart-tv.html#/9-color-off_white"
-                                                                                               content="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/4-154-samsung-qn85aa-series-neo-qled-4k-uhd-smart-tv.html#/9-color-off_white">Samsung
-                                                                                               QN85AA Series Neo QLED 4K UHD
-                                                                                               Smart TV</a></h3>
-
-
-
-                                                                                     <div class="comments_note">
-                                                                                          <div class="star_content clearfix">
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                          </div>
-                                                                                          <span class="total-rating">1
-                                                                                               Review(s)</span>
-                                                                                     </div>
-
-
-
-                                                                                     <div class="product-price-and-shipping">
-
-
-
-                                                                                          <span class="price"
-                                                                                               aria-label="Price">
-                                                                                               $560.00
-                                                                                          </span>
-
-
-
-
-                                                                                     </div>
-
-
-
-                                                                                     <div class="proaction-button">
-                                                                                          <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/4-154-samsung-qn85aa-series-neo-qled-4k-uhd-smart-tv.html#/9-color-off_white"
-                                                                                               class="btn btn-primary add-to-cart">
-                                                                                               Options
-                                                                                          </a>
-                                                                                     </div>
-
-
-
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="product_item  slider_item">
-
-                                                                           <div class="product-miniature js-product-miniature"
-                                                                                data-id-product="5"
-                                                                                data-id-product-attribute="149">
-                                                                                <div class="thumbnail-container">
-
-                                                                                     <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/macbook/5-149-12kg-front-load-washing-machine-with-inverter.html#/5-color-gray"
-                                                                                          class="thumbnail product-thumbnail">
-                                                                                          <img class="lazyload"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/209-home_default/12kg-front-load-washing-machine-with-inverter.jpg"
-                                                                                               alt="12kg Front Load Washing Machine With Inverter"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/209-large_default/12kg-front-load-washing-machine-with-inverter.jpg"
-                                                                                               width="250" height="250">
-                                                                                          <img class="lazyload fliper_image img-responsive"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/210-home_default/12kg-front-load-washing-machine-with-inverter.jpg"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/210-large_default/12kg-front-load-washing-machine-with-inverter.jpg"
-                                                                                               alt="" />
-
-                                                                                     </a>
-
-
-                                                                                     <div class="highlighted-informations">
-
-                                                                                          <div class="variant-links">
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/macbook/5-149-12kg-front-load-washing-machine-with-inverter.html#/5-color-gray"
-                                                                                                    class="color "
-                                                                                                    title="Gray"
-                                                                                                    style="background-color: #AAB2BD"><span
-                                                                                                         class="sr-only">Gray</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/macbook/5-150-12kg-front-load-washing-machine-with-inverter.html#/13-color-orange"
-                                                                                                    class="color "
-                                                                                                    title="Orange"
-                                                                                                    style="background-color: #F39C11"><span
-                                                                                                         class="sr-only">Orange</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/macbook/5-151-12kg-front-load-washing-machine-with-inverter.html#/14-color-blue"
-                                                                                                    class="color "
-                                                                                                    title="Blue"
-                                                                                                    style="background-color: #5D9CEC"><span
-                                                                                                         class="sr-only">Blue</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/macbook/5-153-12kg-front-load-washing-machine-with-inverter.html#/16-color-yellow"
-                                                                                                    class="color "
-                                                                                                    title="Yellow"
-                                                                                                    style="background-color: #F1C40F"><span
-                                                                                                         class="sr-only">Yellow</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/macbook/5-152-12kg-front-load-washing-machine-with-inverter.html#/18-color-pink"
-                                                                                                    class="color "
-                                                                                                    title="Pink"
-                                                                                                    style="background-color: #FCCACD"><span
-                                                                                                         class="sr-only">Pink</span></a>
-                                                                                               <span
-                                                                                                    class="js-count count"></span>
-                                                                                          </div>
-
-                                                                                     </div>
-
-
-                                                                                     <ul
-                                                                                          class="product-flags js-product-flags">
-                                                                                          <li class="product-flag new">New
-                                                                                          </li>
-                                                                                     </ul>
-
-
-                                                                                     <div class="outer-functional">
-                                                                                          <div class="functional-buttons">
-                                                                                               <div class="wishlist">
-                                                                                                    <a class="st-wishlist-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-wishlist=""
-                                                                                                         data-id-product="5"
-                                                                                                         data-id-product-attribute="149"
-                                                                                                         title="Add to Wishlist">
-                                                                                                         <span
-                                                                                                              class="st-wishlist-bt-content">
-                                                                                                              <i class="fa fa-heart"
-                                                                                                                   aria-hidden="true"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_wishlist_text">Add
-                                                                                                                   to
-                                                                                                                   Wishlist</span>
-                                                                                                         </span>
-                                                                                                    </a>
-
-                                                                                               </div>
-                                                                                               <div class="compare">
-                                                                                                    <a class="st-compare-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-product="5"
-                                                                                                         title="Add to Compare">
-                                                                                                         <span
-                                                                                                              class="st-compare-bt-content">
-                                                                                                              <i
-                                                                                                                   class="fa fa-area-chart"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_compare_text">Add
-                                                                                                                   to Compare
-                                                                                                              </span>
-                                                                                                    </a>
-                                                                                               </div>
-
-
-                                                                                               <div class="quickview">
-                                                                                                    <a href="#"
-                                                                                                         class="quick-view js-quick-view"
-                                                                                                         data-link-action="quickview">
-                                                                                                         <i
-                                                                                                              class="material-icons search">&#xE417;</i>
-                                                                                                         Quick view
-                                                                                                    </a>
-                                                                                               </div>
-
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-
-                                                                                <div class="product-description">
-
-
-                                                                                     <div class="brand-title"
-                                                                                          itemprop="name">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/brand/5-quickcart">QuickCart</a>
-                                                                                     </div>
-
-
-
-                                                                                     <h3 class="h3 product-title"><a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/macbook/5-149-12kg-front-load-washing-machine-with-inverter.html#/5-color-gray"
-                                                                                               content="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/macbook/5-149-12kg-front-load-washing-machine-with-inverter.html#/5-color-gray">12kg
-                                                                                               Front Load Washing Machine
-                                                                                               With Inverter</a></h3>
-
-
-
-                                                                                     <div class="comments_note">
-                                                                                          <div class="star_content clearfix">
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                          </div>
-                                                                                          <span class="total-rating">2
-                                                                                               Review(s)</span>
-                                                                                     </div>
-
-
-
-                                                                                     <div class="product-price-and-shipping">
-
-
-
-                                                                                          <span class="price"
-                                                                                               aria-label="Price">
-                                                                                               $210.00
-                                                                                          </span>
-
-
-
-
-                                                                                     </div>
-
-
-
-                                                                                     <div class="proaction-button">
-                                                                                          <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/macbook/5-149-12kg-front-load-washing-machine-with-inverter.html#/5-color-gray"
-                                                                                               class="btn btn-primary add-to-cart">
-                                                                                               Options
-                                                                                          </a>
-                                                                                     </div>
-
-
-
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="product_item  slider_item">
-
-                                                                           <div class="product-miniature js-product-miniature"
-                                                                                data-id-product="12"
-                                                                                data-id-product-attribute="117">
-                                                                                <div class="thumbnail-container">
-
-                                                                                     <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/12-117-momentum-2k-indoor-security-camera-for-home.html#/9-color-off_white"
-                                                                                          class="thumbnail product-thumbnail">
-                                                                                          <img class="lazyload"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/154-home_default/momentum-2k-indoor-security-camera-for-home.jpg"
-                                                                                               alt="MOMENTUM 2K Indoor Security Camera for Home"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/154-large_default/momentum-2k-indoor-security-camera-for-home.jpg"
-                                                                                               width="250" height="250">
-                                                                                          <img class="lazyload fliper_image img-responsive"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/155-home_default/momentum-2k-indoor-security-camera-for-home.jpg"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/155-large_default/momentum-2k-indoor-security-camera-for-home.jpg"
-                                                                                               alt="" />
-
-                                                                                     </a>
-
-
-                                                                                     <div class="highlighted-informations">
-
-                                                                                          <div class="variant-links">
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/12-117-momentum-2k-indoor-security-camera-for-home.html#/9-color-off_white"
-                                                                                                    class="color "
-                                                                                                    title="Off White"
-                                                                                                    style="background-color: #faebd7"><span
-                                                                                                         class="sr-only">Off
-                                                                                                         White</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/12-119-momentum-2k-indoor-security-camera-for-home.html#/15-color-green"
-                                                                                                    class="color "
-                                                                                                    title="Green"
-                                                                                                    style="background-color: #A0D468"><span
-                                                                                                         class="sr-only">Green</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/12-118-momentum-2k-indoor-security-camera-for-home.html#/16-color-yellow"
-                                                                                                    class="color "
-                                                                                                    title="Yellow"
-                                                                                                    style="background-color: #F1C40F"><span
-                                                                                                         class="sr-only">Yellow</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/12-120-momentum-2k-indoor-security-camera-for-home.html#/18-color-pink"
-                                                                                                    class="color "
-                                                                                                    title="Pink"
-                                                                                                    style="background-color: #FCCACD"><span
-                                                                                                         class="sr-only">Pink</span></a>
-                                                                                               <span
-                                                                                                    class="js-count count"></span>
-                                                                                          </div>
-
-                                                                                     </div>
-
-
-                                                                                     <ul
-                                                                                          class="product-flags js-product-flags">
-                                                                                          <li class="product-flag new">New
-                                                                                          </li>
-                                                                                     </ul>
-
-
-                                                                                     <div class="outer-functional">
-                                                                                          <div class="functional-buttons">
-                                                                                               <div class="wishlist">
-                                                                                                    <a class="st-wishlist-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-wishlist=""
-                                                                                                         data-id-product="12"
-                                                                                                         data-id-product-attribute="117"
-                                                                                                         title="Add to Wishlist">
-                                                                                                         <span
-                                                                                                              class="st-wishlist-bt-content">
-                                                                                                              <i class="fa fa-heart"
-                                                                                                                   aria-hidden="true"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_wishlist_text">Add
-                                                                                                                   to
-                                                                                                                   Wishlist</span>
-                                                                                                         </span>
-                                                                                                    </a>
-
-                                                                                               </div>
-                                                                                               <div class="compare">
-                                                                                                    <a class="st-compare-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-product="12"
-                                                                                                         title="Add to Compare">
-                                                                                                         <span
-                                                                                                              class="st-compare-bt-content">
-                                                                                                              <i
-                                                                                                                   class="fa fa-area-chart"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_compare_text">Add
-                                                                                                                   to Compare
-                                                                                                              </span>
-                                                                                                    </a>
-                                                                                               </div>
-
-
-                                                                                               <div class="quickview">
-                                                                                                    <a href="#"
-                                                                                                         class="quick-view js-quick-view"
-                                                                                                         data-link-action="quickview">
-                                                                                                         <i
-                                                                                                              class="material-icons search">&#xE417;</i>
-                                                                                                         Quick view
-                                                                                                    </a>
-                                                                                               </div>
-
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-
-                                                                                <div class="product-description">
-
-
-                                                                                     <div class="brand-title"
-                                                                                          itemprop="name">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/brand/2-cartify">Cartify</a>
-                                                                                     </div>
-
-
-
-                                                                                     <h3 class="h3 product-title"><a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/12-117-momentum-2k-indoor-security-camera-for-home.html#/9-color-off_white"
-                                                                                               content="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/12-117-momentum-2k-indoor-security-camera-for-home.html#/9-color-off_white">MOMENTUM
-                                                                                               2K Indoor Security Camera for
-                                                                                               Home</a></h3>
-
-
-
-                                                                                     <div class="comments_note">
-                                                                                          <div class="star_content clearfix">
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                          </div>
-                                                                                          <span class="total-rating">2
-                                                                                               Review(s)</span>
-                                                                                     </div>
-
-
-
-                                                                                     <div class="product-price-and-shipping">
-
-
-
-                                                                                          <span class="price"
-                                                                                               aria-label="Price">
-                                                                                               $190.00
-                                                                                          </span>
-
-
-
-
-                                                                                     </div>
-
-
-
-                                                                                     <div class="proaction-button">
-                                                                                          <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/12-117-momentum-2k-indoor-security-camera-for-home.html#/9-color-off_white"
-                                                                                               class="btn btn-primary add-to-cart">
-                                                                                               Options
-                                                                                          </a>
-                                                                                     </div>
-
-
-
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="product_item  slider_item">
-
-                                                                           <div class="product-miniature js-product-miniature"
-                                                                                data-id-product="13"
-                                                                                data-id-product-attribute="113">
-                                                                                <div class="thumbnail-container">
-
-                                                                                     <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/headphone/13-113-beats-by-dr-dre-pro-over-the-ear-headphones.html#/11-color-black"
-                                                                                          class="thumbnail product-thumbnail">
-                                                                                          <img class="lazyload"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/144-home_default/beats-by-dr-dre-pro-over-the-ear-headphones.jpg"
-                                                                                               alt="Beats by Dr. Dre Pro Over the Ear Headphones"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/144-large_default/beats-by-dr-dre-pro-over-the-ear-headphones.jpg"
-                                                                                               width="250" height="250">
-                                                                                          <img class="lazyload fliper_image img-responsive"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/145-home_default/beats-by-dr-dre-pro-over-the-ear-headphones.jpg"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/145-large_default/beats-by-dr-dre-pro-over-the-ear-headphones.jpg"
-                                                                                               alt="" />
-
-                                                                                     </a>
-
-
-                                                                                     <div class="highlighted-informations">
-
-                                                                                          <div class="variant-links">
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/headphone/13-115-beats-by-dr-dre-pro-over-the-ear-headphones.html#/5-color-gray"
-                                                                                                    class="color "
-                                                                                                    title="Gray"
-                                                                                                    style="background-color: #AAB2BD"><span
-                                                                                                         class="sr-only">Gray</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/headphone/13-114-beats-by-dr-dre-pro-over-the-ear-headphones.html#/8-color-white"
-                                                                                                    class="color "
-                                                                                                    title="White"
-                                                                                                    style="background-color: #ffffff"><span
-                                                                                                         class="sr-only">White</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/headphone/13-113-beats-by-dr-dre-pro-over-the-ear-headphones.html#/11-color-black"
-                                                                                                    class="color "
-                                                                                                    title="Black"
-                                                                                                    style="background-color: #434A54"><span
-                                                                                                         class="sr-only">Black</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/headphone/13-116-beats-by-dr-dre-pro-over-the-ear-headphones.html#/15-color-green"
-                                                                                                    class="color "
-                                                                                                    title="Green"
-                                                                                                    style="background-color: #A0D468"><span
-                                                                                                         class="sr-only">Green</span></a>
-                                                                                               <span
-                                                                                                    class="js-count count"></span>
-                                                                                          </div>
-
-                                                                                     </div>
 
 
                                                                                      <ul
                                                                                           class="product-flags js-product-flags">
                                                                                           <li class="product-flag on-sale">On
                                                                                                sale!</li>
-                                                                                          <li class="product-flag discount">
+                                                                                          <li class="">
                                                                                                <i
-                                                                                                    class="material-icons left">&#xe3e7;</i>-15%
+                                                                                                    class="material-icons left">&#xe3e7;</i>
+                                                                                                    <?= $product['discount'] ?? ''; ?>
                                                                                           </li>
-                                                                                          <li class="product-flag new">New
+                                                                                          <li class="product-flag new">                                                    
+                                                                                               <?= $product['featured']; ?>
+
                                                                                           </li>
                                                                                      </ul>
 
@@ -2778,50 +547,26 @@
                                                                                      <div class="outer-functional">
                                                                                           <div class="functional-buttons">
                                                                                                <div class="wishlist">
-                                                                                                    <a class="st-wishlist-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-wishlist=""
-                                                                                                         data-id-product="13"
-                                                                                                         data-id-product-attribute="113"
-                                                                                                         title="Add to Wishlist">
-                                                                                                         <span
-                                                                                                              class="st-wishlist-bt-content">
-                                                                                                              <i class="fa fa-heart"
-                                                                                                                   aria-hidden="true"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_wishlist_text">Add
-                                                                                                                   to
-                                                                                                                   Wishlist</span>
+                                                                                                    <a aria-label="Add To Favorite" class="st-wishlist-button btn-product btn" href="javascript:void(0);"
+                                                                                                         data-product-id="<?= $product['id']; ?>"
+                                                                                                         data-product-name="<?= $product['product_name']; ?>"
+                                                                                                         data-selling-price="<?= $product['selling_price']; ?>"
+                                                                                                         data-image="<?= $product['image']; ?>">  
+                                                                                                         <span class="st-wishlist-bt-content">
+                                                                                                              <?php if ($product['in_favorite'] > 0): ?>
+                                                                                                                   <i class="fa fa-heart" aria-hidden="true"></i>
+                                                                                                              <?php else: ?>
+                                                                                                                   <i class="fi-rs-heart"></i>
+                                                                                                              <?php endif; ?>
                                                                                                          </span>
-                                                                                                    </a>
+                                                                                                         </a>
 
                                                                                                </div>
-                                                                                               <div class="compare">
-                                                                                                    <a class="st-compare-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-product="13"
-                                                                                                         title="Add to Compare">
-                                                                                                         <span
-                                                                                                              class="st-compare-bt-content">
-                                                                                                              <i
-                                                                                                                   class="fa fa-area-chart"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_compare_text">Add
-                                                                                                                   to Compare
-                                                                                                              </span>
-                                                                                                    </a>
-                                                                                               </div>
-
-
+                                                                                             <!-- Quick View Trigger -->
                                                                                                <div class="quickview">
-                                                                                                    <a href="#"
-                                                                                                         class="quick-view js-quick-view"
-                                                                                                         data-link-action="quickview">
-                                                                                                         <i
-                                                                                                              class="material-icons search">&#xE417;</i>
-                                                                                                         Quick view
-                                                                                                    </a>
+                                                                                               <a href="#" class="quick-view-btn text-blue-600 hover:underline" data-product-id="<?= $product['id']; ?>">Quick View</a>
                                                                                                </div>
+
 
                                                                                           </div>
                                                                                      </div>
@@ -2833,610 +578,92 @@
                                                                                      <div class="brand-title"
                                                                                           itemprop="name">
                                                                                           <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/brand/8-trendmart">TrendMart</a>
-                                                                                     </div>
-
-
-
-                                                                                     <h3 class="h3 product-title"><a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/headphone/13-113-beats-by-dr-dre-pro-over-the-ear-headphones.html#/11-color-black"
-                                                                                               content="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/headphone/13-113-beats-by-dr-dre-pro-over-the-ear-headphones.html#/11-color-black">Beats
-                                                                                               by Dr. Dre Pro Over the Ear
-                                                                                               Headphones</a></h3>
-
-
-
-                                                                                     <div class="comments_note">
-                                                                                          <div class="star_content clearfix">
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star"></div>
-                                                                                               <div class="star"></div>
-                                                                                          </div>
-                                                                                          <span class="total-rating">1
-                                                                                               Review(s)</span>
-                                                                                     </div>
-
-
-
-                                                                                     <div class="product-price-and-shipping">
-
-
-                                                                                          <span class="regular-price"
-                                                                                               aria-label="Regular price">$59.00</span>
-                                                                                          <span
-                                                                                               class="discount-percentage discount-product">-15%
-                                                                                               <span>Off</span></span>
-
-
-
-                                                                                          <span class="price"
-                                                                                               aria-label="Price">
-                                                                                               $50.15
-                                                                                          </span>
-
-
-
-
-                                                                                     </div>
-
-
-
-                                                                                     <div class="proaction-button">
-                                                                                          <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/headphone/13-113-beats-by-dr-dre-pro-over-the-ear-headphones.html#/11-color-black"
-                                                                                               class="btn btn-primary add-to-cart">
-                                                                                               Options
+                                                                                               href="category.php?id=<?= $product['category_id'] ?? ''; ?>">
+                                                                                               <?= htmlspecialchars($product['category_name'] ?? 'No Category'); ?>
                                                                                           </a>
                                                                                      </div>
 
 
 
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="product_item  slider_item">
-
-                                                                           <div class="product-miniature js-product-miniature"
-                                                                                data-id-product="14"
-                                                                                data-id-product-attribute="109">
-                                                                                <div class="thumbnail-container">
-
-                                                                                     <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/14-109-insta360-go-3-small-lightweight-action-camera.html#/5-color-gray"
-                                                                                          class="thumbnail product-thumbnail">
-                                                                                          <img class="lazyload"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/138-home_default/insta360-go-3-small-lightweight-action-camera.jpg"
-                                                                                               alt="Insta360 GO 3 – Small &amp; Lightweight Action Camera"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/138-large_default/insta360-go-3-small-lightweight-action-camera.jpg"
-                                                                                               width="250" height="250">
-                                                                                          <img class="lazyload fliper_image img-responsive"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/139-home_default/insta360-go-3-small-lightweight-action-camera.jpg"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/139-large_default/insta360-go-3-small-lightweight-action-camera.jpg"
-                                                                                               alt="" />
-
-                                                                                     </a>
-
-
-                                                                                     <div class="highlighted-informations">
-
-                                                                                          <div class="variant-links">
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/14-109-insta360-go-3-small-lightweight-action-camera.html#/5-color-gray"
-                                                                                                    class="color "
-                                                                                                    title="Gray"
-                                                                                                    style="background-color: #AAB2BD"><span
-                                                                                                         class="sr-only">Gray</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/14-110-insta360-go-3-small-lightweight-action-camera.html#/9-color-off_white"
-                                                                                                    class="color "
-                                                                                                    title="Off White"
-                                                                                                    style="background-color: #faebd7"><span
-                                                                                                         class="sr-only">Off
-                                                                                                         White</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/14-111-insta360-go-3-small-lightweight-action-camera.html#/12-color-camel"
-                                                                                                    class="color "
-                                                                                                    title="Camel"
-                                                                                                    style="background-color: #C19A6B"><span
-                                                                                                         class="sr-only">Camel</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/14-112-insta360-go-3-small-lightweight-action-camera.html#/13-color-orange"
-                                                                                                    class="color "
-                                                                                                    title="Orange"
-                                                                                                    style="background-color: #F39C11"><span
-                                                                                                         class="sr-only">Orange</span></a>
-                                                                                               <span
-                                                                                                    class="js-count count"></span>
-                                                                                          </div>
-
-                                                                                     </div>
-
-
-                                                                                     <ul
-                                                                                          class="product-flags js-product-flags">
-                                                                                          <li class="product-flag new">New
-                                                                                          </li>
-                                                                                     </ul>
-
-
-                                                                                     <div class="outer-functional">
-                                                                                          <div class="functional-buttons">
-                                                                                               <div class="wishlist">
-                                                                                                    <a class="st-wishlist-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-wishlist=""
-                                                                                                         data-id-product="14"
-                                                                                                         data-id-product-attribute="109"
-                                                                                                         title="Add to Wishlist">
-                                                                                                         <span
-                                                                                                              class="st-wishlist-bt-content">
-                                                                                                              <i class="fa fa-heart"
-                                                                                                                   aria-hidden="true"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_wishlist_text">Add
-                                                                                                                   to
-                                                                                                                   Wishlist</span>
-                                                                                                         </span>
-                                                                                                    </a>
-
-                                                                                               </div>
-                                                                                               <div class="compare">
-                                                                                                    <a class="st-compare-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-product="14"
-                                                                                                         title="Add to Compare">
-                                                                                                         <span
-                                                                                                              class="st-compare-bt-content">
-                                                                                                              <i
-                                                                                                                   class="fa fa-area-chart"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_compare_text">Add
-                                                                                                                   to Compare
-                                                                                                              </span>
-                                                                                                    </a>
-                                                                                               </div>
-
-
-                                                                                               <div class="quickview">
-                                                                                                    <a href="#"
-                                                                                                         class="quick-view js-quick-view"
-                                                                                                         data-link-action="quickview">
-                                                                                                         <i
-                                                                                                              class="material-icons search">&#xE417;</i>
-                                                                                                         Quick view
-                                                                                                    </a>
-                                                                                               </div>
-
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-
-                                                                                <div class="product-description">
-
-
-                                                                                     <div class="brand-title"
-                                                                                          itemprop="name">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/brand/2-cartify">Cartify</a>
-                                                                                     </div>
-
-
-
                                                                                      <h3 class="h3 product-title"><a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/14-109-insta360-go-3-small-lightweight-action-camera.html#/5-color-gray"
-                                                                                               content="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/14-109-insta360-go-3-small-lightweight-action-camera.html#/5-color-gray">Insta360
-                                                                                               GO 3 – Small &amp; Lightweight
-                                                                                               Action Camera</a></h3>
+                                                                                               href="shop-product.php?id=<?= $product['id'] ?? ''; ?>"
+                                                                                               content="shop-product.php?id=<?= $product['id'] ?? ''; ?>"><?= htmlspecialchars($product['product_name'] ?? 'No Name'); ?></a></h3>
 
 
 
                                                                                      <div class="comments_note">
                                                                                           <div class="star_content clearfix">
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star"></div>
+                                                                                               <?php
+                                                                                               $rating = $product['rating'] ?? 0;
+                                                                                               for ($i = 0; $i < 5; $i++) {
+                                                                                                   if ($i < $rating) {
+                                                                                                       echo '<div class="star star_on"></div>';
+                                                                                                   } else {
+                                                                                                       echo '<div class="star"></div>';
+                                                                                                   }
+                                                                                               }
+                                                                                               ?>
                                                                                           </div>
-                                                                                          <span class="total-rating">2
-                                                                                               Review(s)</span>
+                                                                                         
                                                                                      </div>
-
-
-
-                                                                                     <div class="product-price-and-shipping">
-
-
-
-                                                                                          <span class="price"
-                                                                                               aria-label="Price">
-                                                                                               $100.00
-                                                                                          </span>
-
-
-
-
-                                                                                     </div>
-
-
-
-                                                                                     <div class="proaction-button">
-                                                                                          <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/14-109-insta360-go-3-small-lightweight-action-camera.html#/5-color-gray"
-                                                                                               class="btn btn-primary add-to-cart">
-                                                                                               Options
-                                                                                          </a>
-                                                                                     </div>
-
-
-
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="product_item  slider_item">
-
-                                                                           <div class="product-miniature js-product-miniature"
-                                                                                data-id-product="15"
-                                                                                data-id-product-attribute="0">
-                                                                                <div class="thumbnail-container">
-
-                                                                                     <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/tv-audio-accessories/15-latest-4k-full-hdr-smart-mi-tv-1388-cm.html"
-                                                                                          class="thumbnail product-thumbnail">
-                                                                                          <img class="lazyload"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/131-home_default/latest-4k-full-hdr-smart-mi-tv-1388-cm.jpg"
-                                                                                               alt="Latest 4K Full HDR Smart Mi TV 138.8 Cm"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/131-large_default/latest-4k-full-hdr-smart-mi-tv-1388-cm.jpg"
-                                                                                               width="250" height="250">
-                                                                                          <img class="lazyload fliper_image img-responsive"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/132-home_default/latest-4k-full-hdr-smart-mi-tv-1388-cm.jpg"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/132-large_default/latest-4k-full-hdr-smart-mi-tv-1388-cm.jpg"
-                                                                                               alt="" />
-
-                                                                                     </a>
-
-
-                                                                                     <div
-                                                                                          class="highlighted-informations no-variants">
-
-
-                                                                                     </div>
-
-
-                                                                                     <ul
-                                                                                          class="product-flags js-product-flags">
-                                                                                          <li class="product-flag new">New
-                                                                                          </li>
-                                                                                          <li class="product-flag pack">Pack
-                                                                                          </li>
-                                                                                     </ul>
-
-
-                                                                                     <div class="outer-functional">
-                                                                                          <div class="functional-buttons">
-                                                                                               <div class="wishlist">
-                                                                                                    <a class="st-wishlist-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-wishlist=""
-                                                                                                         data-id-product="15"
-                                                                                                         data-id-product-attribute="0"
-                                                                                                         title="Add to Wishlist">
-                                                                                                         <span
-                                                                                                              class="st-wishlist-bt-content">
-                                                                                                              <i class="fa fa-heart"
-                                                                                                                   aria-hidden="true"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_wishlist_text">Add
-                                                                                                                   to
-                                                                                                                   Wishlist</span>
-                                                                                                         </span>
-                                                                                                    </a>
-
-                                                                                               </div>
-                                                                                               <div class="compare">
-                                                                                                    <a class="st-compare-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-product="15"
-                                                                                                         title="Add to Compare">
-                                                                                                         <span
-                                                                                                              class="st-compare-bt-content">
-                                                                                                              <i
-                                                                                                                   class="fa fa-area-chart"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_compare_text">Add
-                                                                                                                   to Compare
-                                                                                                              </span>
-                                                                                                    </a>
-                                                                                               </div>
-
-
-                                                                                               <div class="quickview">
-                                                                                                    <a href="#"
-                                                                                                         class="quick-view js-quick-view"
-                                                                                                         data-link-action="quickview">
-                                                                                                         <i
-                                                                                                              class="material-icons search">&#xE417;</i>
-                                                                                                         Quick view
-                                                                                                    </a>
-                                                                                               </div>
-
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-
-                                                                                <div class="product-description">
-
-
-                                                                                     <div class="brand-title"
-                                                                                          itemprop="name">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/brand/7-stylehub">StyleHub</a>
-                                                                                     </div>
-
-
-
-                                                                                     <h3 class="h3 product-title"><a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/tv-audio-accessories/15-latest-4k-full-hdr-smart-mi-tv-1388-cm.html"
-                                                                                               content="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/tv-audio-accessories/15-latest-4k-full-hdr-smart-mi-tv-1388-cm.html">Latest
-                                                                                               4K Full HDR Smart Mi TV 138.8
-                                                                                               Cm</a></h3>
-
-
-
-                                                                                     <div class="comments_note">
-                                                                                          <div class="star_content clearfix">
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star"></div>
-                                                                                          </div>
-                                                                                          <span class="total-rating">2
-                                                                                               Review(s)</span>
-                                                                                     </div>
-
-
-
-                                                                                     <div class="product-price-and-shipping">
-
-
-
-                                                                                          <span class="price"
-                                                                                               aria-label="Price">
-                                                                                               $190.00
-                                                                                          </span>
-
-
-
-
-                                                                                     </div>
-
-
-
-                                                                                     <div class="proaction-button">
-                                                                                          <form action="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/cart"
-                                                                                               method="post"
-                                                                                               class="add-to-cart-or-refresh">
-                                                                                               <input type="hidden"
-                                                                                                    name="token"
-                                                                                                    value="be2e4f21e069f2f9e1a4d6f6ab1dfbfa">
-                                                                                               <input type="hidden"
-                                                                                                    name="id_product"
-                                                                                                    value="15"
-                                                                                                    class="product_page_product_id">
-                                                                                               <input type="hidden"
-                                                                                                    name="id_customization"
-                                                                                                    value="0"
-                                                                                                    id="product_customization_id"
-                                                                                                    class="js-product-customization-id">
-                                                                                               <button
-                                                                                                    class="btn btn-primary add-to-cart"
-                                                                                                    data-button-action="add-to-cart"
-                                                                                                    type="submit">
-                                                                                                    Add to cart
-                                                                                               </button>
-                                                                                          </form>
-                                                                                     </div>
-
-
-
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="product_item  slider_item">
-
-                                                                           <div class="product-miniature js-product-miniature"
-                                                                                data-id-product="1"
-                                                                                data-id-product-attribute="163">
-                                                                                <div class="thumbnail-container">
-
-                                                                                     <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/chargers-cables/1-163-hummingbird-printed-t-shirt.html#/32-ram-4gb/38-internal_storage-128gb"
-                                                                                          class="thumbnail product-thumbnail">
-                                                                                          <img class="lazyload"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/244-home_default/hummingbird-printed-t-shirt.jpg"
-                                                                                               alt="New Featured MacBook Pro With Apple M1 Pro Chip"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/244-large_default/hummingbird-printed-t-shirt.jpg"
-                                                                                               width="250" height="250">
-                                                                                          <img class="lazyload fliper_image img-responsive"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/245-home_default/hummingbird-printed-t-shirt.jpg"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/245-large_default/hummingbird-printed-t-shirt.jpg"
-                                                                                               alt="" />
-
-                                                                                     </a>
-
-
-                                                                                     <div
-                                                                                          class="highlighted-informations no-variants">
-
-
-                                                                                     </div>
-
-
-                                                                                     <ul
-                                                                                          class="product-flags js-product-flags">
-                                                                                          <li class="product-flag on-sale">On
-                                                                                               sale!</li>
-                                                                                          <li class="product-flag discount">
-                                                                                               <i
-                                                                                                    class="material-icons left">&#xe3e7;</i>-10%
-                                                                                          </li>
-                                                                                          <li class="product-flag new">New
-                                                                                          </li>
-                                                                                     </ul>
-
-
-                                                                                     <div class="outer-functional">
-                                                                                          <div class="functional-buttons">
-                                                                                               <div class="wishlist">
-                                                                                                    <a class="st-wishlist-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-wishlist=""
-                                                                                                         data-id-product="1"
-                                                                                                         data-id-product-attribute="163"
-                                                                                                         title="Add to Wishlist">
-                                                                                                         <span
-                                                                                                              class="st-wishlist-bt-content">
-                                                                                                              <i class="fa fa-heart"
-                                                                                                                   aria-hidden="true"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_wishlist_text">Add
-                                                                                                                   to
-                                                                                                                   Wishlist</span>
-                                                                                                         </span>
-                                                                                                    </a>
-
-                                                                                               </div>
-                                                                                               <div class="compare">
-                                                                                                    <a class="st-compare-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-product="1"
-                                                                                                         title="Add to Compare">
-                                                                                                         <span
-                                                                                                              class="st-compare-bt-content">
-                                                                                                              <i
-                                                                                                                   class="fa fa-area-chart"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_compare_text">Add
-                                                                                                                   to Compare
-                                                                                                              </span>
-                                                                                                    </a>
-                                                                                               </div>
-
-
-                                                                                               <div class="quickview">
-                                                                                                    <a href="#"
-                                                                                                         class="quick-view js-quick-view"
-                                                                                                         data-link-action="quickview">
-                                                                                                         <i
-                                                                                                              class="material-icons search">&#xE417;</i>
-                                                                                                         Quick view
-                                                                                                    </a>
-                                                                                               </div>
-
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-
-                                                                                <div class="product-description">
-
-
-                                                                                     <div class="brand-title"
-                                                                                          itemprop="name">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/brand/8-trendmart">TrendMart</a>
-                                                                                     </div>
-
-
-
-                                                                                     <h3 class="h3 product-title"><a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/chargers-cables/1-163-hummingbird-printed-t-shirt.html#/32-ram-4gb/38-internal_storage-128gb"
-                                                                                               content="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/chargers-cables/1-163-hummingbird-printed-t-shirt.html#/32-ram-4gb/38-internal_storage-128gb">New
-                                                                                               Featured MacBook Pro With
-                                                                                               Apple M1 Pro Chip</a></h3>
-
-
-
-                                                                                     <div class="comments_note">
-                                                                                          <div class="star_content clearfix">
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star"></div>
-                                                                                               <div class="star"></div>
-                                                                                          </div>
-                                                                                          <span class="total-rating">1
-                                                                                               Review(s)</span>
-                                                                                     </div>
-
-
 
                                                                                      <div class="product-price-and-shipping">
 
 
                                                                                           <span class="regular-price"
-                                                                                               aria-label="Regular price">$900.00</span>
-                                                                                          <span
-                                                                                               class="discount-percentage discount-product">-10%
-                                                                                               <span>Off</span></span>
-
-
+                                                                                               aria-label="Regular price">
+                                                                                              Kes  <?= $product['original_price'] ?? ''; ?>
+                                                                                          </span>
+                                                                                         
 
                                                                                           <span class="price"
                                                                                                aria-label="Price">
-                                                                                               $810.00
+                                                                                               Kes <?= $product['selling_price'] ?? ''; ?>
                                                                                           </span>
-
-
-
-
                                                                                      </div>
 
+                                                                                   <div class="proaction-button">
 
+                                                                                     <!-- Add to Cart Form -->
+                                                                                     <form id="cartForm_<?= $product['id']; ?>" method="POST" action="">
+                                                                                          <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
+                                                                                          <input type="hidden" name="add_to_cart_btn" value="true">
+                                                                                          <input type="hidden" name="product_name" value="<?= htmlspecialchars($product['product_name']); ?>">
+                                                                                          <input type="hidden" name="selling_price" value="<?= $product['selling_price']; ?>">
+                                                                                          <input type="hidden" name="image" value="<?= $product['image']; ?>">
+                                                                                          <input type="hidden" name="quantity" value="1">
 
-                                                                                     <div class="proaction-button">
-                                                                                          <form action="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/cart"
-                                                                                               method="post"
-                                                                                               class="add-to-cart-or-refresh">
-                                                                                               <input type="hidden"
-                                                                                                    name="token"
-                                                                                                    value="be2e4f21e069f2f9e1a4d6f6ab1dfbfa">
-                                                                                               <input type="hidden"
-                                                                                                    name="id_product"
-                                                                                                    value="1"
-                                                                                                    class="product_page_product_id">
-                                                                                               <input type="hidden"
-                                                                                                    name="id_customization"
-                                                                                                    value="0"
-                                                                                                    id="product_customization_id"
-                                                                                                    class="js-product-customization-id">
-                                                                                               <button
-                                                                                                    class="btn btn-primary add-to-cart"
-                                                                                                    data-button-action="add-to-cart"
-                                                                                                    type="submit">
-                                                                                                    Add to cart
-                                                                                               </button>
-                                                                                          </form>
+                                                                                        <?php if (!isset($product['in_cart']) || $product['in_cart'] == 0): ?>
+                                                                                               <a aria-label="Add To Cart"
+                                                                                                    class="action-btn hover-up btn-primary add-to-cart"
+                                                                                                    href="javascript:void(0);"
+                                                                                                    onclick="addToCart('cartForm_<?= $product['id']; ?>');">
+                                                                                                    <i class="add-to-cart"></i> Add to Cart
+                                                                                               </a>
+                                                                                               <?php else: ?>
+                                                                                               <span class="action-btn hover-up btn-primary add-to-cart" style="pointer-events: none;">In Cart</span>
+                                                                                          <?php endif; ?>
+                                                                                               <style>
+                                                                                                    .action-btn[style="pointer-events: none;"] {
+                                                                                               opacity: 0.5;  /* Make the button appear disabled */
+                                                                                               }
+
+                                                                                               </style>
+
+                                                                                     </form>
+
                                                                                      </div>
-
-
 
                                                                                 </div>
                                                                            </div>
                                                                       </article>
+                                                                      <?php
+                                                                                }
+                                                                           } else {
+                                                                                echo "<p>No featured products available</p>";
+                                                                           }
+                                                                      ?>
+                                                                    
                                                                  </div>
 
                                                                  <div class="customNavigation">
@@ -3458,935 +685,40 @@
 
                                                        <div class="products-wrapper">
                                                             <div class="products">
-                                                                 <div id="czcategory10-carousel"
+                                                                  <div id="czcategory10-carousel"
                                                                       class="cz-carousel product_list product_slider_grid"
                                                                       data-catid="10">
 
-                                                                      <article class="product_item  slider_item">
+                                                                       <?php
 
-                                                                           <div class="product-miniature js-product-miniature"
-                                                                                data-id-product="1"
-                                                                                data-id-product-attribute="163">
-                                                                                <div class="thumbnail-container">
+                                                                           $product_query = "SELECT products.*, 
+                                                                           categories.name AS category_name, 
+                                                                           categories.id AS category_id, 
+                                                                           (SELECT COUNT(*) FROM cart 
+                                                                           WHERE cart.product_id = products.id 
+                                                                           AND (cart.session_id = '" . session_id() . "' OR cart.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')
+                                                                           AND (cart.cart_status IS NULL OR cart.cart_status != 'processed')
 
-                                                                                     <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/chargers-cables/1-163-hummingbird-printed-t-shirt.html#/32-ram-4gb/38-internal_storage-128gb"
-                                                                                          class="thumbnail product-thumbnail">
-                                                                                          <img class="lazyload"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/244-home_default/hummingbird-printed-t-shirt.jpg"
-                                                                                               alt="New Featured MacBook Pro With Apple M1 Pro Chip"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/244-large_default/hummingbird-printed-t-shirt.jpg"
-                                                                                               width="250" height="250">
-                                                                                          <img class="lazyload fliper_image img-responsive"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/245-home_default/hummingbird-printed-t-shirt.jpg"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/245-large_default/hummingbird-printed-t-shirt.jpg"
-                                                                                               alt="" />
+                                                                           
+                                                                           ) AS in_cart, 
 
-                                                                                     </a>
+                                                                           (SELECT COUNT(*) FROM favorite 
+                                                                           WHERE favorite.product_id = products.id 
+                                                                           AND (favorite.session_id = '" . session_id() . "' OR favorite.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_favorite 
+                                                                           
+                                                                           FROM products 
+                                                                           LEFT JOIN categories ON products.category_name = categories.name 
+                                                                           WHERE products.status = 1 AND products.featured = 'new' 
+                                                                           ORDER BY RAND() ";
 
 
-                                                                                     <div
-                                                                                          class="highlighted-informations no-variants">
 
+                                                                           $product_query_run = mysqli_query($conn, $product_query);
 
-                                                                                     </div>
+                                                                           if (mysqli_num_rows($product_query_run) > 0) {
+                                                                                while ($product = mysqli_fetch_assoc($product_query_run)) {
+                                                                      ?> 
 
-
-                                                                                     <ul
-                                                                                          class="product-flags js-product-flags">
-                                                                                          <li class="product-flag on-sale">On
-                                                                                               sale!</li>
-                                                                                          <li class="product-flag discount">
-                                                                                               <i
-                                                                                                    class="material-icons left">&#xe3e7;</i>-10%
-                                                                                          </li>
-                                                                                          <li class="product-flag new">New
-                                                                                          </li>
-                                                                                     </ul>
-
-
-                                                                                     <div class="outer-functional">
-                                                                                          <div class="functional-buttons">
-                                                                                               <div class="wishlist">
-                                                                                                    <a class="st-wishlist-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-wishlist=""
-                                                                                                         data-id-product="1"
-                                                                                                         data-id-product-attribute="163"
-                                                                                                         title="Add to Wishlist">
-                                                                                                         <span
-                                                                                                              class="st-wishlist-bt-content">
-                                                                                                              <i class="fa fa-heart"
-                                                                                                                   aria-hidden="true"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_wishlist_text">Add
-                                                                                                                   to
-                                                                                                                   Wishlist</span>
-                                                                                                         </span>
-                                                                                                    </a>
-
-                                                                                               </div>
-                                                                                               <div class="compare">
-                                                                                                    <a class="st-compare-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-product="1"
-                                                                                                         title="Add to Compare">
-                                                                                                         <span
-                                                                                                              class="st-compare-bt-content">
-                                                                                                              <i
-                                                                                                                   class="fa fa-area-chart"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_compare_text">Add
-                                                                                                                   to Compare
-                                                                                                              </span>
-                                                                                                    </a>
-                                                                                               </div>
-
-
-                                                                                               <div class="quickview">
-                                                                                                    <a href="#"
-                                                                                                         class="quick-view js-quick-view"
-                                                                                                         data-link-action="quickview">
-                                                                                                         <i
-                                                                                                              class="material-icons search">&#xE417;</i>
-                                                                                                         Quick view
-                                                                                                    </a>
-                                                                                               </div>
-
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-
-                                                                                <div class="product-description">
-
-
-                                                                                     <div class="brand-title"
-                                                                                          itemprop="name">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/brand/8-trendmart">TrendMart</a>
-                                                                                     </div>
-
-
-
-                                                                                     <h3 class="h3 product-title"><a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/chargers-cables/1-163-hummingbird-printed-t-shirt.html#/32-ram-4gb/38-internal_storage-128gb"
-                                                                                               content="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/chargers-cables/1-163-hummingbird-printed-t-shirt.html#/32-ram-4gb/38-internal_storage-128gb">New
-                                                                                               Featured MacBook Pro With
-                                                                                               Apple M1 Pro Chip</a></h3>
-
-
-
-                                                                                     <div class="comments_note">
-                                                                                          <div class="star_content clearfix">
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star"></div>
-                                                                                               <div class="star"></div>
-                                                                                          </div>
-                                                                                          <span class="total-rating">1
-                                                                                               Review(s)</span>
-                                                                                     </div>
-
-
-
-                                                                                     <div class="product-price-and-shipping">
-
-
-                                                                                          <span class="regular-price"
-                                                                                               aria-label="Regular price">$900.00</span>
-                                                                                          <span
-                                                                                               class="discount-percentage discount-product">-10%
-                                                                                               <span>Off</span></span>
-
-
-
-                                                                                          <span class="price"
-                                                                                               aria-label="Price">
-                                                                                               $810.00
-                                                                                          </span>
-
-
-
-
-                                                                                     </div>
-
-
-
-                                                                                     <div class="proaction-button">
-                                                                                          <form action="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/cart"
-                                                                                               method="post"
-                                                                                               class="add-to-cart-or-refresh">
-                                                                                               <input type="hidden"
-                                                                                                    name="token"
-                                                                                                    value="be2e4f21e069f2f9e1a4d6f6ab1dfbfa">
-                                                                                               <input type="hidden"
-                                                                                                    name="id_product"
-                                                                                                    value="1"
-                                                                                                    class="product_page_product_id">
-                                                                                               <input type="hidden"
-                                                                                                    name="id_customization"
-                                                                                                    value="0"
-                                                                                                    id="product_customization_id"
-                                                                                                    class="js-product-customization-id">
-                                                                                               <button
-                                                                                                    class="btn btn-primary add-to-cart"
-                                                                                                    data-button-action="add-to-cart"
-                                                                                                    type="submit">
-                                                                                                    Add to cart
-                                                                                               </button>
-                                                                                          </form>
-                                                                                     </div>
-
-
-
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="product_item  slider_item">
-
-                                                                           <div class="product-miniature js-product-miniature"
-                                                                                data-id-product="2"
-                                                                                data-id-product-attribute="0">
-                                                                                <div class="thumbnail-container">
-
-                                                                                     <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/usb-type-cable/2-rumbloo-silicone-controller-grip-cover-for-oculus-quest-2.html"
-                                                                                          class="thumbnail product-thumbnail">
-                                                                                          <img class="lazyload"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/239-home_default/rumbloo-silicone-controller-grip-cover-for-oculus-quest-2.jpg"
-                                                                                               alt="Rumbloo Silicone Controller Grip Cover for Oculus Quest 2"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/239-large_default/rumbloo-silicone-controller-grip-cover-for-oculus-quest-2.jpg"
-                                                                                               width="250" height="250">
-                                                                                          <img class="lazyload fliper_image img-responsive"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/240-home_default/rumbloo-silicone-controller-grip-cover-for-oculus-quest-2.jpg"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/240-large_default/rumbloo-silicone-controller-grip-cover-for-oculus-quest-2.jpg"
-                                                                                               alt="" />
-
-                                                                                     </a>
-
-
-                                                                                     <div
-                                                                                          class="highlighted-informations no-variants">
-
-
-                                                                                     </div>
-
-
-                                                                                     <ul
-                                                                                          class="product-flags js-product-flags">
-                                                                                          <li class="product-flag on-sale">On
-                                                                                               sale!</li>
-                                                                                          <li class="product-flag discount">
-                                                                                               <i
-                                                                                                    class="material-icons left">&#xe3e7;</i>-15%
-                                                                                          </li>
-                                                                                          <li class="product-flag new">New
-                                                                                          </li>
-                                                                                     </ul>
-
-
-                                                                                     <div class="outer-functional">
-                                                                                          <div class="functional-buttons">
-                                                                                               <div class="wishlist">
-                                                                                                    <a class="st-wishlist-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-wishlist=""
-                                                                                                         data-id-product="2"
-                                                                                                         data-id-product-attribute="0"
-                                                                                                         title="Add to Wishlist">
-                                                                                                         <span
-                                                                                                              class="st-wishlist-bt-content">
-                                                                                                              <i class="fa fa-heart"
-                                                                                                                   aria-hidden="true"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_wishlist_text">Add
-                                                                                                                   to
-                                                                                                                   Wishlist</span>
-                                                                                                         </span>
-                                                                                                    </a>
-
-                                                                                               </div>
-                                                                                               <div class="compare">
-                                                                                                    <a class="st-compare-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-product="2"
-                                                                                                         title="Add to Compare">
-                                                                                                         <span
-                                                                                                              class="st-compare-bt-content">
-                                                                                                              <i
-                                                                                                                   class="fa fa-area-chart"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_compare_text">Add
-                                                                                                                   to Compare
-                                                                                                              </span>
-                                                                                                    </a>
-                                                                                               </div>
-
-
-                                                                                               <div class="quickview">
-                                                                                                    <a href="#"
-                                                                                                         class="quick-view js-quick-view"
-                                                                                                         data-link-action="quickview">
-                                                                                                         <i
-                                                                                                              class="material-icons search">&#xE417;</i>
-                                                                                                         Quick view
-                                                                                                    </a>
-                                                                                               </div>
-
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-
-                                                                                <div class="product-description">
-
-
-                                                                                     <div class="brand-title"
-                                                                                          itemprop="name">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/brand/7-stylehub">StyleHub</a>
-                                                                                     </div>
-
-
-
-                                                                                     <h3 class="h3 product-title"><a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/usb-type-cable/2-rumbloo-silicone-controller-grip-cover-for-oculus-quest-2.html"
-                                                                                               content="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/usb-type-cable/2-rumbloo-silicone-controller-grip-cover-for-oculus-quest-2.html">Rumbloo
-                                                                                               Silicone Controller Grip Cover
-                                                                                               for Oculus Quest 2</a></h3>
-
-
-
-                                                                                     <div class="comments_note">
-                                                                                          <div class="star_content clearfix">
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                          </div>
-                                                                                          <span class="total-rating">1
-                                                                                               Review(s)</span>
-                                                                                     </div>
-
-
-
-                                                                                     <div class="product-price-and-shipping">
-
-
-                                                                                          <span class="regular-price"
-                                                                                               aria-label="Regular price">$120.00</span>
-                                                                                          <span
-                                                                                               class="discount-percentage discount-product">-15%
-                                                                                               <span>Off</span></span>
-
-
-
-                                                                                          <span class="price"
-                                                                                               aria-label="Price">
-                                                                                               $102.00
-                                                                                          </span>
-
-
-
-
-                                                                                     </div>
-
-
-
-                                                                                     <div class="proaction-button">
-                                                                                          <form action="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/cart"
-                                                                                               method="post"
-                                                                                               class="add-to-cart-or-refresh">
-                                                                                               <input type="hidden"
-                                                                                                    name="token"
-                                                                                                    value="be2e4f21e069f2f9e1a4d6f6ab1dfbfa">
-                                                                                               <input type="hidden"
-                                                                                                    name="id_product"
-                                                                                                    value="2"
-                                                                                                    class="product_page_product_id">
-                                                                                               <input type="hidden"
-                                                                                                    name="id_customization"
-                                                                                                    value="0"
-                                                                                                    id="product_customization_id"
-                                                                                                    class="js-product-customization-id">
-                                                                                               <button
-                                                                                                    class="btn btn-primary add-to-cart"
-                                                                                                    data-button-action="add-to-cart"
-                                                                                                    type="submit">
-                                                                                                    Add to cart
-                                                                                               </button>
-                                                                                          </form>
-                                                                                     </div>
-
-
-
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="product_item  slider_item">
-
-                                                                           <div class="product-miniature js-product-miniature"
-                                                                                data-id-product="3"
-                                                                                data-id-product-attribute="158">
-                                                                                <div class="thumbnail-container">
-
-                                                                                     <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/3-158-the-best-is-yet-to-come-framed-poster.html#/29-texture-off_white"
-                                                                                          class="thumbnail product-thumbnail">
-                                                                                          <img class="lazyload"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/222-home_default/the-best-is-yet-to-come-framed-poster.jpg"
-                                                                                               alt="The best is yet to come&#039; Framed poster"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/222-large_default/the-best-is-yet-to-come-framed-poster.jpg"
-                                                                                               width="250" height="250">
-                                                                                          <img class="lazyload fliper_image img-responsive"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/229-home_default/the-best-is-yet-to-come-framed-poster.jpg"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/229-large_default/the-best-is-yet-to-come-framed-poster.jpg"
-                                                                                               alt="" />
-
-                                                                                     </a>
-
-
-                                                                                     <div class="highlighted-informations">
-
-                                                                                          <div class="variant-links">
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/3-158-the-best-is-yet-to-come-framed-poster.html#/29-texture-off_white"
-                                                                                                    class="color texture"
-                                                                                                    title="Off White"
-                                                                                                    style="background-image: url(/prestashop/PRS21/PRS210518/default/img/co/29.jpg)"><span
-                                                                                                         class="sr-only">Off
-                                                                                                         White</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/3-159-the-best-is-yet-to-come-framed-poster.html#/30-texture-red"
-                                                                                                    class="color texture"
-                                                                                                    title="Red"
-                                                                                                    style="background-image: url(/prestashop/PRS21/PRS210518/default/img/co/30.jpg)"><span
-                                                                                                         class="sr-only">Red</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/3-160-the-best-is-yet-to-come-framed-poster.html#/31-texture-blue"
-                                                                                                    class="color texture"
-                                                                                                    title="Blue"
-                                                                                                    style="background-image: url(/prestashop/PRS21/PRS210518/default/img/co/31.jpg)"><span
-                                                                                                         class="sr-only">Blue</span></a>
-                                                                                               <span
-                                                                                                    class="js-count count"></span>
-                                                                                          </div>
-
-                                                                                     </div>
-
-
-                                                                                     <ul
-                                                                                          class="product-flags js-product-flags">
-                                                                                          <li class="product-flag new">New
-                                                                                          </li>
-                                                                                     </ul>
-
-
-                                                                                     <div class="outer-functional">
-                                                                                          <div class="functional-buttons">
-                                                                                               <div class="wishlist">
-                                                                                                    <a class="st-wishlist-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-wishlist=""
-                                                                                                         data-id-product="3"
-                                                                                                         data-id-product-attribute="158"
-                                                                                                         title="Add to Wishlist">
-                                                                                                         <span
-                                                                                                              class="st-wishlist-bt-content">
-                                                                                                              <i class="fa fa-heart"
-                                                                                                                   aria-hidden="true"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_wishlist_text">Add
-                                                                                                                   to
-                                                                                                                   Wishlist</span>
-                                                                                                         </span>
-                                                                                                    </a>
-
-                                                                                               </div>
-                                                                                               <div class="compare">
-                                                                                                    <a class="st-compare-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-product="3"
-                                                                                                         title="Add to Compare">
-                                                                                                         <span
-                                                                                                              class="st-compare-bt-content">
-                                                                                                              <i
-                                                                                                                   class="fa fa-area-chart"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_compare_text">Add
-                                                                                                                   to Compare
-                                                                                                              </span>
-                                                                                                    </a>
-                                                                                               </div>
-
-
-                                                                                               <div class="quickview">
-                                                                                                    <a href="#"
-                                                                                                         class="quick-view js-quick-view"
-                                                                                                         data-link-action="quickview">
-                                                                                                         <i
-                                                                                                              class="material-icons search">&#xE417;</i>
-                                                                                                         Quick view
-                                                                                                    </a>
-                                                                                               </div>
-
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-
-                                                                                <div class="product-description">
-
-
-                                                                                     <div class="brand-title"
-                                                                                          itemprop="name">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/brand/6-smartshop">SmartShop</a>
-                                                                                     </div>
-
-
-
-                                                                                     <h3 class="h3 product-title"><a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/3-158-the-best-is-yet-to-come-framed-poster.html#/29-texture-off_white"
-                                                                                               content="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/3-158-the-best-is-yet-to-come-framed-poster.html#/29-texture-off_white">The
-                                                                                               best is yet to come&#039;
-                                                                                               Framed poster</a></h3>
-
-
-
-                                                                                     <div class="comments_note">
-                                                                                          <div class="star_content clearfix">
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                          </div>
-                                                                                          <span class="total-rating">3
-                                                                                               Review(s)</span>
-                                                                                     </div>
-
-
-
-                                                                                     <div class="product-price-and-shipping">
-
-
-
-                                                                                          <span class="price"
-                                                                                               aria-label="Price">
-                                                                                               $99.00
-                                                                                          </span>
-
-
-
-
-                                                                                     </div>
-
-
-
-                                                                                     <div class="proaction-button">
-                                                                                          <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/3-158-the-best-is-yet-to-come-framed-poster.html#/29-texture-off_white"
-                                                                                               class="btn btn-primary add-to-cart">
-                                                                                               Options
-                                                                                          </a>
-                                                                                     </div>
-
-
-
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="product_item  slider_item">
-
-                                                                           <div class="product-miniature js-product-miniature"
-                                                                                data-id-product="4"
-                                                                                data-id-product-attribute="154">
-                                                                                <div class="thumbnail-container">
-
-                                                                                     <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/4-154-samsung-qn85aa-series-neo-qled-4k-uhd-smart-tv.html#/9-color-off_white"
-                                                                                          class="thumbnail product-thumbnail">
-                                                                                          <img class="lazyload"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/216-home_default/samsung-qn85aa-series-neo-qled-4k-uhd-smart-tv.jpg"
-                                                                                               alt="Samsung QN85AA Series Neo QLED 4K UHD Smart TV"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/216-large_default/samsung-qn85aa-series-neo-qled-4k-uhd-smart-tv.jpg"
-                                                                                               width="250" height="250">
-                                                                                          <img class="lazyload fliper_image img-responsive"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/217-home_default/samsung-qn85aa-series-neo-qled-4k-uhd-smart-tv.jpg"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/217-large_default/samsung-qn85aa-series-neo-qled-4k-uhd-smart-tv.jpg"
-                                                                                               alt="" />
-
-                                                                                     </a>
-
-
-                                                                                     <div class="highlighted-informations">
-
-                                                                                          <div class="variant-links">
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/4-154-samsung-qn85aa-series-neo-qled-4k-uhd-smart-tv.html#/9-color-off_white"
-                                                                                                    class="color "
-                                                                                                    title="Off White"
-                                                                                                    style="background-color: #faebd7"><span
-                                                                                                         class="sr-only">Off
-                                                                                                         White</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/4-155-samsung-qn85aa-series-neo-qled-4k-uhd-smart-tv.html#/12-color-camel"
-                                                                                                    class="color "
-                                                                                                    title="Camel"
-                                                                                                    style="background-color: #C19A6B"><span
-                                                                                                         class="sr-only">Camel</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/4-156-samsung-qn85aa-series-neo-qled-4k-uhd-smart-tv.html#/14-color-blue"
-                                                                                                    class="color "
-                                                                                                    title="Blue"
-                                                                                                    style="background-color: #5D9CEC"><span
-                                                                                                         class="sr-only">Blue</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/4-157-samsung-qn85aa-series-neo-qled-4k-uhd-smart-tv.html#/15-color-green"
-                                                                                                    class="color "
-                                                                                                    title="Green"
-                                                                                                    style="background-color: #A0D468"><span
-                                                                                                         class="sr-only">Green</span></a>
-                                                                                               <span
-                                                                                                    class="js-count count"></span>
-                                                                                          </div>
-
-                                                                                     </div>
-
-
-                                                                                     <ul
-                                                                                          class="product-flags js-product-flags">
-                                                                                          <li class="product-flag new">New
-                                                                                          </li>
-                                                                                     </ul>
-
-
-                                                                                     <div class="outer-functional">
-                                                                                          <div class="functional-buttons">
-                                                                                               <div class="wishlist">
-                                                                                                    <a class="st-wishlist-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-wishlist=""
-                                                                                                         data-id-product="4"
-                                                                                                         data-id-product-attribute="154"
-                                                                                                         title="Add to Wishlist">
-                                                                                                         <span
-                                                                                                              class="st-wishlist-bt-content">
-                                                                                                              <i class="fa fa-heart"
-                                                                                                                   aria-hidden="true"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_wishlist_text">Add
-                                                                                                                   to
-                                                                                                                   Wishlist</span>
-                                                                                                         </span>
-                                                                                                    </a>
-
-                                                                                               </div>
-                                                                                               <div class="compare">
-                                                                                                    <a class="st-compare-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-product="4"
-                                                                                                         title="Add to Compare">
-                                                                                                         <span
-                                                                                                              class="st-compare-bt-content">
-                                                                                                              <i
-                                                                                                                   class="fa fa-area-chart"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_compare_text">Add
-                                                                                                                   to Compare
-                                                                                                              </span>
-                                                                                                    </a>
-                                                                                               </div>
-
-
-                                                                                               <div class="quickview">
-                                                                                                    <a href="#"
-                                                                                                         class="quick-view js-quick-view"
-                                                                                                         data-link-action="quickview">
-                                                                                                         <i
-                                                                                                              class="material-icons search">&#xE417;</i>
-                                                                                                         Quick view
-                                                                                                    </a>
-                                                                                               </div>
-
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-
-                                                                                <div class="product-description">
-
-
-                                                                                     <div class="brand-title"
-                                                                                          itemprop="name">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/brand/6-smartshop">SmartShop</a>
-                                                                                     </div>
-
-
-
-                                                                                     <h3 class="h3 product-title"><a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/4-154-samsung-qn85aa-series-neo-qled-4k-uhd-smart-tv.html#/9-color-off_white"
-                                                                                               content="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/4-154-samsung-qn85aa-series-neo-qled-4k-uhd-smart-tv.html#/9-color-off_white">Samsung
-                                                                                               QN85AA Series Neo QLED 4K UHD
-                                                                                               Smart TV</a></h3>
-
-
-
-                                                                                     <div class="comments_note">
-                                                                                          <div class="star_content clearfix">
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                          </div>
-                                                                                          <span class="total-rating">1
-                                                                                               Review(s)</span>
-                                                                                     </div>
-
-
-
-                                                                                     <div class="product-price-and-shipping">
-
-
-
-                                                                                          <span class="price"
-                                                                                               aria-label="Price">
-                                                                                               $560.00
-                                                                                          </span>
-
-
-
-
-                                                                                     </div>
-
-
-
-                                                                                     <div class="proaction-button">
-                                                                                          <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/smart-devices/4-154-samsung-qn85aa-series-neo-qled-4k-uhd-smart-tv.html#/9-color-off_white"
-                                                                                               class="btn btn-primary add-to-cart">
-                                                                                               Options
-                                                                                          </a>
-                                                                                     </div>
-
-
-
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
-                                                                      <article class="product_item  slider_item">
-
-                                                                           <div class="product-miniature js-product-miniature"
-                                                                                data-id-product="6"
-                                                                                data-id-product-attribute="144">
-                                                                                <div class="thumbnail-container">
-
-                                                                                     <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/adapter-plug/6-144-apple-new-airpods-max-bluetooth-headset.html#/14-color-blue"
-                                                                                          class="thumbnail product-thumbnail">
-                                                                                          <img class="lazyload"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/195-home_default/apple-new-airpods-max-bluetooth-headset.jpg"
-                                                                                               alt="APPLE New AirPods Max Bluetooth Headset"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/195-large_default/apple-new-airpods-max-bluetooth-headset.jpg"
-                                                                                               width="250" height="250">
-                                                                                          <img class="lazyload fliper_image img-responsive"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/204-home_default/apple-new-airpods-max-bluetooth-headset.jpg"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/204-large_default/apple-new-airpods-max-bluetooth-headset.jpg"
-                                                                                               alt="" />
-
-                                                                                     </a>
-
-
-                                                                                     <div class="highlighted-informations">
-
-                                                                                          <div class="variant-links">
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/adapter-plug/6-148-apple-new-airpods-max-bluetooth-headset.html#/9-color-off_white"
-                                                                                                    class="color "
-                                                                                                    title="Off White"
-                                                                                                    style="background-color: #faebd7"><span
-                                                                                                         class="sr-only">Off
-                                                                                                         White</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/adapter-plug/6-144-apple-new-airpods-max-bluetooth-headset.html#/14-color-blue"
-                                                                                                    class="color "
-                                                                                                    title="Blue"
-                                                                                                    style="background-color: #5D9CEC"><span
-                                                                                                         class="sr-only">Blue</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/adapter-plug/6-145-apple-new-airpods-max-bluetooth-headset.html#/15-color-green"
-                                                                                                    class="color "
-                                                                                                    title="Green"
-                                                                                                    style="background-color: #A0D468"><span
-                                                                                                         class="sr-only">Green</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/adapter-plug/6-147-apple-new-airpods-max-bluetooth-headset.html#/16-color-yellow"
-                                                                                                    class="color "
-                                                                                                    title="Yellow"
-                                                                                                    style="background-color: #F1C40F"><span
-                                                                                                         class="sr-only">Yellow</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/adapter-plug/6-146-apple-new-airpods-max-bluetooth-headset.html#/18-color-pink"
-                                                                                                    class="color "
-                                                                                                    title="Pink"
-                                                                                                    style="background-color: #FCCACD"><span
-                                                                                                         class="sr-only">Pink</span></a>
-                                                                                               <span
-                                                                                                    class="js-count count"></span>
-                                                                                          </div>
-
-                                                                                     </div>
-
-
-                                                                                     <ul
-                                                                                          class="product-flags js-product-flags">
-                                                                                          <li class="product-flag on-sale">On
-                                                                                               sale!</li>
-                                                                                          <li class="product-flag discount">
-                                                                                               <i
-                                                                                                    class="material-icons left">&#xe3e7;</i>-8%
-                                                                                          </li>
-                                                                                          <li class="product-flag new">New
-                                                                                          </li>
-                                                                                     </ul>
-
-
-                                                                                     <div class="outer-functional">
-                                                                                          <div class="functional-buttons">
-                                                                                               <div class="wishlist">
-                                                                                                    <a class="st-wishlist-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-wishlist=""
-                                                                                                         data-id-product="6"
-                                                                                                         data-id-product-attribute="144"
-                                                                                                         title="Add to Wishlist">
-                                                                                                         <span
-                                                                                                              class="st-wishlist-bt-content">
-                                                                                                              <i class="fa fa-heart"
-                                                                                                                   aria-hidden="true"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_wishlist_text">Add
-                                                                                                                   to
-                                                                                                                   Wishlist</span>
-                                                                                                         </span>
-                                                                                                    </a>
-
-                                                                                               </div>
-                                                                                               <div class="compare">
-                                                                                                    <a class="st-compare-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-product="6"
-                                                                                                         title="Add to Compare">
-                                                                                                         <span
-                                                                                                              class="st-compare-bt-content">
-                                                                                                              <i
-                                                                                                                   class="fa fa-area-chart"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_compare_text">Add
-                                                                                                                   to Compare
-                                                                                                              </span>
-                                                                                                    </a>
-                                                                                               </div>
-
-
-                                                                                               <div class="quickview">
-                                                                                                    <a href="#"
-                                                                                                         class="quick-view js-quick-view"
-                                                                                                         data-link-action="quickview">
-                                                                                                         <i
-                                                                                                              class="material-icons search">&#xE417;</i>
-                                                                                                         Quick view
-                                                                                                    </a>
-                                                                                               </div>
-
-                                                                                          </div>
-                                                                                     </div>
-                                                                                </div>
-
-                                                                                <div class="product-description">
-
-
-                                                                                     <div class="brand-title"
-                                                                                          itemprop="name">
-                                                                                          <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/brand/4-megamart">MegaMart</a>
-                                                                                     </div>
-
-
-
-                                                                                     <h3 class="h3 product-title"><a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/adapter-plug/6-144-apple-new-airpods-max-bluetooth-headset.html#/14-color-blue"
-                                                                                               content="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/adapter-plug/6-144-apple-new-airpods-max-bluetooth-headset.html#/14-color-blue">APPLE
-                                                                                               New AirPods Max Bluetooth
-                                                                                               Headset</a></h3>
-
-
-
-                                                                                     <div class="comments_note">
-                                                                                          <div class="star_content clearfix">
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                          </div>
-                                                                                          <span class="total-rating">2
-                                                                                               Review(s)</span>
-                                                                                     </div>
-
-
-
-                                                                                     <div class="product-price-and-shipping">
-
-
-                                                                                          <span class="regular-price"
-                                                                                               aria-label="Regular price">$24.00</span>
-                                                                                          <span
-                                                                                               class="discount-percentage discount-product">-8%
-                                                                                               <span>Off</span></span>
-
-
-
-                                                                                          <span class="price"
-                                                                                               aria-label="Price">
-                                                                                               $22.08
-                                                                                          </span>
-
-
-
-
-                                                                                     </div>
-
-
-
-                                                                                     <div class="proaction-button">
-                                                                                          <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/adapter-plug/6-144-apple-new-airpods-max-bluetooth-headset.html#/14-color-blue"
-                                                                                               class="btn btn-primary add-to-cart">
-                                                                                               Options
-                                                                                          </a>
-                                                                                     </div>
-
-
-
-                                                                                </div>
-                                                                           </div>
-                                                                      </article>
                                                                       <article class="product_item  slider_item">
 
                                                                            <div class="product-miniature js-product-miniature"
@@ -4394,57 +726,33 @@
                                                                                 data-id-product-attribute="141">
                                                                                 <div class="thumbnail-container">
 
-                                                                                     <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/convertible-laptops/7-141-oneplus-nord-2r-wireless-earbuds-with-dual-mic.html#/8-color-white"
-                                                                                          class="thumbnail product-thumbnail">
-                                                                                          <img class="lazyload"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/187-home_default/oneplus-nord-2r-wireless-earbuds-with-dual-mic.jpg"
-                                                                                               alt="OnePlus Nord 2r Wireless Earbuds with Dual Mic"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/187-large_default/oneplus-nord-2r-wireless-earbuds-with-dual-mic.jpg"
-                                                                                               width="250" height="250">
-                                                                                          <img class="lazyload fliper_image img-responsive"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/192-home_default/oneplus-nord-2r-wireless-earbuds-with-dual-mic.jpg"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/192-large_default/oneplus-nord-2r-wireless-earbuds-with-dual-mic.jpg"
-                                                                                               alt="" />
+                                                                                    <a href="shop-product.php?id=<?= $product['id'] ?? ''; ?>" class="thumbnail product-thumbnail">
+                                                                                     <img class="lazyload"
+                                                                                          src="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          data-full-size-image-url="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          alt="<?= htmlspecialchars($product['name'] ?? 'No Name'); ?>"
+                                                                                          width="250" height="250">
 
+                                                                                     <img class="lazyload fliper_image img-responsive"
+                                                                                          src="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          data-src="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          data-full-size-image-url="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          alt="Flip image of <?= htmlspecialchars($product['name'] ?? 'No Name'); ?>">
                                                                                      </a>
-
-
-                                                                                     <div class="highlighted-informations">
-
-                                                                                          <div class="variant-links">
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/convertible-laptops/7-141-oneplus-nord-2r-wireless-earbuds-with-dual-mic.html#/8-color-white"
-                                                                                                    class="color "
-                                                                                                    title="White"
-                                                                                                    style="background-color: #ffffff"><span
-                                                                                                         class="sr-only">White</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/convertible-laptops/7-143-oneplus-nord-2r-wireless-earbuds-with-dual-mic.html#/11-color-black"
-                                                                                                    class="color "
-                                                                                                    title="Black"
-                                                                                                    style="background-color: #434A54"><span
-                                                                                                         class="sr-only">Black</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/convertible-laptops/7-142-oneplus-nord-2r-wireless-earbuds-with-dual-mic.html#/14-color-blue"
-                                                                                                    class="color "
-                                                                                                    title="Blue"
-                                                                                                    style="background-color: #5D9CEC"><span
-                                                                                                         class="sr-only">Blue</span></a>
-                                                                                               <span
-                                                                                                    class="js-count count"></span>
-                                                                                          </div>
-
-                                                                                     </div>
 
 
                                                                                      <ul
                                                                                           class="product-flags js-product-flags">
                                                                                           <li class="product-flag on-sale">On
                                                                                                sale!</li>
-                                                                                          <li class="product-flag discount">
+                                                                                          <li class="">
                                                                                                <i
-                                                                                                    class="material-icons left">&#xe3e7;</i>-$5.00
+                                                                                                    class="material-icons left">&#xe3e7;</i>
+                                                                                                    <?= $product['discount'] ?? ''; ?>
                                                                                           </li>
-                                                                                          <li class="product-flag new">New
+                                                                                          <li class="product-flag new">                                                    
+                                                                                               <?= $product['featured']; ?>
+
                                                                                           </li>
                                                                                      </ul>
 
@@ -4452,50 +760,26 @@
                                                                                      <div class="outer-functional">
                                                                                           <div class="functional-buttons">
                                                                                                <div class="wishlist">
-                                                                                                    <a class="st-wishlist-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-wishlist=""
-                                                                                                         data-id-product="7"
-                                                                                                         data-id-product-attribute="141"
-                                                                                                         title="Add to Wishlist">
-                                                                                                         <span
-                                                                                                              class="st-wishlist-bt-content">
-                                                                                                              <i class="fa fa-heart"
-                                                                                                                   aria-hidden="true"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_wishlist_text">Add
-                                                                                                                   to
-                                                                                                                   Wishlist</span>
+                                                                                                    <a aria-label="Add To Favorite" class="st-wishlist-button btn-product btn" href="javascript:void(0);"
+                                                                                                         data-product-id="<?= $product['id']; ?>"
+                                                                                                         data-product-name="<?= $product['product_name']; ?>"
+                                                                                                         data-selling-price="<?= $product['selling_price']; ?>"
+                                                                                                         data-image="<?= $product['image']; ?>">  
+                                                                                                         <span class="st-wishlist-bt-content">
+                                                                                                              <?php if ($product['in_favorite'] > 0): ?>
+                                                                                                                   <i class="fa fa-heart" aria-hidden="true"></i>
+                                                                                                              <?php else: ?>
+                                                                                                                   <i class="fi-rs-heart"></i>
+                                                                                                              <?php endif; ?>
                                                                                                          </span>
-                                                                                                    </a>
+                                                                                                         </a>
 
                                                                                                </div>
-                                                                                               <div class="compare">
-                                                                                                    <a class="st-compare-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-product="7"
-                                                                                                         title="Add to Compare">
-                                                                                                         <span
-                                                                                                              class="st-compare-bt-content">
-                                                                                                              <i
-                                                                                                                   class="fa fa-area-chart"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_compare_text">Add
-                                                                                                                   to Compare
-                                                                                                              </span>
-                                                                                                    </a>
-                                                                                               </div>
-
-
+                                                                                             <!-- Quick View Trigger -->
                                                                                                <div class="quickview">
-                                                                                                    <a href="#"
-                                                                                                         class="quick-view js-quick-view"
-                                                                                                         data-link-action="quickview">
-                                                                                                         <i
-                                                                                                              class="material-icons search">&#xE417;</i>
-                                                                                                         Quick view
-                                                                                                    </a>
+                                                                                               <a href="#" class="quick-view-btn text-blue-600 hover:underline" data-product-id="<?= $product['id']; ?>">Quick View</a>
                                                                                                </div>
+
 
                                                                                           </div>
                                                                                      </div>
@@ -4507,130 +791,181 @@
                                                                                      <div class="brand-title"
                                                                                           itemprop="name">
                                                                                           <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/brand/3-ecoshop">EcoShop</a>
+                                                                                               href="category.php?id=<?= $product['category_id'] ?? ''; ?>">
+                                                                                               <?= htmlspecialchars($product['category_name'] ?? 'No Category'); ?>
+                                                                                          </a>
                                                                                      </div>
 
 
 
                                                                                      <h3 class="h3 product-title"><a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/convertible-laptops/7-141-oneplus-nord-2r-wireless-earbuds-with-dual-mic.html#/8-color-white"
-                                                                                               content="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/convertible-laptops/7-141-oneplus-nord-2r-wireless-earbuds-with-dual-mic.html#/8-color-white">OnePlus
-                                                                                               Nord 2r Wireless Earbuds with
-                                                                                               Dual Mic</a></h3>
+                                                                                               href="shop-product.php?id=<?= $product['id'] ?? ''; ?>"
+                                                                                               content="shop-product.php?id=<?= $product['id'] ?? ''; ?>"><?= htmlspecialchars($product['product_name'] ?? 'No Name'); ?></a></h3>
 
 
 
                                                                                      <div class="comments_note">
                                                                                           <div class="star_content clearfix">
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
+                                                                                               <?php
+                                                                                               $rating = $product['rating'] ?? 0;
+                                                                                               for ($i = 0; $i < 5; $i++) {
+                                                                                                   if ($i < $rating) {
+                                                                                                       echo '<div class="star star_on"></div>';
+                                                                                                   } else {
+                                                                                                       echo '<div class="star"></div>';
+                                                                                                   }
+                                                                                               }
+                                                                                               ?>
                                                                                           </div>
-                                                                                          <span class="total-rating">3
-                                                                                               Review(s)</span>
+                                                                                         
                                                                                      </div>
-
-
 
                                                                                      <div class="product-price-and-shipping">
 
 
                                                                                           <span class="regular-price"
-                                                                                               aria-label="Regular price">$37.00</span>
-                                                                                          <span
-                                                                                               class="discount-amount discount-product">-$5.00<span>
-                                                                                                    Off</span></span>
-
-
+                                                                                               aria-label="Regular price">
+                                                                                              Kes  <?= $product['original_price'] ?? ''; ?>
+                                                                                          </span>
+                                                                                         
 
                                                                                           <span class="price"
                                                                                                aria-label="Price">
-                                                                                               $32.00
+                                                                                               Kes <?= $product['selling_price'] ?? ''; ?>
                                                                                           </span>
-
-
-
-
                                                                                      </div>
 
+                                                                                   <div class="proaction-button">
 
+                                                                                     <!-- Add to Cart Form -->
+                                                                                     <form id="cartForm_<?= $product['id']; ?>" method="POST" action="">
+                                                                                          <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
+                                                                                          <input type="hidden" name="add_to_cart_btn" value="true">
+                                                                                          <input type="hidden" name="product_name" value="<?= htmlspecialchars($product['product_name']); ?>">
+                                                                                          <input type="hidden" name="selling_price" value="<?= $product['selling_price']; ?>">
+                                                                                          <input type="hidden" name="image" value="<?= $product['image']; ?>">
+                                                                                          <input type="hidden" name="quantity" value="1">
 
-                                                                                     <div class="proaction-button">
-                                                                                          <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/convertible-laptops/7-141-oneplus-nord-2r-wireless-earbuds-with-dual-mic.html#/8-color-white"
-                                                                                               class="btn btn-primary add-to-cart">
-                                                                                               Options
-                                                                                          </a>
+                                                                                        <?php if (!isset($product['in_cart']) || $product['in_cart'] == 0): ?>
+                                                                                               <a aria-label="Add To Cart"
+                                                                                                    class="action-btn hover-up btn-primary add-to-cart"
+                                                                                                    href="javascript:void(0);"
+                                                                                                    onclick="addToCart('cartForm_<?= $product['id']; ?>');">
+                                                                                                    <i class="add-to-cart"></i> Add to Cart
+                                                                                               </a>
+                                                                                               <?php else: ?>
+                                                                                               <span class="action-btn hover-up btn-primary add-to-cart" style="pointer-events: none;">In Cart</span>
+                                                                                          <?php endif; ?>
+                                                                                               <style>
+                                                                                                    .action-btn[style="pointer-events: none;"] {
+                                                                                               opacity: 0.5;  /* Make the button appear disabled */
+                                                                                               }
+
+                                                                                               </style>
+
+                                                                                     </form>
+
                                                                                      </div>
-
-
 
                                                                                 </div>
                                                                            </div>
                                                                       </article>
+                                                                      <?php
+                                                                                }
+                                                                           } else {
+                                                                                echo "<p>No featured products available</p>";
+                                                                           }
+                                                                      ?>
+                                                                    
+                                                                 </div>
+
+                                                                 <div class="customNavigation">
+                                                                      <a class="btn prev czcategory_prev">&nbsp;</a>
+                                                                      <a class="btn next czcategory_next">&nbsp;</a>
+                                                                 </div>
+
+                                                                 <div class="view_more">
+                                                                      <a class="all-product-link btn btn-primary"
+                                                                           href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/10-laptop-computers">
+                                                                           View All Products
+                                                                      </a>
+                                                                 </div>
+                                                            </div>
+                                                       </div>
+
+                                                  </div>
+                                                  <div id="tab_11" class="tab-pane ">
+
+                                                       <div class="products-wrapper">
+                                                            <div class="products">
+                                                                  <div id="czcategory11-carousel"
+                                                                      class="cz-carousel product_list product_slider_grid"
+                                                                      data-catid="11">
+
+                                                                       <?php
+
+                                                                           $product_query = "SELECT products.*, 
+                                                                           categories.name AS category_name, 
+                                                                           categories.id AS category_id, 
+                                                                           (SELECT COUNT(*) FROM cart 
+                                                                           WHERE cart.product_id = products.id 
+                                                                           AND (cart.session_id = '" . session_id() . "' OR cart.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')
+                                                                           AND (cart.cart_status IS NULL OR cart.cart_status != 'processed')
+
+                                                                           
+                                                                           ) AS in_cart, 
+
+                                                                           (SELECT COUNT(*) FROM favorite 
+                                                                           WHERE favorite.product_id = products.id 
+                                                                           AND (favorite.session_id = '" . session_id() . "' OR favorite.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_favorite 
+                                                                           
+                                                                           FROM products 
+                                                                           LEFT JOIN categories ON products.category_name = categories.name 
+                                                                           WHERE products.status = 1 AND products.featured = 'best_selling' 
+                                                                           ORDER BY RAND() ";
+
+
+
+                                                                           $product_query_run = mysqli_query($conn, $product_query);
+
+                                                                           if (mysqli_num_rows($product_query_run) > 0) {
+                                                                                while ($product = mysqli_fetch_assoc($product_query_run)) {
+                                                                      ?> 
+
                                                                       <article class="product_item  slider_item">
 
                                                                            <div class="product-miniature js-product-miniature"
-                                                                                data-id-product="8"
-                                                                                data-id-product-attribute="137">
+                                                                                data-id-product="7"
+                                                                                data-id-product-attribute="141">
                                                                                 <div class="thumbnail-container">
 
-                                                                                     <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/bettery-chargers/8-137-hp-smart-tank-all-in-one-wifi-colour-printer.html#/10-color-red"
-                                                                                          class="thumbnail product-thumbnail">
-                                                                                          <img class="lazyload"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/180-home_default/hp-smart-tank-all-in-one-wifi-colour-printer.jpg"
-                                                                                               alt="HP Smart Tank All-in-one WiFi Colour Printer"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/180-large_default/hp-smart-tank-all-in-one-wifi-colour-printer.jpg"
-                                                                                               width="250" height="250">
-                                                                                          <img class="lazyload fliper_image img-responsive"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/181-home_default/hp-smart-tank-all-in-one-wifi-colour-printer.jpg"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/181-large_default/hp-smart-tank-all-in-one-wifi-colour-printer.jpg"
-                                                                                               alt="" />
+                                                                                    <a href="shop-product.php?id=<?= $product['id'] ?? ''; ?>" class="thumbnail product-thumbnail">
+                                                                                     <img class="lazyload"
+                                                                                          src="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          data-full-size-image-url="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          alt="<?= htmlspecialchars($product['name'] ?? 'No Name'); ?>"
+                                                                                          width="250" height="250">
 
+                                                                                     <img class="lazyload fliper_image img-responsive"
+                                                                                          src="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          data-src="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          data-full-size-image-url="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          alt="Flip image of <?= htmlspecialchars($product['name'] ?? 'No Name'); ?>">
                                                                                      </a>
-
-
-                                                                                     <div class="highlighted-informations">
-
-                                                                                          <div class="variant-links">
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/bettery-chargers/8-140-hp-smart-tank-all-in-one-wifi-colour-printer.html#/5-color-gray"
-                                                                                                    class="color "
-                                                                                                    title="Gray"
-                                                                                                    style="background-color: #AAB2BD"><span
-                                                                                                         class="sr-only">Gray</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/bettery-chargers/8-137-hp-smart-tank-all-in-one-wifi-colour-printer.html#/10-color-red"
-                                                                                                    class="color "
-                                                                                                    title="Red"
-                                                                                                    style="background-color: #E84C3D"><span
-                                                                                                         class="sr-only">Red</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/bettery-chargers/8-139-hp-smart-tank-all-in-one-wifi-colour-printer.html#/14-color-blue"
-                                                                                                    class="color "
-                                                                                                    title="Blue"
-                                                                                                    style="background-color: #5D9CEC"><span
-                                                                                                         class="sr-only">Blue</span></a>
-                                                                                               <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/bettery-chargers/8-138-hp-smart-tank-all-in-one-wifi-colour-printer.html#/16-color-yellow"
-                                                                                                    class="color "
-                                                                                                    title="Yellow"
-                                                                                                    style="background-color: #F1C40F"><span
-                                                                                                         class="sr-only">Yellow</span></a>
-                                                                                               <span
-                                                                                                    class="js-count count"></span>
-                                                                                          </div>
-
-                                                                                     </div>
 
 
                                                                                      <ul
                                                                                           class="product-flags js-product-flags">
-                                                                                          <li class="product-flag new">New
+                                                                                          <li class="product-flag on-sale">On
+                                                                                               sale!</li>
+                                                                                          <li class="">
+                                                                                               <i
+                                                                                                    class="material-icons left">&#xe3e7;</i>
+                                                                                                    <?= $product['discount'] ?? ''; ?>
+                                                                                          </li>
+                                                                                          <li class="product-flag new">                                                    
+                                                                                               <?= $product['featured']; ?>
+
                                                                                           </li>
                                                                                      </ul>
 
@@ -4638,50 +973,26 @@
                                                                                      <div class="outer-functional">
                                                                                           <div class="functional-buttons">
                                                                                                <div class="wishlist">
-                                                                                                    <a class="st-wishlist-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-wishlist=""
-                                                                                                         data-id-product="8"
-                                                                                                         data-id-product-attribute="137"
-                                                                                                         title="Add to Wishlist">
-                                                                                                         <span
-                                                                                                              class="st-wishlist-bt-content">
-                                                                                                              <i class="fa fa-heart"
-                                                                                                                   aria-hidden="true"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_wishlist_text">Add
-                                                                                                                   to
-                                                                                                                   Wishlist</span>
+                                                                                                    <a aria-label="Add To Favorite" class="st-wishlist-button btn-product btn" href="javascript:void(0);"
+                                                                                                         data-product-id="<?= $product['id']; ?>"
+                                                                                                         data-product-name="<?= $product['product_name']; ?>"
+                                                                                                         data-selling-price="<?= $product['selling_price']; ?>"
+                                                                                                         data-image="<?= $product['image']; ?>">  
+                                                                                                         <span class="st-wishlist-bt-content">
+                                                                                                              <?php if ($product['in_favorite'] > 0): ?>
+                                                                                                                   <i class="fa fa-heart" aria-hidden="true"></i>
+                                                                                                              <?php else: ?>
+                                                                                                                   <i class="fi-rs-heart"></i>
+                                                                                                              <?php endif; ?>
                                                                                                          </span>
-                                                                                                    </a>
+                                                                                                         </a>
 
                                                                                                </div>
-                                                                                               <div class="compare">
-                                                                                                    <a class="st-compare-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-product="8"
-                                                                                                         title="Add to Compare">
-                                                                                                         <span
-                                                                                                              class="st-compare-bt-content">
-                                                                                                              <i
-                                                                                                                   class="fa fa-area-chart"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_compare_text">Add
-                                                                                                                   to Compare
-                                                                                                              </span>
-                                                                                                    </a>
-                                                                                               </div>
-
-
+                                                                                             <!-- Quick View Trigger -->
                                                                                                <div class="quickview">
-                                                                                                    <a href="#"
-                                                                                                         class="quick-view js-quick-view"
-                                                                                                         data-link-action="quickview">
-                                                                                                         <i
-                                                                                                              class="material-icons search">&#xE417;</i>
-                                                                                                         Quick view
-                                                                                                    </a>
+                                                                                               <a href="#" class="quick-view-btn text-blue-600 hover:underline" data-product-id="<?= $product['id']; ?>">Quick View</a>
                                                                                                </div>
+
 
                                                                                           </div>
                                                                                      </div>
@@ -4693,99 +1004,181 @@
                                                                                      <div class="brand-title"
                                                                                           itemprop="name">
                                                                                           <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/brand/6-smartshop">SmartShop</a>
-                                                                                     </div>
-
-
-
-                                                                                     <h3 class="h3 product-title"><a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/bettery-chargers/8-137-hp-smart-tank-all-in-one-wifi-colour-printer.html#/10-color-red"
-                                                                                               content="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/bettery-chargers/8-137-hp-smart-tank-all-in-one-wifi-colour-printer.html#/10-color-red">HP
-                                                                                               Smart Tank All-in-one WiFi
-                                                                                               Colour Printer</a></h3>
-
-
-
-                                                                                     <div class="comments_note">
-                                                                                          <div class="star_content clearfix">
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star"></div>
-                                                                                          </div>
-                                                                                          <span class="total-rating">1
-                                                                                               Review(s)</span>
-                                                                                     </div>
-
-
-
-                                                                                     <div class="product-price-and-shipping">
-
-
-
-                                                                                          <span class="price"
-                                                                                               aria-label="Price">
-                                                                                               $225.00
-                                                                                          </span>
-
-
-
-
-                                                                                     </div>
-
-
-
-                                                                                     <div class="proaction-button">
-                                                                                          <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/bettery-chargers/8-137-hp-smart-tank-all-in-one-wifi-colour-printer.html#/10-color-red"
-                                                                                               class="btn btn-primary add-to-cart">
-                                                                                               Options
+                                                                                               href="category.php?id=<?= $product['category_id'] ?? ''; ?>">
+                                                                                               <?= htmlspecialchars($product['category_name'] ?? 'No Category'); ?>
                                                                                           </a>
                                                                                      </div>
 
 
 
+                                                                                     <h3 class="h3 product-title"><a
+                                                                                               href="shop-product.php?id=<?= $product['id'] ?? ''; ?>"
+                                                                                               content="shop-product.php?id=<?= $product['id'] ?? ''; ?>"><?= htmlspecialchars($product['product_name'] ?? 'No Name'); ?></a></h3>
+
+
+
+                                                                                     <div class="comments_note">
+                                                                                          <div class="star_content clearfix">
+                                                                                               <?php
+                                                                                               $rating = $product['rating'] ?? 0;
+                                                                                               for ($i = 0; $i < 5; $i++) {
+                                                                                                   if ($i < $rating) {
+                                                                                                       echo '<div class="star star_on"></div>';
+                                                                                                   } else {
+                                                                                                       echo '<div class="star"></div>';
+                                                                                                   }
+                                                                                               }
+                                                                                               ?>
+                                                                                          </div>
+                                                                                         
+                                                                                     </div>
+
+                                                                                     <div class="product-price-and-shipping">
+
+
+                                                                                          <span class="regular-price"
+                                                                                               aria-label="Regular price">
+                                                                                              Kes  <?= $product['original_price'] ?? ''; ?>
+                                                                                          </span>
+                                                                                         
+
+                                                                                          <span class="price"
+                                                                                               aria-label="Price">
+                                                                                               Kes <?= $product['selling_price'] ?? ''; ?>
+                                                                                          </span>
+                                                                                     </div>
+
+                                                                                   <div class="proaction-button">
+
+                                                                                     <!-- Add to Cart Form -->
+                                                                                     <form id="cartForm_<?= $product['id']; ?>" method="POST" action="">
+                                                                                          <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
+                                                                                          <input type="hidden" name="add_to_cart_btn" value="true">
+                                                                                          <input type="hidden" name="product_name" value="<?= htmlspecialchars($product['product_name']); ?>">
+                                                                                          <input type="hidden" name="selling_price" value="<?= $product['selling_price']; ?>">
+                                                                                          <input type="hidden" name="image" value="<?= $product['image']; ?>">
+                                                                                          <input type="hidden" name="quantity" value="1">
+
+                                                                                        <?php if (!isset($product['in_cart']) || $product['in_cart'] == 0): ?>
+                                                                                               <a aria-label="Add To Cart"
+                                                                                                    class="action-btn hover-up btn-primary add-to-cart"
+                                                                                                    href="javascript:void(0);"
+                                                                                                    onclick="addToCart('cartForm_<?= $product['id']; ?>');">
+                                                                                                    <i class="add-to-cart"></i> Add to Cart
+                                                                                               </a>
+                                                                                               <?php else: ?>
+                                                                                               <span class="action-btn hover-up btn-primary add-to-cart" style="pointer-events: none;">In Cart</span>
+                                                                                          <?php endif; ?>
+                                                                                               <style>
+                                                                                                    .action-btn[style="pointer-events: none;"] {
+                                                                                               opacity: 0.5;  /* Make the button appear disabled */
+                                                                                               }
+
+                                                                                               </style>
+
+                                                                                     </form>
+
+                                                                                     </div>
+
                                                                                 </div>
                                                                            </div>
                                                                       </article>
+                                                                      <?php
+                                                                                }
+                                                                           } else {
+                                                                                echo "<p>No featured products available</p>";
+                                                                           }
+                                                                      ?>
+                                                                    
+                                                                 </div>
+
+                                                                 <div class="customNavigation">
+                                                                      <a class="btn prev czcategory_prev">&nbsp;</a>
+                                                                      <a class="btn next czcategory_next">&nbsp;</a>
+                                                                 </div>
+
+                                                                 <div class="view_more">
+                                                                      <a class="all-product-link btn btn-primary"
+                                                                           href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/10-laptop-computers">
+                                                                           View All Products
+                                                                      </a>
+                                                                 </div>
+                                                            </div>
+                                                       </div>
+
+                                                  </div>
+                                                   <div id="tab_12" class="tab-pane ">
+
+                                                       <div class="products-wrapper">
+                                                            <div class="products">
+                                                                  <div id="czcategory12-carousel"
+                                                                      class="cz-carousel product_list product_slider_grid"
+                                                                      data-catid="12">
+
+                                                                       <?php
+
+                                                                           $product_query = "SELECT products.*, 
+                                                                           categories.name AS category_name, 
+                                                                           categories.id AS category_id, 
+                                                                           (SELECT COUNT(*) FROM cart 
+                                                                           WHERE cart.product_id = products.id 
+                                                                           AND (cart.session_id = '" . session_id() . "' OR cart.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')
+                                                                           AND (cart.cart_status IS NULL OR cart.cart_status != 'processed')
+
+                                                                           
+                                                                           ) AS in_cart, 
+
+                                                                           (SELECT COUNT(*) FROM favorite 
+                                                                           WHERE favorite.product_id = products.id 
+                                                                           AND (favorite.session_id = '" . session_id() . "' OR favorite.user_id = '" . ($_SESSION['auth_user']['id'] ?? '0') . "')) AS in_favorite 
+                                                                           
+                                                                           FROM products 
+                                                                           LEFT JOIN categories ON products.category_name = categories.name 
+                                                                           WHERE products.status = 1 AND products.featured = 'trending' 
+                                                                           ORDER BY RAND() ";
+
+
+
+                                                                           $product_query_run = mysqli_query($conn, $product_query);
+
+                                                                           if (mysqli_num_rows($product_query_run) > 0) {
+                                                                                while ($product = mysqli_fetch_assoc($product_query_run)) {
+                                                                      ?> 
+
                                                                       <article class="product_item  slider_item">
 
                                                                            <div class="product-miniature js-product-miniature"
-                                                                                data-id-product="9"
-                                                                                data-id-product-attribute="0">
+                                                                                data-id-product="7"
+                                                                                data-id-product-attribute="141">
                                                                                 <div class="thumbnail-container">
 
-                                                                                     <a href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/usb-c-charger/9-lg-8-kg-fully-automatic-top-load-washing-machine.html"
-                                                                                          class="thumbnail product-thumbnail">
-                                                                                          <img class="lazyload"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/175-home_default/lg-8-kg-fully-automatic-top-load-washing-machine.jpg"
-                                                                                               alt="LG 8 kg Fully Automatic Top Load Washing Machine"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/175-large_default/lg-8-kg-fully-automatic-top-load-washing-machine.jpg"
-                                                                                               width="250" height="250">
-                                                                                          <img class="lazyload fliper_image img-responsive"
-                                                                                               src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/themes/Electech/assets/img/codezeel/lazy-loader.svg"
-                                                                                               data-src="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/176-home_default/lg-8-kg-fully-automatic-top-load-washing-machine.jpg"
-                                                                                               data-full-size-image-url="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/176-large_default/lg-8-kg-fully-automatic-top-load-washing-machine.jpg"
-                                                                                               alt="" />
+                                                                                    <a href="shop-product.php?id=<?= $product['id'] ?? ''; ?>" class="thumbnail product-thumbnail">
+                                                                                     <img class="lazyload"
+                                                                                          src="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          data-full-size-image-url="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          alt="<?= htmlspecialchars($product['name'] ?? 'No Name'); ?>"
+                                                                                          width="250" height="250">
 
+                                                                                     <img class="lazyload fliper_image img-responsive"
+                                                                                          src="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          data-src="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          data-full-size-image-url="uploads/shop/<?= $product['image'] ?? 'default.jpg'; ?>"
+                                                                                          alt="Flip image of <?= htmlspecialchars($product['name'] ?? 'No Name'); ?>">
                                                                                      </a>
-
-
-                                                                                     <div
-                                                                                          class="highlighted-informations no-variants">
-
-
-                                                                                     </div>
 
 
                                                                                      <ul
                                                                                           class="product-flags js-product-flags">
-                                                                                          <li class="product-flag new">New
+                                                                                          <li class="product-flag on-sale">On
+                                                                                               sale!</li>
+                                                                                          <li class="">
+                                                                                               <i
+                                                                                                    class="material-icons left">&#xe3e7;</i>
+                                                                                                    <?= $product['discount'] ?? ''; ?>
+                                                                                          </li>
+                                                                                          <li class="product-flag new">                                                    
+                                                                                               <?= $product['featured']; ?>
+
                                                                                           </li>
                                                                                      </ul>
 
@@ -4793,50 +1186,26 @@
                                                                                      <div class="outer-functional">
                                                                                           <div class="functional-buttons">
                                                                                                <div class="wishlist">
-                                                                                                    <a class="st-wishlist-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-wishlist=""
-                                                                                                         data-id-product="9"
-                                                                                                         data-id-product-attribute="0"
-                                                                                                         title="Add to Wishlist">
-                                                                                                         <span
-                                                                                                              class="st-wishlist-bt-content">
-                                                                                                              <i class="fa fa-heart"
-                                                                                                                   aria-hidden="true"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_wishlist_text">Add
-                                                                                                                   to
-                                                                                                                   Wishlist</span>
+                                                                                                    <a aria-label="Add To Favorite" class="st-wishlist-button btn-product btn" href="javascript:void(0);"
+                                                                                                         data-product-id="<?= $product['id']; ?>"
+                                                                                                         data-product-name="<?= $product['product_name']; ?>"
+                                                                                                         data-selling-price="<?= $product['selling_price']; ?>"
+                                                                                                         data-image="<?= $product['image']; ?>">  
+                                                                                                         <span class="st-wishlist-bt-content">
+                                                                                                              <?php if ($product['in_favorite'] > 0): ?>
+                                                                                                                   <i class="fa fa-heart" aria-hidden="true"></i>
+                                                                                                              <?php else: ?>
+                                                                                                                   <i class="fi-rs-heart"></i>
+                                                                                                              <?php endif; ?>
                                                                                                          </span>
-                                                                                                    </a>
+                                                                                                         </a>
 
                                                                                                </div>
-                                                                                               <div class="compare">
-                                                                                                    <a class="st-compare-button btn-product btn"
-                                                                                                         href="#"
-                                                                                                         data-id-product="9"
-                                                                                                         title="Add to Compare">
-                                                                                                         <span
-                                                                                                              class="st-compare-bt-content">
-                                                                                                              <i
-                                                                                                                   class="fa fa-area-chart"></i>
-                                                                                                              <span
-                                                                                                                   class="ajax_compare_text">Add
-                                                                                                                   to Compare
-                                                                                                              </span>
-                                                                                                    </a>
-                                                                                               </div>
-
-
+                                                                                             <!-- Quick View Trigger -->
                                                                                                <div class="quickview">
-                                                                                                    <a href="#"
-                                                                                                         class="quick-view js-quick-view"
-                                                                                                         data-link-action="quickview">
-                                                                                                         <i
-                                                                                                              class="material-icons search">&#xE417;</i>
-                                                                                                         Quick view
-                                                                                                    </a>
+                                                                                               <a href="#" class="quick-view-btn text-blue-600 hover:underline" data-product-id="<?= $product['id']; ?>">Quick View</a>
                                                                                                </div>
+
 
                                                                                           </div>
                                                                                      </div>
@@ -4848,84 +1217,92 @@
                                                                                      <div class="brand-title"
                                                                                           itemprop="name">
                                                                                           <a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/brand/8-trendmart">TrendMart</a>
+                                                                                               href="category.php?id=<?= $product['category_id'] ?? ''; ?>">
+                                                                                               <?= htmlspecialchars($product['category_name'] ?? 'No Category'); ?>
+                                                                                          </a>
                                                                                      </div>
 
 
 
                                                                                      <h3 class="h3 product-title"><a
-                                                                                               href="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/usb-c-charger/9-lg-8-kg-fully-automatic-top-load-washing-machine.html"
-                                                                                               content="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/usb-c-charger/9-lg-8-kg-fully-automatic-top-load-washing-machine.html">LG
-                                                                                               8 kg Fully Automatic Top Load
-                                                                                               Washing Machine</a></h3>
+                                                                                               href="shop-product.php?id=<?= $product['id'] ?? ''; ?>"
+                                                                                               content="shop-product.php?id=<?= $product['id'] ?? ''; ?>"><?= htmlspecialchars($product['product_name'] ?? 'No Name'); ?></a></h3>
 
 
 
                                                                                      <div class="comments_note">
                                                                                           <div class="star_content clearfix">
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
-                                                                                               <div class="star star_on">
-                                                                                               </div>
+                                                                                               <?php
+                                                                                               $rating = $product['rating'] ?? 0;
+                                                                                               for ($i = 0; $i < 5; $i++) {
+                                                                                                   if ($i < $rating) {
+                                                                                                       echo '<div class="star star_on"></div>';
+                                                                                                   } else {
+                                                                                                       echo '<div class="star"></div>';
+                                                                                                   }
+                                                                                               }
+                                                                                               ?>
                                                                                           </div>
-                                                                                          <span class="total-rating">3
-                                                                                               Review(s)</span>
+                                                                                         
                                                                                      </div>
-
-
 
                                                                                      <div class="product-price-and-shipping">
 
 
+                                                                                          <span class="regular-price"
+                                                                                               aria-label="Regular price">
+                                                                                              Kes  <?= $product['original_price'] ?? ''; ?>
+                                                                                          </span>
+                                                                                         
 
                                                                                           <span class="price"
                                                                                                aria-label="Price">
-                                                                                               $230.00
+                                                                                               Kes <?= $product['selling_price'] ?? ''; ?>
                                                                                           </span>
-
-
-
-
                                                                                      </div>
 
+                                                                                   <div class="proaction-button">
 
+                                                                                     <!-- Add to Cart Form -->
+                                                                                     <form id="cartForm_<?= $product['id']; ?>" method="POST" action="">
+                                                                                          <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
+                                                                                          <input type="hidden" name="add_to_cart_btn" value="true">
+                                                                                          <input type="hidden" name="product_name" value="<?= htmlspecialchars($product['product_name']); ?>">
+                                                                                          <input type="hidden" name="selling_price" value="<?= $product['selling_price']; ?>">
+                                                                                          <input type="hidden" name="image" value="<?= $product['image']; ?>">
+                                                                                          <input type="hidden" name="quantity" value="1">
 
-                                                                                     <div class="proaction-button">
-                                                                                          <form action="https://demos.codezeel.com/prestashop/PRS21/PRS210518/default/en/cart"
-                                                                                               method="post"
-                                                                                               class="add-to-cart-or-refresh">
-                                                                                               <input type="hidden"
-                                                                                                    name="token"
-                                                                                                    value="be2e4f21e069f2f9e1a4d6f6ab1dfbfa">
-                                                                                               <input type="hidden"
-                                                                                                    name="id_product"
-                                                                                                    value="9"
-                                                                                                    class="product_page_product_id">
-                                                                                               <input type="hidden"
-                                                                                                    name="id_customization"
-                                                                                                    value="0"
-                                                                                                    id="product_customization_id"
-                                                                                                    class="js-product-customization-id">
-                                                                                               <button
-                                                                                                    class="btn btn-primary add-to-cart"
-                                                                                                    data-button-action="add-to-cart"
-                                                                                                    type="submit" disabled>
-                                                                                                    Add to cart
-                                                                                               </button>
-                                                                                          </form>
+                                                                                        <?php if (!isset($product['in_cart']) || $product['in_cart'] == 0): ?>
+                                                                                               <a aria-label="Add To Cart"
+                                                                                                    class="action-btn hover-up btn-primary add-to-cart"
+                                                                                                    href="javascript:void(0);"
+                                                                                                    onclick="addToCart('cartForm_<?= $product['id']; ?>');">
+                                                                                                    <i class="add-to-cart"></i> Add to Cart
+                                                                                               </a>
+                                                                                               <?php else: ?>
+                                                                                               <span class="action-btn hover-up btn-primary add-to-cart" style="pointer-events: none;">In Cart</span>
+                                                                                          <?php endif; ?>
+                                                                                               <style>
+                                                                                                    .action-btn[style="pointer-events: none;"] {
+                                                                                               opacity: 0.5;  /* Make the button appear disabled */
+                                                                                               }
+
+                                                                                               </style>
+
+                                                                                     </form>
+
                                                                                      </div>
-
-
 
                                                                                 </div>
                                                                            </div>
                                                                       </article>
+                                                                      <?php
+                                                                                }
+                                                                           } else {
+                                                                                echo "<p>No featured products available</p>";
+                                                                           }
+                                                                      ?>
+                                                                    
                                                                  </div>
 
                                                                  <div class="customNavigation">
@@ -4946,50 +1323,45 @@
                                              </div>
                                         </div>
                                    </section>
-                                   <section id="czservicecmsblock">
+                                  <section id="czservicecmsblock">
                                         <div class="service_container container">
-                                             <div class="service-area stickyscroll">
-                                                  <div class="service-fourth service1 scroll-item">
-                                                       <div class="service-icon icon1"></div>
-                                                       <div class="service-content">
-                                                            <div class="service-heading">Free Shipping</div>
-                                                            <div class="service-description">For all Orders Over $100</div>
-                                                       </div>
-                                                  </div>
-                                                  <div class="service-fourth service2 scroll-item">
-                                                       <div class="service-icon icon2"></div>
-                                                       <div class="service-content">
-                                                            <div class="service-heading">30 Days Returns</div>
-                                                            <div class="service-description">For an Exchange Product</div>
-                                                       </div>
-                                                  </div>
-                                                  <div class="service-fourth service3 scroll-item">
-                                                       <div class="service-icon icon3"></div>
-                                                       <div class="service-content">
-                                                            <div class="service-heading">Offers And Discounts</div>
-                                                            <div class="service-description">Payment Cards Accepted</div>
-                                                       </div>
-                                                  </div>
-                                                  <div class="service-fourth service4 scroll-item">
-                                                       <div class="service-icon icon4"></div>
-                                                       <div class="service-content">
-                                                            <div class="service-heading">Special Gifts</div>
-                                                            <div class="service-description">Contact us Anytime</div>
-                                                       </div>
-                                                  </div>
-                                                  <div class="service-fourth service5 scroll-item">
-                                                       <div class="service-icon icon5"></div>
-                                                       <div class="service-content">
-                                                            <div class="service-heading">Support 24/7</div>
-                                                            <div class="service-description">Contact us Anytime</div>
-                                                       </div>
-                                                  </div>
+                                        <div class="service-area stickyscroll">
+                                             <div class="service-fourth service1 scroll-item">
+                                             <div class="service-icon icon1"></div>
+                                             <div class="service-content">
+                                                  <div class="service-heading">Complimentary Shipping</div>
+                                                  <div class="service-description">On All Orders Above Kes 1,000</div>
+                                             </div>
+                                             </div>
+                                             <div class="service-fourth service2 scroll-item">
+                                             <div class="service-icon icon2"></div>
+                                             <div class="service-content">
+                                                  <div class="service-heading">Hassle‑Free Returns</div>
+                                                  <div class="service-description">Exchange Within 30 Days</div>
+                                             </div>
+                                             </div>
+                                            
+                                             <div class="service-fourth service4 scroll-item">
+                                             <div class="service-icon icon4"></div>
+                                             <div class="service-content">
+                                                  <div class="service-heading">Free Gift Wrapping</div>
+                                                  <div class="service-description">Reach Out Anytime</div>
+                                             </div>
+                                             </div>
+                                             <div class="service-fourth service5 scroll-item">
+                                             <div class="service-icon icon5"></div>
+                                             <div class="service-content">
+                                                  <div class="service-heading">24/7 Assistance</div>
+                                                  <div class="service-description">We’re Here to Help</div>
+                                             </div>
                                              </div>
                                         </div>
+                                        </div>
                                    </section>
+
                                    <section class="newproducts products-section clearfix">
                                         <div class="container">
-                                             <h2 class="h1 products-section-title text-uppercase">
+                                             <h2 style="color: #333;" class="h1 products-section-title text-uppercase">
                                                   Latest Products
                                              </h2>
 
@@ -11647,4 +8019,220 @@
                <div class="insta_username"><span>#Instagram</span></div>
           </div>
      </div>
+
+
+
+ <!-- Quick View Modal -->
+<div id="quickViewModal" class="custom-modal">
+  <div class="custom-modal-dialog">
+    <div class="custom-modal-content">
+      <span class="close-modal">&times;</span>
+      <div id="quick-view-content">
+        <!-- Product details will be loaded here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    // Open the Quick View Modal when clicking on the quick-view button
+    $(".quick-view-btn").click(function(e) {
+        e.preventDefault();
+        var productId = $(this).data("product-id");
+
+        $("#quick-view-content").html('<p class="text-center">Loading product details...</p>');
+        $("#quickViewModal").fadeIn();
+
+        // Fetch product details using AJAX
+        $.ajax({
+            url: "ajax/fetch_product.php",
+            type: "POST",
+            data: { product_id: productId },
+            success: function(response) {
+                $("#quick-view-content").html(response);
+            },
+            error: function() {
+                $("#quick-view-content").html('<p class="text-danger text-center">Failed to load product details.</p>');
+            }
+        });
+    });
+
+    // Close the modal when clicking on the close button
+    $(".close-modal").click(function() {
+        $("#quickViewModal").fadeOut();
+    });
+
+    // Close the modal if clicking outside the modal content
+    $(window).click(function(e) {
+        if ($(e.target).is("#quickViewModal")) {
+            $("#quickViewModal").fadeOut();
+        }
+    });
+
+    // Quantity increase handler
+    $(".quantity-increase").click(function() {
+        var input = $(this).siblings(".quantity-input"); // Get the quantity input next to the button
+        var currentValue = parseInt(input.val()); // Get the current quantity value
+        var maxStock = parseInt(input.attr('max')); // Get the available stock from the 'max' attribute
+        if (currentValue < maxStock) {
+            input.val(currentValue + 1); // Increase quantity if it's less than max stock
+        }
+    });
+
+    // Quantity decrease handler
+    $(".quantity-decrease").click(function() {
+        var input = $(this).siblings(".quantity-input"); // Get the quantity input next to the button
+        var currentValue = parseInt(input.val()); // Get the current quantity value
+        if (currentValue > 1) {
+            input.val(currentValue - 1); // Decrease quantity if it's greater than 1
+        }
+    });
+
+    // Handle form submission for adding to cart
+    $("form.quick-cart-form").on("submit", function(e) {
+        e.preventDefault();
+        var form = $(this);
+        var formData = form.serialize();
+
+        $.ajax({
+            url: 'ajax/code.php',  // Adjust the path to your AJAX handler if needed
+            type: 'POST',
+            data: formData,
+            dataType: 'json',
+            success: function(response) {
+                if (response.status === 'success') {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 2000,
+                        toast: true
+                    });
+                    form.find("button[type='submit']")
+                        .text("Update Cart")
+                        .removeClass("btn-primary")
+                        .addClass("btn-success");
+                } else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'error',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 2000,
+                        toast: true
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'An error occurred while processing your request.',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    toast: true
+                });
+            }
+        });
+    });
+});
+
+</script>
+<style>
+    /* Modal Styling */
+    .custom-modal {
+        display: none;
+        position: fixed;
+        z-index: 1050;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .custom-modal-dialog {
+        position: relative;
+        margin: 5% auto;
+        max-width: 800px;
+        width: 90%;
+    }
+
+    .custom-modal-content {
+        background-color: #fff;
+        padding: 25px;
+        border-radius: 10px;
+        position: relative;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .close-modal {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 28px;
+        font-weight: bold;
+        color: #aaa;
+        cursor: pointer;
+    }
+
+    .close-modal:hover {
+        color: #000;
+    }
+
+    /* Quantity Button and Input Styling */
+    .input-group {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .quantity-input {
+        text-align: center;
+        width: 60px;
+        height: 40px;
+        font-size: 18px;
+        margin: 0 5px;
+    }
+
+    .quantity-decrease, .quantity-increase {
+        font-size: 20px;
+        width: 40px;
+        height: 40px;
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .quantity-decrease:hover, .quantity-increase:hover {
+        background-color: #ddd;
+    }
+
+    /* Adjust the button when the quantity is already in the cart */
+    .in-cart-message {
+        margin-top: 10px;
+        font-size: 14px;
+        color: green;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+</style>
+
 <?php include 'includes/footer.php'; ?>

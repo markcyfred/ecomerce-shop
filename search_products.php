@@ -3,50 +3,109 @@
 
 include('admin/config/dbcon.php');
 
-$search   = isset($_GET['search']) ? $_GET['search'] : '';
-$category = isset($_GET['category']) ? $_GET['category'] : '';
+// Get search parameters
+$rawSearch = isset($_GET['search']) ? trim($_GET['search']) : '';
+$category  = isset($_GET['category']) ? intval($_GET['category']) : 0;
+$page      = isset($_GET['page']) && intval($_GET['page']) > 0 ? intval($_GET['page']) : 1;
+$limit     = 2;
+$offset    = ($page - 1) * $limit;
 
-$search_safe = mysqli_real_escape_string($conn, $search);
-$whereClause = "product_name LIKE '%$search_safe%'";
-
-if (!empty($category)) {
-    $category_safe = mysqli_real_escape_string($conn, $category);
-    $whereClause .= " AND category_name = '$category_safe'";
+// Split search into terms
+$terms = array_filter(preg_split('/\s+/', $rawSearch));
+if (empty($terms)) {
+    echo "<div style='text-align:center; padding:40px; color:#888;'>Please enter a search term.</div>";
+    exit;
 }
 
-// Set limit to 2 products per page
-$limit = 2;
-$page   = isset($_GET['page']) && intval($_GET['page']) > 0 ? intval($_GET['page']) : 1;
-$offset = ($page - 1) * $limit;
+// Build dynamic WHERE parts and parameter sets
+$whereParts     = [];
+$countParams    = [];
+$countTypes     = '';
+$scoreParts     = [];
+$searchParams   = [];
+$searchTypes    = '';
 
-$count_query  = "SELECT COUNT(*) AS total FROM products WHERE $whereClause";
-$count_result = mysqli_query($conn, $count_query);
-$total = 0;
-if ($count_result) {
-    $row = mysqli_fetch_assoc($count_result);
-    $total = $row['total'];
+foreach ($terms as $term) {
+    $like = "%{$term}%";
+    // WHERE condition (used by both count & main query)
+    $whereParts[] = "product_name LIKE ?";
+    // Count params
+    $countParams[] = $like;
+    $countTypes   .= 's';
+    // Score for ordering (main query)
+    $scoreParts[] = "(product_name LIKE ?)";
+    // Main query params (term for where + for score)
+    $searchParams[] = $like;
+    $searchParams[] = $like;
+    $searchTypes   .= 'ss';
 }
-$total_pages = ceil($total / $limit);
 
-$query  = "SELECT * FROM products WHERE $whereClause LIMIT $offset, $limit";
-$result = mysqli_query($conn, $query);
+// Category filter
+if ($category > 0) {
+    $whereParts[]   = "category_id = ?";
+    $countParams[]  = $category;
+    $searchParams[] = $category;
+    $countTypes    .= 'i';
+    $searchTypes   .= 'i';
+}
 
-if ($result && mysqli_num_rows($result) > 0) {
+$whereSql = implode(' AND ', $whereParts);
+$scoreSql = implode(' + ', $scoreParts);
+
+// Count total matching rows
+$countSql  = "SELECT COUNT(*) AS total FROM products WHERE $whereSql";
+$countStmt = $conn->prepare($countSql);
+$countStmt->bind_param($countTypes, ...$countParams);
+$countStmt->execute();
+$countRes   = $countStmt->get_result();
+$total      = $countRes->fetch_assoc()['total'] ?? 0;
+$totalPages = ceil($total / $limit);
+$countStmt->close();
+
+// Main query with score, limit, offset
+$sql = "SELECT *, ($scoreSql) AS score
+        FROM products
+        WHERE $whereSql
+        ORDER BY score DESC
+        LIMIT ? OFFSET ?";
+$stmt = $conn->prepare($sql);
+
+// Append limit & offset to search params
+$searchParams[] = $limit;
+$searchParams[] = $offset;
+$searchTypes   .= 'ii';
+
+$stmt->bind_param($searchTypes, ...$searchParams);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Highlight function
+function highlight($text, $terms) {
+    foreach ($terms as $t) {
+        $escaped = preg_quote($t, '/');
+        $text = preg_replace(
+            "/($escaped)/i",
+            '<span class="highlight">$1</span>',
+            $text
+        );
+    }
+    return $text;
+}
+
+// Output results
+if ($result && $result->num_rows > 0) {
     echo "<div class='products-container'>";
-    while ($product = mysqli_fetch_assoc($result)) {
-        // Wrap the entire product block within an anchor tag
+    while ($product = $result->fetch_assoc()) {
         echo "<div class='product shoe-product'>";
-        echo "<a href='shop-product.php?id=" . htmlspecialchars($product['id']) . "' style='text-decoration: none; color: inherit;'>";
-        echo    "<h3>" . htmlspecialchars($product['product_name']) . "</h3>";
-        echo    "<p>" . htmlspecialchars($product['description']) . "</p>";
-        //ORIGINAL_PRICE
+        echo "<a href='shop-product.php?id=" . htmlspecialchars($product['id']) . "' style='text-decoration:none;color:inherit;'>";
+        echo "<h3>" . highlight(htmlspecialchars($product['product_name']), $terms) . "</h3>";
+        echo "<p>" . highlight(htmlspecialchars($product['description']), $terms) . "</p>";
         if ($product['original_price'] > 0) {
-            echo    "<p style='text-decoration: line-through; color: #888;'>Kes" . htmlspecialchars($product['original_price']) . "</p>";
+            echo "<p style='text-decoration:line-through;color:#888;'>Kes" . htmlspecialchars($product['original_price']) . "</p>";
         }
-        //SELLING_PRICE
-        echo    "<p>Price: Kes" . htmlspecialchars($product['selling_price']) . "</p>";
+        echo "<p>Price: Kes" . htmlspecialchars($product['selling_price']) . "</p>";
         if (!empty($product['image'])) {
-            echo "<img src='uploads/shop/" . htmlspecialchars($product['image']) . "' alt='" . htmlspecialchars($product['product_name']) . "' style='max-width: 120px; max-height: 120px; border-radius: 8px; object-fit: cover; margin-top: 10px;'>";
+            echo "<img src='uploads/shop/" . htmlspecialchars($product['image']) . "' alt='" . htmlspecialchars($product['product_name']) . "' style='max-width:120px;max-height:120px;border-radius:8px;object-fit:cover;margin-top:10px;'>";
         }
         echo "</a>";
         echo "</div>";
@@ -54,44 +113,38 @@ if ($result && mysqli_num_rows($result) > 0) {
     echo "</div>";
 
     // Pagination
-    if ($total_pages > 1) {
+    if ($totalPages > 1) {
         echo "<nav aria-label='Page navigation'>";
-        echo   "<ul class='pagination justify-content-center'>";
+        echo "<ul class='pagination justify-content-center'>";
         if ($page > 1) {
-            echo "<li class='page-item'><a class='page-link pagination-link' href='#' data-page='" . ($page - 1) . "'>Previous</a></li>";
+            echo "<li class='page-item'><a class='page-link pagination-link' href='#' data-page='" . ($page-1) . "'>Previous</a></li>";
         } else {
             echo "<li class='page-item disabled'><span class='page-link'>Previous</span></li>";
         }
-        for ($i = 1; $i <= $total_pages; $i++) {
+        for ($i = 1; $i <= $totalPages; $i++) {
             if ($i == $page) {
-                echo "<li class='page-item active'><span class='page-link'>" . $i . "</span></li>";
+                echo "<li class='page-item active'><span class='page-link'>$i</span></li>";
             } else {
-                echo "<li class='page-item'><a class='page-link pagination-link' href='#' data-page='" . $i . "'>" . $i . "</a></li>";
+                echo "<li class='page-item'><a class='page-link pagination-link' href='#' data-page='$i'>$i</a></li>";
             }
         }
-        if ($page < $total_pages) {
-            echo "<li class='page-item'><a class='page-link pagination-link' href='#' data-page='" . ($page + 1) . "'>Next</a></li>";
+        if ($page < $totalPages) {
+            echo "<li class='page-item'><a class='page-link pagination-link' href='#' data-page='" . ($page+1) . "'>Next</a></li>";
         } else {
             echo "<li class='page-item disabled'><span class='page-link'>Next</span></li>";
         }
-        echo   "</ul>";
+        echo "</ul>";
         echo "</nav>";
     }
 } else {
-    echo "
-    <div style='text-align: center; padding: 40px;'>
-        <script src='https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs' type='module'></script>
-        <dotlottie-player
-            src='https://lottie.host/4d90d9e8-11b2-46c0-8032-61f6db73591b/VZqRxP5O84.lottie'
-            background='transparent'
-            speed='1'
-            style='width: 250px; height: 250px; margin: 0 auto;'
-            loop
-            autoplay>
-        </dotlottie-player>
-        <h4 style='margin-top: 20px; color: #888;'>No items found matching your search</h4>
-        <p style='color: #aaa;'>Try checking the spelling or choosing a different category.</p>
-    </div>
-    ";
+    echo "<div style='text-align:center;padding:40px;'>";
+    echo "<script src='https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs' type='module'></script>";
+    echo "<dotlottie-player src='https://lottie.host/4d90d9e8-11b2-46c0-8032-61f6db73591b/VZqRxP5O84.lottie' background='transparent' speed='1' style='width:250px;height:250px;margin:0 auto;' loop autoplay></dotlottie-player>";
+    echo "<h4 style='margin-top:20px;color:#888;'>No items found matching your search</h4>";
+    echo "<p style='color:#aaa;'>Try checking the spelling or choosing a different category.</p>";
+    echo "</div>";
 }
+
+$stmt->close();
+$conn->close();
 ?>

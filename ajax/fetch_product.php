@@ -41,7 +41,7 @@ if (isset($_POST['product_id'])) {
                 <p><strong>Available Stock:</strong> <?= $available_stock; ?></p>
                 <p><?= nl2br($product['description']); ?></p>
 
-                <form id="quickCartForm_<?= $product['id']; ?>" method="POST">
+                <form class="quick-cart-form" id="quickCartForm_<?= $product['id']; ?>" method="POST">
                     <input type="hidden" name="product_id" value="<?= $product['id']; ?>">
                     <input type="hidden" name="add_to_cart_btn" value="true">
                     <input type="hidden" name="product_name" value="<?= $product['product_name']; ?>">
@@ -50,10 +50,16 @@ if (isset($_POST['product_id'])) {
 
                     <!-- Quantity -->
                     <div class="input-group mb-3">
-                        <button type="button" class="btn btn-outline-secondary quantity-decrease">-</button>
+                        <!-- Decrease button -->
+                        <button type="button" class="quantity-decrease" id="decrease-<?= $product['id']; ?>">-</button>
+
+                        <!-- Quantity input field -->
                         <input type="number" name="quantity" class="form-control text-center quantity-input"
-                               value="<?= $cart_quantity; ?>" min="1" max="<?= $available_stock; ?>">
-                        <button type="button" class="btn btn-outline-secondary quantity-increase">+</button>
+                            value="<?= $cart_quantity; ?>" min="1" max="<?= $available_stock; ?>"
+                            id="quantity-input-<?= $product['id']; ?>">
+
+                        <!-- Increase button -->
+                        <button type="button" class="quantity-increase" id="increase-<?= $product['id']; ?>">+</button>
                     </div>
 
                     <!-- Display "Already in Cart" message if applicable -->
@@ -66,6 +72,7 @@ if (isset($_POST['product_id'])) {
                         <?= $in_cart ? 'Update Cart' : 'Add to Cart'; ?>
                     </button>
                 </form>
+
             </div>
         </div>
 
@@ -94,12 +101,12 @@ if (isset($_POST['product_id'])) {
                 var form = $(this);
                 var formData = form.serialize();
                 $.ajax({
-                    url: 'ajax/code.php',  // Adjust the path to your AJAX handler if needed
+                    url: 'ajax/code.php', // Adjust the path to your AJAX handler if needed
                     type: 'POST',
                     data: formData,
                     dataType: 'json',
                     success: function(response) {
-                        if(response.status === 'success'){
+                        if (response.status === 'success') {
                             Swal.fire({
                                 position: 'top-end',
                                 icon: 'success',
@@ -110,7 +117,9 @@ if (isset($_POST['product_id'])) {
                                 width: 'auto',
                                 padding: '0.1em',
                                 background: 'white',
-                                customClass: { popup: 'small-swal' }
+                                customClass: {
+                                    popup: 'small-swal'
+                                }
                             });
                             // Update button text and style to reflect the product is in the cart
                             form.find("button[type='submit']")
@@ -132,7 +141,9 @@ if (isset($_POST['product_id'])) {
                                 width: 'auto',
                                 padding: '0.1em',
                                 background: 'white',
-                                customClass: { popup: 'small-swal' }
+                                customClass: {
+                                    popup: 'small-swal'
+                                }
                             });
                         }
                     },
@@ -147,7 +158,9 @@ if (isset($_POST['product_id'])) {
                             width: 'auto',
                             padding: '0.1em',
                             background: 'white',
-                            customClass: { popup: 'small-swal' }
+                            customClass: {
+                                popup: 'small-swal'
+                            }
                         });
                     }
                 });
