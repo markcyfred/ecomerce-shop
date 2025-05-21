@@ -134,7 +134,9 @@ if (isset($_SESSION['message'])) {
                         </thead>
                         <tbody>
                             <?php
-                            $products = mysqli_query($conn, "SELECT * FROM products ORDER BY created_at DESC");
+                            // Correct SQL: filter out 'dummy' products in product_name, order by created_at descending
+                            $products = mysqli_query($conn, "SELECT * FROM products WHERE product_name NOT LIKE '%dummy%' ORDER BY created_at DESC");
+
                             if (mysqli_num_rows($products) > 0) {
                                 foreach ($products as $item) {
                             ?>
@@ -204,8 +206,6 @@ if (isset($_SESSION['message'])) {
                                                     });
                                                 });
                                             </script>
-
-
                                         </td>
                                     </tr>
                             <?php
@@ -215,6 +215,7 @@ if (isset($_SESSION['message'])) {
                             }
                             ?>
                         </tbody>
+
                     </table>
                 </div>
             </div>

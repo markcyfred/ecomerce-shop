@@ -33,7 +33,7 @@
               <i class="bi bi-circle"></i><span>Add Products</span>
             </a>
           </li>
-          
+
           <li>
             <a href="products.php">
               <i class="bi bi-circle"></i><span>Products</span>
@@ -45,15 +45,51 @@
               <i class="bi bi-circle"></i><span>Add Brand</span>
             </a>
           </li>
-      
+
           <!--BRANDS-->
           <li>
             <a href="brands.php">
               <i class="bi bi-circle"></i><span>Brands</span>
             </a>
           </li>
+         
         </ul>
       </li><!-- End Products Nav -->
+      <!--products tags with dropdown-->
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#tags-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-tags"></i><span>Tags</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="tags-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="add-featured-tag.php">
+              <i class="bi bi-circle"></i><span>Add Tag</span>
+            </a>
+          </li>
+          <li>
+            <a href="featured-tags-manage.php">
+              <i class="bi bi-circle"></i><span>Tags</span>
+            </a>
+          </li>
+          <li>
+            <a href="assign-featured-tag.php">
+              <i class="bi bi-circle"></i><span>Assign Tag</span>
+            </a>
+          </li>
+          <li>
+            <a href="sync-tag.php">
+              <i class="bi bi-circle"></i><span>Sync Tag</span>
+            </a>
+          </li>
+          <!--manage tags-->
+          <li>
+            <a href="tags-manage.php">
+              <i class="bi bi-circle"></i><span>Sequence Tags</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Tags Nav -->
+      <!--products tags with dropdown-->
 
 
       <li class="nav-heading">Shop Sales</li>
@@ -192,81 +228,21 @@
           <i class="bi bi-chevron-down ms-auto"></i>
         </a>
         <ul id="system-dropdown" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-
-          <!-- Languages Dropdown -->
+          <!-- management of Select Featured , add featured tags-->
           <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-toggle="collapse" href="#languages-dropdown">
-              <i class="bi bi-circle"></i><span>Languages</span>
+            <a class="nav-link collapsed" data-bs-toggle="collapse" href="#featured-tags-dropdown">
+              <i class="bi bi-circle"></i><span>Featured Tags</span>
               <i class="bi bi-chevron-down ms-auto"></i>
             </a>
-            <ul id="languages-dropdown" class="nav-content collapse">
-              <!-- Languages Sub-Menu English -->
-              <li class="nav-item">
-                <a href="languages-sub-menu-english.php">
-                  <i class="bi bi-circle"></i><span>English</span>
-                </a>
-              </li>
-              <!-- Languages Sub-Menu Spanish -->
-              <li class="nav-item">
-                <a href="languages-sub-menu-spanish.php">
-                  <i class="bi bi-circle"></i><span>Spanish</span>
-                </a>
-              </li>
-              <!--swahili-->
-              <li class="nav-item">
-                <a href="languages-sub-menu-swahili.php">
-                  <i class="bi bi-circle"></i><span>Swahili</span>
-                </a>
-              </li>
+            <ul id="featured-tags-dropdown" class="nav-content collapse">
+
             </ul>
           </li>
 
-          <!-- Backup Dropdown -->
-          <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-toggle="collapse" href="#backup-dropdown">
-              <i class="bi bi-circle"></i><span>Backup</span>
-              <i class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <ul id="backup-dropdown" class="nav-content collapse">
-              <!-- Create Backup Sub-Menu Item -->
-              <li class="nav-item">
-                <a href="create-backup-sub-menu-item.php">
-                  <i class="bi bi-circle"></i><span>Create Backup</span>
-                </a>
-              </li>
-              <!-- Restore Backup Sub-Menu Item -->
-              <li class="nav-item">
-                <a href="restore-backup-sub-menu-item.php">
-                  <i class="bi bi-circle"></i><span>Restore Backup</span>
-                </a>
-              </li>
-            </ul>
-          </li>
 
-          <!-- Update Dropdown -->
-          <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-toggle="collapse" href="#update-dropdown">
-              <i class="bi bi-circle"></i><span>Update</span>
-              <i class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <ul id="update-dropdown" class="nav-content collapse">
-              <!-- Get Update Sub-Menu Item -->
-              <li class="nav-item">
-                <a href="get-update-sub-menu-item.php">
-                  <i class="bi bi-circle"></i><span>Get Update</span>
-                </a>
-              </li>
-          </li>
         </ul>
       </li>
 
-      <!-- Clear Cache Dropdown -->
-
-      <!-- Clear Cache Sub-Menu Item -->
-      <li class="nav-item">
-        <a href="clear-cache.php">
-          <i class="bi bi-circle"></i><span>Clear Cache</span>
-        </a>
       </li>
       <!-- End Clear Cache Sub-Menu Item -->
     </ul>

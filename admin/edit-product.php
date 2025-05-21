@@ -16,7 +16,7 @@ include('includes/header.php');
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">Edit product Forms</li>
                 <a href="products-add.php" title="Add new Product">
-                    <i class="ri-menu-add-line"></i> Add Product
+                    <i  class="ri-menu-add-line"></i> <span>Add Product</span>
                 </a>
                 <li class="breadcrumb-item active">
                     <a href="index.php">
@@ -132,19 +132,24 @@ include('includes/header.php');
                                     <div class="col-md-4">
                                         <label for="inputFeautered" class="form-label">Select Featured</label>
                                         <select class="form-select" id="inputFeautered" name="featured">
-                                            <option selected>Select Featured</option>
+                                            <option value="">Select Featured</option>
                                             <?php
-                                            $features = ['new', 'best_selling', 'trending', 'populer', 'featured'];
-                                            foreach ($features as $value) {
-                                            ?>
-                                                <option value="<?= $value ?>" <?= ($data['featured'] == $value) ? 'selected' : '' ?>>
-                                                    <?= ucfirst($value) ?>
-                                                </option>
-                                            <?php
+                                            $query = "SELECT DISTINCT featured FROM products WHERE featured IS NOT NULL AND featured != ''";
+                                            $result = mysqli_query($conn, $query);
+
+                                            if (mysqli_num_rows($result) > 0) {
+                                                while ($tag = mysqli_fetch_assoc($result)) {
+                                                    $tag_value = htmlspecialchars($tag['featured']);
+                                                    $selected = ($data['featured'] == $tag_value) ? 'selected' : '';
+                                                    echo "<option value=\"$tag_value\" $selected>" . ucfirst($tag_value) . "</option>";
+                                                }
+                                            } else {
+                                                echo '<option disabled>No featured tags found</option>';
                                             }
                                             ?>
                                         </select>
                                     </div>
+
                                     <!-- Description -->
                                     <div class="col-md-12">
                                         <label for="inputDescription" class="form-label">Description</label>
@@ -248,108 +253,110 @@ include('includes/header.php');
 </main>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    // Discount functionality (existing code)
-    var discountSelect = document.getElementById('inputDiscountType');
-    var originalPriceInput = document.getElementById('original_price');
-    var sellingPriceInput = document.getElementById('selling_price');
-    var applyDiscountBtn = document.getElementById('applyDiscountBtn');
-    var discountApplied = false;
+    document.addEventListener("DOMContentLoaded", function() {
+        // Discount functionality (existing code)
+        var discountSelect = document.getElementById('inputDiscountType');
+        var originalPriceInput = document.getElementById('original_price');
+        var sellingPriceInput = document.getElementById('selling_price');
+        var applyDiscountBtn = document.getElementById('applyDiscountBtn');
+        var discountApplied = false;
 
-    function updateSellingPrice() {
-        var discount = parseFloat(discountSelect.value) || 0;
-        var originalPrice = parseFloat(originalPriceInput.value) || 0;
-        if (originalPrice > 0) {
-            var discountAmount = originalPrice * (discount / 100);
-            var newSellingPrice = originalPrice - discountAmount;
-            sellingPriceInput.value = Math.round(newSellingPrice);
-        }
-    }
-
-    discountSelect.addEventListener("change", function() {
-        if (discountApplied) {
-            applyDiscountBtn.textContent = 'Apply new selected discount';
-            sellingPriceInput.value = Math.round(parseFloat(originalPriceInput.value) || 0);
-            discountApplied = false;
-        }
-    });
-
-    applyDiscountBtn.addEventListener("click", function() {
-        if (!discountApplied) {
-            var originalPrice = parseFloat(originalPriceInput.value) || 0;
+        function updateSellingPrice() {
             var discount = parseFloat(discountSelect.value) || 0;
-            if (originalPrice <= 0 || discount <= 0) {
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'error',
-                    title: 'Please enter a valid original price and select a discount.',
-                    showConfirmButton: false,
-                    timer: 2000,
-                    toast: true,
-                    width: 'auto',
-                    padding: '0.1em',
-                    background: 'white',
-                    customClass: { popup: 'small-swal' }
-                });
-                return;
+            var originalPrice = parseFloat(originalPriceInput.value) || 0;
+            if (originalPrice > 0) {
+                var discountAmount = originalPrice * (discount / 100);
+                var newSellingPrice = originalPrice - discountAmount;
+                sellingPriceInput.value = Math.round(newSellingPrice);
             }
-            applyDiscountBtn.disabled = true;
-            applyDiscountBtn.textContent = 'Applying Discount...';
-            setTimeout(function() {
-                updateSellingPrice();
-                discountApplied = true;
-                applyDiscountBtn.textContent = 'Remove Discount';
-                applyDiscountBtn.disabled = false;
-            }, 1000);
-        } else {
-            applyDiscountBtn.disabled = true;
-            applyDiscountBtn.textContent = 'Removing Discount...';
-            setTimeout(function() {
+        }
+
+        discountSelect.addEventListener("change", function() {
+            if (discountApplied) {
+                applyDiscountBtn.textContent = 'Apply new selected discount';
                 sellingPriceInput.value = Math.round(parseFloat(originalPriceInput.value) || 0);
                 discountApplied = false;
-                applyDiscountBtn.textContent = 'Apply Discount';
-                applyDiscountBtn.disabled = false;
-            }, 1000);
-        }
-    });
-
-    // Deal of the Day toggle functionality
-    const dealCheckbox = document.getElementById('dealOfTheDay');
-    const dealInputs = document.getElementById('dealTimeInputs');
-    const dealStartInput = document.getElementById('deal_start');
-    const dealEndInput = document.getElementById('deal_end');
-    const dealStatusSelect = document.getElementById('deal_status_select');
-
-    function getCurrentDateTimeLocal() {
-        const now = new Date();
-        return new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0,16);
-    }
-
-    dealCheckbox.addEventListener('change', function() {
-        if (this.checked) {
-            dealInputs.style.display = 'block';
-            const nowLocal = getCurrentDateTimeLocal();
-            dealStartInput.min = nowLocal;
-            dealEndInput.min = nowLocal;
-            // If no status is set or if currently closed, default to open.
-            if (dealStatusSelect.value === "" || dealStatusSelect.value === "closed") {
-                dealStatusSelect.value = "open";
             }
-        } else {
-            dealInputs.style.display = 'none';
-            dealStartInput.value = '';
-            dealEndInput.value = '';
-            // When unchecked, automatically set status to closed.
-            dealStatusSelect.value = "closed";
-        }
-    });
+        });
 
-    dealStartInput.addEventListener('change', function() {
-        if (this.value) {
-            dealEndInput.min = this.value;
+        applyDiscountBtn.addEventListener("click", function() {
+            if (!discountApplied) {
+                var originalPrice = parseFloat(originalPriceInput.value) || 0;
+                var discount = parseFloat(discountSelect.value) || 0;
+                if (originalPrice <= 0 || discount <= 0) {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'error',
+                        title: 'Please enter a valid original price and select a discount.',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        toast: true,
+                        width: 'auto',
+                        padding: '0.1em',
+                        background: 'white',
+                        customClass: {
+                            popup: 'small-swal'
+                        }
+                    });
+                    return;
+                }
+                applyDiscountBtn.disabled = true;
+                applyDiscountBtn.textContent = 'Applying Discount...';
+                setTimeout(function() {
+                    updateSellingPrice();
+                    discountApplied = true;
+                    applyDiscountBtn.textContent = 'Remove Discount';
+                    applyDiscountBtn.disabled = false;
+                }, 1000);
+            } else {
+                applyDiscountBtn.disabled = true;
+                applyDiscountBtn.textContent = 'Removing Discount...';
+                setTimeout(function() {
+                    sellingPriceInput.value = Math.round(parseFloat(originalPriceInput.value) || 0);
+                    discountApplied = false;
+                    applyDiscountBtn.textContent = 'Apply Discount';
+                    applyDiscountBtn.disabled = false;
+                }, 1000);
+            }
+        });
+
+        // Deal of the Day toggle functionality
+        const dealCheckbox = document.getElementById('dealOfTheDay');
+        const dealInputs = document.getElementById('dealTimeInputs');
+        const dealStartInput = document.getElementById('deal_start');
+        const dealEndInput = document.getElementById('deal_end');
+        const dealStatusSelect = document.getElementById('deal_status_select');
+
+        function getCurrentDateTimeLocal() {
+            const now = new Date();
+            return new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
         }
+
+        dealCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                dealInputs.style.display = 'block';
+                const nowLocal = getCurrentDateTimeLocal();
+                dealStartInput.min = nowLocal;
+                dealEndInput.min = nowLocal;
+                // If no status is set or if currently closed, default to open.
+                if (dealStatusSelect.value === "" || dealStatusSelect.value === "closed") {
+                    dealStatusSelect.value = "open";
+                }
+            } else {
+                dealInputs.style.display = 'none';
+                dealStartInput.value = '';
+                dealEndInput.value = '';
+                // When unchecked, automatically set status to closed.
+                dealStatusSelect.value = "closed";
+            }
+        });
+
+        dealStartInput.addEventListener('change', function() {
+            if (this.value) {
+                dealEndInput.min = this.value;
+            }
+        });
     });
-});
 </script>
 
 <?php

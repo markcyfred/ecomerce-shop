@@ -13,27 +13,27 @@ include('includes/header.php');
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <?php
 if (isset($_SESSION['message'])) {
-  $icon = ($_SESSION['messageType'] == 'success') ? 'success' : 'error';
+    $icon = ($_SESSION['messageType'] == 'success') ? 'success' : 'error';
 ?>
-  <script>
-    Swal.fire({
-      position: 'top-end',
-      icon: '<?php echo $icon; ?>',
-      title: '<?php echo $_SESSION['message']; ?>',
-      showConfirmButton: false,
-      timer: 2000,
-      toast: true,
-      width: 'auto',
-      padding: '0.1em',
-      background: 'white',
-      customClass: {
-        popup: 'small-swal'
-      }
-    });
-  </script>
+    <script>
+        Swal.fire({
+            position: 'top-end',
+            icon: '<?php echo $icon; ?>',
+            title: '<?php echo $_SESSION['message']; ?>',
+            showConfirmButton: false,
+            timer: 2000,
+            toast: true,
+            width: 'auto',
+            padding: '0.1em',
+            background: 'white',
+            customClass: {
+                popup: 'small-swal'
+            }
+        });
+    </script>
 <?php
-  unset($_SESSION['message']); // unset the session message after displaying
-  unset($_SESSION['messageType']); // unset the session message type after displaying
+    unset($_SESSION['message']); // unset the session message after displaying
+    unset($_SESSION['messageType']); // unset the session message type after displaying
 }
 ?>
 <main id="main" class="main">
@@ -68,14 +68,14 @@ if (isset($_SESSION['message'])) {
                             <!-- Bulk Upload Form -->
                             <form action="bulk.php" method="POST" enctype="multipart/form-data">
                                 <label for="bulkUpload" class="form-label">Bulk Upload (CSV/Excel File)</label>
-                                <input type="file" class="form-control" id="bulkUpload" name="bulk_file" accept=".csv, .xlsx" >
+                                <input type="file" class="form-control" id="bulkUpload" name="bulk_file" accept=".csv, .xlsx">
 
                                 <br>
 
                                 <label for="imageUpload" class="form-label">Upload Product Images (ZIP File)</label>
                                 <!--USER NOTE THAT IMAGES SHOULD BE NAMED AS SAME TO PRODUCT NAME-->
                                 <small class="text-danger">Note: Images should be named as same to product name in the excell</small>
-                                <input type="file" class="form-control" id="imageUpload" name="image_zip" accept=".zip" >
+                                <input type="file" class="form-control" id="imageUpload" name="image_zip" accept=".zip">
 
                                 <br>
 
@@ -193,14 +193,21 @@ if (isset($_SESSION['message'])) {
                             <div class="col-md-6">
                                 <label for="inputFeautered" class="form-label">Select Featured</label>
                                 <select class="form-select" id="inputFeautered" name="featured">
-                                    <option selected>Select Featured</option>
-                                    <option value="new">New</option>
-                                    <option value="best_selling">Best Selling</option>
-                                    <option value="trending">Trending</option>
-                                    <option value="popular">Popular</option>
-                                    <option value="featured">Featured</option>
+                                    <option value="" selected>Select Featured</option>
+                                    <?php
+                                    $featured_tags_query = "SELECT DISTINCT featured FROM products WHERE featured IS NOT NULL AND featured != ''";
+                                    $tags_result = mysqli_query($conn, $featured_tags_query);
+
+                                    if (mysqli_num_rows($tags_result) > 0) {
+                                        while ($tag_row = mysqli_fetch_assoc($tags_result)) {
+                                            $tag_value = htmlspecialchars($tag_row['featured']);
+                                            echo "<option value=\"$tag_value\">$tag_value</option>";
+                                        }
+                                    }
+                                    ?>
                                 </select>
                             </div>
+
                             <div class="col-md-6">
                                 <label for="brand_image" class="form-label">product Image</label>
                                 <div class="drop-zone" id="dropZone">Drag & Drop Image Here</div>
@@ -257,7 +264,7 @@ if (isset($_SESSION['message'])) {
                                 <div class="card-body">
                                     <!-- Toggle Switch -->
                                     <div class="form-check form-switch mb-3">
-                                        <input class="form-check-input" type="checkbox" id="dealOfTheDay" name="deal_of_day">
+                                        <input class="form-check-input" type="checkbox" id="dealOfTheDay" name="deal_of_day_status">
                                         <label class="form-check-label" for="dealOfTheDay">Enable Deal of the Day</label>
                                     </div>
                                     <!-- Deal Time Inputs (hidden by default) -->

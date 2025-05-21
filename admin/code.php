@@ -132,6 +132,9 @@ if (isset($_POST['add_product_btn'])) {
     $trending      = isset($_POST['trending']) ? 1 : 0;
     $size          = mysqli_real_escape_string($conn, $_POST['size']);
     $featured      = isset($_POST['featured']) ? 1 : 0;
+    $brand_name    = mysqli_real_escape_string($conn, $_POST['brand_name']);
+    $deal_of_day_status = isset($_POST['deal_of_day_status']) ? 1 : 0;
+
 
     // Handle Image Upload
     if (!empty($_FILES['image']['name'])) {
@@ -152,7 +155,7 @@ if (isset($_POST['add_product_btn'])) {
     }
 
     // Capture Deal of the Day inputs
-    $deal_of_day = isset($_POST['deal_of_day']) ? 1 : 0;
+    $deal_of_day = isset($_POST['deal_of_day_status']) ? 1 : 0;
     $deal_start = NULL;
     $deal_end   = NULL;
     
@@ -171,7 +174,7 @@ if (isset($_POST['add_product_btn'])) {
 
     // Insert product into the database
     $add_product_query = "INSERT INTO products 
-            (category_name, rating, status, discount, product_name, description, original_price, selling_price, image, quantity, trending, size, featured, deal_of_day, deal_start, deal_end) 
+            (category_name, rating, status, discount, product_name, description, original_price, selling_price, image, quantity, trending, size, featured, brand_name , deal_of_day_status, deal_start, deal_end) 
             VALUES (
                 '$category_name', 
                 '$rating', 
@@ -186,7 +189,8 @@ if (isset($_POST['add_product_btn'])) {
                 '$trending', 
                 '$size', 
                 '$featured', 
-                '$deal_of_day', 
+                '$brand_name',
+                '$deal_of_day_status', 
                 " . (!empty($deal_start) ? "'$deal_start'" : "NULL") . ", 
                 " . (!empty($deal_end) ? "'$deal_end'" : "NULL") . "
             )";
@@ -502,4 +506,233 @@ else if (isset($_POST['delete_brand_btn'])) {
     } else {
         redirect("brands.php", "Brand not deleted", "error");
     }
+}
+
+//add_featured_tag_btn
+// Assign featured tag to selected products
+if (isset($_POST['add_featured_tag_btn'])) {
+    $tag = mysqli_real_escape_string($conn, $_POST['tag_name']);
+    $product_ids = $_POST['product_ids'] ?? [];
+
+    if (!empty($tag)) {
+        if (empty($product_ids)) {
+            // Find one available dummy product to assign tag to (limit 1)
+            $dummyResult = mysqli_query($conn, "SELECT id FROM products WHERE status=0 AND (featured IS NULL OR featured = '') LIMIT 1");
+            if (mysqli_num_rows($dummyResult) > 0) {
+                $dummy = mysqli_fetch_assoc($dummyResult);
+                $product_ids = [$dummy['id']];
+            } else {
+                // No available dummy product - you may want to handle this case
+                $_SESSION['message'] = "No available dummy products to assign the tag. Please select a product.";
+                $_SESSION['messageType'] = "error";
+                header("Location: featured-tags-manage.php");
+                exit();
+            }
+        }
+
+        // Assign tag to selected products (or dummy)
+        foreach ($product_ids as $product_id) {
+            $product_id = intval($product_id);
+            mysqli_query($conn, "UPDATE products SET featured = '$tag' WHERE id = $product_id");
+        }
+
+        $_SESSION['message'] = "Featured tag assigned successfully!";
+        $_SESSION['messageType'] = "success";
+    } else {
+        $_SESSION['message'] = "Please enter a tag name.";
+        $_SESSION['messageType'] = "error";
+    }
+
+    header("Location: featured-tags-manage.php");
+    exit();
+}
+
+if (isset($_POST['delete_tag_btn'])) {
+    $tag_to_delete = mysqli_real_escape_string($conn, $_POST['tag_delete']);
+
+    // Step 1: Remove the tag from all products
+    $query = "UPDATE products SET featured = '' WHERE featured = '$tag_to_delete'";
+    $result = mysqli_query($conn, $query);
+
+    // Step 2: Check if the tag is used in any other products
+    $checkQuery = "SELECT COUNT(*) as count FROM products WHERE featured = '$tag_to_delete'";
+    $checkResult = mysqli_query($conn, $checkQuery);
+    $countRow = mysqli_fetch_assoc($checkResult);
+    $usedCount = $countRow['count'];
+
+    // Step 3: If not used, delete it from the tags table
+    if ($usedCount == 0) {
+        $deleteTagQuery = "DELETE FROM tags WHERE tag_name = '$tag_to_delete'";
+        mysqli_query($conn, $deleteTagQuery);
+    }
+
+    $_SESSION['message'] = $result ? "Tag removed from products and synced with tags." : "Failed to remove tag.";
+    $_SESSION['messageType'] = $result ? "success" : "error";
+    header("Location: featured-tags-manage.php");
+    exit();
+}
+
+
+if (isset($_POST['update_featured_tag_btn'])) {
+    $old_tag_name = mysqli_real_escape_string($conn, $_POST['old_tag_name']);
+    $new_tag_name = mysqli_real_escape_string($conn, $_POST['new_tag_name']);
+    $product_ids = isset($_POST['product_ids']) ? $_POST['product_ids'] : [];
+
+    // 1. Update all products currently using the old tag
+    mysqli_query($conn, "UPDATE products SET featured = NULL WHERE featured = '$old_tag_name'");
+
+    // 2. Assign the new tag to selected products
+    if (!empty($product_ids)) {
+        foreach ($product_ids as $prod_id) {
+            $prod_id = mysqli_real_escape_string($conn, $prod_id);
+            mysqli_query($conn, "UPDATE products SET featured = '$new_tag_name' WHERE id = '$prod_id'");
+        }
+    }
+
+    $_SESSION['message'] = "Tag updated successfully.";
+    $_SESSION['messageType'] = "success";
+    header("Location: featured-tags-manage.php");
+    exit();
+}
+if (isset($_POST['assign_featured_tag_btn'])) {
+    // Choose tag from new tag input or existing tag dropdown
+    $new_tag = trim(mysqli_real_escape_string($conn, $_POST['new_tag_name'] ?? ''));
+    $existing_tag = trim(mysqli_real_escape_string($conn, $_POST['existing_tag'] ?? ''));
+
+    // Determine the tag to assign
+    $tag = !empty($new_tag) ? $new_tag : (!empty($existing_tag) ? $existing_tag : '');
+
+    $product_ids = $_POST['product_ids'] ?? [];
+
+    if (empty($tag)) {
+        $_SESSION['message'] = "Please select an existing tag or enter a new tag name.";
+        $_SESSION['messageType'] = "error";
+        header("Location: featured-tags-manage.php");
+        exit();
+    }
+
+    // If no products selected, try to assign tag to one dummy product (status=0 and no featured tag)
+    if (empty($product_ids)) {
+        $dummyResult = mysqli_query($conn, "SELECT id FROM products WHERE status = 0 AND (featured IS NULL OR featured = '') LIMIT 1");
+        if (mysqli_num_rows($dummyResult) > 0) {
+            $dummy = mysqli_fetch_assoc($dummyResult);
+            $product_ids = [$dummy['id']];
+        } else {
+            $_SESSION['message'] = "No products selected and no dummy product available to assign the tag. Please select at least one product.";
+            $_SESSION['messageType'] = "error";
+            header("Location: featured-tags-manage.php");
+            exit();
+        }
+    }
+
+    // Assign tag to all selected product IDs
+    $stmt = $conn->prepare("UPDATE products SET featured = ? WHERE id = ?");
+    if (!$stmt) {
+        $_SESSION['message'] = "Database error: " . $conn->error;
+        $_SESSION['messageType'] = "error";
+        header("Location: featured-tags-manage.php");
+        exit();
+    }
+
+    foreach ($product_ids as $pid) {
+        $pid = intval($pid);
+        $stmt->bind_param("si", $tag, $pid);
+        $stmt->execute();
+    }
+    $stmt->close();
+
+    $_SESSION['message'] = "Featured tag assigned successfully!";
+    $_SESSION['messageType'] = "success";
+    header("Location: featured-tags-manage.php");
+    exit();
+}
+if (isset($_POST['sync_tags'])) {
+    $query = "SELECT DISTINCT featured FROM products WHERE featured IS NOT NULL AND featured != ''";
+    $result = mysqli_query($conn, $query);
+
+    if (!$result) {
+        $_SESSION['message'] = "Failed to fetch product tags.";
+        $_SESSION['messageType'] = "error";
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit();
+    }
+
+    $featuredTags = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $featuredTags[] = $row['featured'];
+    }
+
+    // Get current tags and count
+    $tagsResult = mysqli_query($conn, "SELECT id, tag_name FROM tags ORDER BY id ASC");
+    $existingTags = [];
+    $existingTagNames = [];
+
+    while ($row = mysqli_fetch_assoc($tagsResult)) {
+        $existingTags[] = $row;
+        $existingTagNames[] = $row['tag_name'];
+    }
+
+    // If tag count is already 10, deny access
+    if (count($existingTags) >= 10) {
+        $_SESSION['message'] = "Maximum tag limit reached (10). Please request access from admin.";
+        $_SESSION['messageType'] = "error";
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit();
+    }
+
+    $inserted = 0;
+    $deleted = 0;
+
+    // Insert missing tags
+    foreach ($featuredTags as $tag) {
+        if (!in_array($tag, $existingTagNames)) {
+            $safeTag = mysqli_real_escape_string($conn, $tag);
+
+            // Calculate today's date
+            $today = date('Ymd');
+
+            // Assign the next available ID (simulate)
+            $newId = 1;
+            $usedIds = array_column($existingTags, 'id');
+            while (in_array($newId, $usedIds)) {
+                $newId++;
+            }
+
+            if (count($existingTags) + $inserted >= 10) {
+                $_SESSION['message'] = "Only limited tag slots are available. Contact admin.";
+                $_SESSION['messageType'] = "error";
+                header("Location: " . $_SERVER['PHP_SELF']);
+                exit();
+            }
+
+            $description = "{$newId}#ecommerce{$today}";
+            $query = "INSERT INTO tags (tag_name, description) VALUES ('$safeTag', '$description')";
+            $insertResult = mysqli_query($conn, $query);
+
+            if ($insertResult) {
+                $inserted++;
+                $usedIds[] = $newId; // mark id as used
+            }
+        }
+    }
+
+    // Delete unused tags
+    foreach ($existingTagNames as $tag) {
+        if (!in_array($tag, $featuredTags)) {
+            $safeTag = mysqli_real_escape_string($conn, $tag);
+            $deleteResult = mysqli_query($conn, "DELETE FROM tags WHERE tag_name = '$safeTag'");
+            if ($deleteResult) $deleted++;
+        }
+    }
+
+    if ($inserted === 0 && $deleted === 0) {
+        $_SESSION['message'] = "No changes detected. Tags are already up to date.";
+        $_SESSION['messageType'] = "info";
+    } else {
+        $_SESSION['message'] = "Tags synced successfully. Inserted: $inserted, Deleted: $deleted.";
+        $_SESSION['messageType'] = "success";
+    }
+
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
 }

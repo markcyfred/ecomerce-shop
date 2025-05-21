@@ -196,6 +196,8 @@ for ($row = 2; $row <= 100; $row++) {
 // (C) Featured (Column J => J2:J100)
 // Fetch enum values from the products table for the 'featured' column
 $featuredEnum = [];
+
+// Try to get enum values first
 $enumQuery = "SHOW COLUMNS FROM products LIKE 'featured'";
 $enumResult = mysqli_query($conn, $enumQuery);
 if ($enumResult && $enumRow = mysqli_fetch_assoc($enumResult)) {
@@ -207,9 +209,27 @@ if ($enumResult && $enumRow = mysqli_fetch_assoc($enumResult)) {
         $featuredEnum = $vals;
     }
 }
+
+// If no enum values found, get all distinct featured tags from products table
 if (empty($featuredEnum)) {
-    $featuredEnum = ['new','best_selling','trending','popular'];
+    $all_tags = [];
+    $tagsQuery = "SELECT featured FROM products WHERE featured IS NOT NULL AND featured != ''";
+    $tagsResult = mysqli_query($conn, $tagsQuery);
+
+    if ($tagsResult) {
+        while ($row = mysqli_fetch_assoc($tagsResult)) {
+            $tags = explode(',', $row['featured']);
+            foreach ($tags as $tag) {
+                $trimmed = trim($tag);
+                if ($trimmed !== '' && !in_array($trimmed, $all_tags)) {
+                    $all_tags[] = $trimmed;
+                }
+            }
+        }
+    }
+    $featuredEnum = $all_tags;
 }
+
 $featuredList = '"' . implode(',', $featuredEnum) . '"';
 for ($row = 2; $row <= 100; $row++) {
     $validation = $sheet->getCell('J' . $row)->getDataValidation();

@@ -129,23 +129,40 @@ for ($row = 2; $row <= 100; $row++) {
 
 // (C) Featured (column I => I2:I100) => from enum('new','best_selling','trending','popular', etc.)
 $featuredEnum = [];
+
+// Try to get enum values first
 $enumQuery = "SHOW COLUMNS FROM products LIKE 'featured'";
 $enumResult = mysqli_query($conn, $enumQuery);
 if ($enumResult && $enumRow = mysqli_fetch_assoc($enumResult)) {
-    // The Type might look like: enum('new','best_selling','trending','popular')
     if (preg_match("/^enum\((.*)\)$/", $enumRow['Type'], $matches)) {
-        // $matches[1] => "'new','best_selling','trending','popular'"
-        $vals = explode(",", $matches[1]); // ["'new'","'best_selling'","'trending'","'popular'"]
-        $vals = array_map(function($v) {
+        $vals = explode(",", $matches[1]);
+        $vals = array_map(function ($v) {
             return trim($v, " '");
         }, $vals);
         $featuredEnum = $vals;
     }
 }
-// Fallback if empty
+
+// If no enum values found, get all distinct featured tags from products table
 if (empty($featuredEnum)) {
-    $featuredEnum = ['new','best_selling','trending','popular'];
+    $all_tags = [];
+    $tagsQuery = "SELECT featured FROM products WHERE featured IS NOT NULL AND featured != ''";
+    $tagsResult = mysqli_query($conn, $tagsQuery);
+
+    if ($tagsResult) {
+        while ($row = mysqli_fetch_assoc($tagsResult)) {
+            $tags = explode(',', $row['featured']);
+            foreach ($tags as $tag) {
+                $trimmed = trim($tag);
+                if ($trimmed !== '' && !in_array($trimmed, $all_tags)) {
+                    $all_tags[] = $trimmed;
+                }
+            }
+        }
+    }
+    $featuredEnum = $all_tags;
 }
+
 $featuredList = '"' . implode(',', $featuredEnum) . '"';
 
 for ($row = 2; $row <= 100; $row++) {
