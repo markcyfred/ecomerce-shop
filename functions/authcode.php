@@ -204,7 +204,8 @@ if (isset($_POST['login'])) {
             $user_email = $user_data['email'];
             $user_first_name = $user_data['first_name'];
             $user_last_name = $user_data['last_name'];
-            $user_display_name = $user_data['display_name'];
+            // Note: display_name field doesn't exist in users table, using first_name + last_name instead
+            $user_display_name = $user_data['first_name'] . ' ' . $user_data['last_name'];
             $user_role = $user_data['role_as'];
             $user_phone = $user_data['phone'];
             $user_city = $user_data['city'];

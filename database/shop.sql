@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 21, 2025 at 12:19 PM
+-- Generation Time: Sep 26, 2025 at 01:25 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -353,14 +353,6 @@ INSERT INTO `likes` (`id`, `blog_id`, `ip_address`, `created_at`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `orders`
---
--- Error reading structure for table shop.orders: #1932 - Table &#039;shop.orders&#039; doesn&#039;t exist in engine
--- Error reading data for table shop.orders: #1064 - You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near &#039;FROM `shop`.`orders`&#039; at line 1
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `products`
 --
 
@@ -605,14 +597,21 @@ CREATE TABLE `users` (
   `last_name` varchar(100) NOT NULL,
   `email` varchar(255) NOT NULL,
   `phone` varchar(20) NOT NULL,
+  `phonenumber` varchar(20) DEFAULT NULL,
   `street_address` varchar(255) DEFAULT NULL,
   `city` varchar(100) DEFAULT NULL,
   `postal_code` varchar(20) DEFAULT NULL,
   `additional_info` text DEFAULT NULL,
   `password` varchar(255) NOT NULL,
   `role_as` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0=User, 1=Admin, 2=Supplier',
+  `user_role` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0=Student, 1=Admin, 2=Lecturer, 3=Super Admin',
   `profile_picture` varchar(255) DEFAULT NULL,
   `agreed_to_terms` tinyint(1) NOT NULL DEFAULT 0,
+  `verify_status` tinyint(1) NOT NULL DEFAULT 0,
+  `verify_token` varchar(255) DEFAULT NULL,
+  `student_number` varchar(50) DEFAULT NULL,
+  `is_school_student` tinyint(1) DEFAULT 0,
+  `twofa_enabled` tinyint(1) DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `user_status` enum('active','inactive') NOT NULL DEFAULT 'active'
@@ -623,11 +622,64 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `first_name`, `last_name`, `email`, `phone`, `street_address`, `city`, `postal_code`, `additional_info`, `password`, `role_as`, `profile_picture`, `agreed_to_terms`, `created_at`, `updated_at`, `user_status`) VALUES
-(3, 'Mark', 'Kinai', 'mark@gmail.com', '0111893789', '50100', 'Nairobi', 'N50100', 'fdsdf', '$2y$10$osm5XRy/z2x7IHlXaiKKpOEqig8POyYCP3lv8YTMMimVRs3iWgvf6', 2, '1732445429.png', 1, '2024-11-21 13:05:04', '2025-03-21 08:30:47', 'active'),
+(3, 'Mark', 'Kinai', 'mark@gmail.com', '0111893789', '50100', 'Nairobi', 'N50100', 'fdsdf', 'e10adc3949ba59abbe56e057f20f883e', 2, '1732445429.png', 1, '2024-11-21 13:05:04', '2025-09-13 17:45:21', 'active'),
 (6, 'Mark', 'Kinai', 'markkinai3@gmail.com', '0111893789', '00100', 'Nairobi', '00100', '', '$2y$10$7nM/F9PBqaHZJ9KYhDQLQOqgZP1HOgHy2ag7cqw3eqpsij/bVzifm', 1, 'DSIC.png', 0, '2024-11-24 11:03:24', '2025-04-12 12:54:49', ''),
-(12, 'Mark', 'Kinai', 'mar@gmail.com', '0111893789', NULL, NULL, NULL, NULL, '$2y$10$AUjekjxMmMaWFz1Zv3.o2OAqhewF/BlQdkOwWadj0rZZ43VFE/aP2', 2, '1732451741.jpg', 0, '2024-11-24 12:35:41', '2025-03-21 08:29:37', 'active'),
-(13, 'Mark', 'Kinai', 'mark1kinai@gmail.com', '0111893789', '50100', 'Nairobi', 'N50100', '', '$2y$10$Wjf8k5shXFdqt/E8UogqkuPxU.5sdxJr1rp2XwMlWlo6VlAWVdIu.', 2, 'GD.png', 1, '2025-03-21 08:40:55', '2025-03-21 08:41:26', 'active'),
-(14, 'Mark', 'Kinai', 'mark1kinai1@gmail.com', '0111893789', '50100', 'Nairobi', 'N50100', '', '$2y$10$xRV7.3rM9HXk4tQSZRx64evtOYF.jVzkRMY9Jvb4eyf6jdmJMpCSK', 0, 'feature-5.png', 1, '2025-04-15 10:47:14', '2025-04-15 10:47:14', 'active');
+(12, 'Mark', 'Kinai', 'mar@gmail.com', '0111893789', NULL, NULL, NULL, NULL, '$2y$10$AUjekjxMmMaWFz1Zv3.o2OAqhewF/BlQdkOwWadj0rZZ43VFE/aP2', 2, '1732451741.jpg', 0, '2024-11-24 12:35:41', '2025-03-21 08:29:37', 'active');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `password_reset_attempts`
+--
+
+CREATE TABLE `password_reset_attempts` (
+  `id` int(11) NOT NULL,
+  `ip_address` varchar(45) NOT NULL,
+  `email_attempted` varchar(255) DEFAULT NULL,
+  `attempt_time` int(11) NOT NULL,
+  `attempt_type` enum('password_reset','login_failed','login_success','honeypot','database_error','invalid_email') NOT NULL,
+  `success` tinyint(1) DEFAULT 0,
+  `user_agent` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `student_devices`
+--
+
+CREATE TABLE `student_devices` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) UNSIGNED NOT NULL,
+  `device_fingerprint` varchar(255) NOT NULL,
+  `device_info` text DEFAULT NULL,
+  `device_name` varchar(255) DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT 1,
+  `last_used` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `device_access_requests`
+--
+
+CREATE TABLE `device_access_requests` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) UNSIGNED NOT NULL,
+  `device_fingerprint` varchar(255) NOT NULL,
+  `device_info` text DEFAULT NULL,
+  `request_reason` text NOT NULL,
+  `status` enum('pending','approved','rejected') DEFAULT 'pending',
+  `admin_notes` text DEFAULT NULL,
+  `processed_by` int(11) UNSIGNED DEFAULT NULL,
+  `processed_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Indexes for dumped tables
@@ -881,14 +933,6 @@ ALTER TABLE `likes`
 --
 ALTER TABLE `product_images`
   ADD CONSTRAINT `product_images_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `promocode_usage`
---
-ALTER TABLE `promocode_usage`
-  ADD CONSTRAINT `promocode_usage_ibfk_1` FOREIGN KEY (`promocode_id`) REFERENCES `promocodes` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `promocode_usage_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-  ADD CONSTRAINT `promocode_usage_ibfk_3` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE SET NULL;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -519,8 +519,8 @@ include __DIR__ . '/../functions/userfunctions.php';
                          $user_points = 0;
                          $next_reward = 100;
 
-                         if (isset($_SESSION['auth_user'])) {
-                              $user_id = $_SESSION['auth_user']['id'];
+                         if (isset($_SESSION['auth_user']) && isset($_SESSION['auth_user']['user_id'])) {
+                              $user_id = $_SESSION['auth_user']['user_id'];
 
                               $points_query = "
                                    SELECT SUM(total_amount) AS total_spent
@@ -1029,16 +1029,16 @@ include __DIR__ . '/../functions/userfunctions.php';
                                                   <!-- ─── USER ACCOUNT (LOGIN / PROFILE) ─── -->
                                                   <li class="hide level-1" style="margin-left: 160px;" class="level-1 user-account">
                                                        <div class="user-info js-dropdown">
-                                                            <?php if (isset($_SESSION['auth_user'])): ?>
+                                                            <?php if (isset($_SESSION['auth_user']) && isset($_SESSION['auth_user']['user_id'])): ?>
                                                                  <?php
                                                                  // Get user details from the session
-                                                                 $user_id = $_SESSION['auth_user']['id'];
+                                                                 $user_id = $_SESSION['auth_user']['user_id'];
                                                                  $query = "SELECT `first_name`,`last_name`,`profile_picture` FROM `users` WHERE `id`='$user_id'";
                                                                  $result = mysqli_query($conn, $query);
                                                                  $user_data = mysqli_fetch_assoc($result);
 
-                                                                 $profile_picture = $user_data['profile_picture'] ?? 'default.png';
-                                                                 $full_name = $user_data['first_name'] . ' ' . $user_data['last_name'];
+                                                                 $profile_picture = ($user_data && isset($user_data['profile_picture'])) ? $user_data['profile_picture'] : 'default.png';
+                                                                 $full_name = ($user_data && isset($user_data['first_name']) && isset($user_data['last_name'])) ? $user_data['first_name'] . ' ' . $user_data['last_name'] : 'User';
                                                                  ?>
                                                                  <a class="user-icon" href="javascript:void(0)"
                                                                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
